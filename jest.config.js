@@ -1,9 +1,7 @@
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  globals: {
-    'ts-jest': {
-      isolatedModules: true,
-    },
-  },
+  projects: [
+    'packages/get-number-precision/jest.config.js',
+    'packages/range/jest.config.js',
+    'packages/react-pagination/jest.config.js',
+  ],
 };

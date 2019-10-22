@@ -1,8 +1,8 @@
 {
-  "name": "@spudly/range",
+  "name": "@spudly/get-number-precision",
   "version": "1.0.0",
   "description": "",
-  "main": "build/range.js",
+  "main": "build/getNumberPrecision.js",
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.build.json",
     "prepare": "npm run build",

@@ -3,5 +3,6 @@
     "outDir": "build"
   },
   "extends": "../../tsconfig",
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["**/*.test.*", "**/*.stories.*"]
 }

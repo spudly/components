@@ -5,7 +5,8 @@
     "jsx": "react",
     "target": "esnext",
     "moduleResolution": "node",
-    "declaration": true
+    "declaration": true,
+    "module": "commonjs"
   },
   "include": ["packages/*/src/**/*"]
 }

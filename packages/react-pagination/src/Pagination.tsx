@@ -23,7 +23,7 @@ const Pagination = ({
     lastPage != null && currentPage < lastPage ? currentPage + 1 : null;
 
   const pageNumbers =
-    size === Infinity || size >= totalPages
+    !Number.isFinite(size) || size >= totalPages
       ? range(0, totalPages)
       : totalPages && currentPage < size / 2
       ? range(0, size)
