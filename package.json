@@ -1,9 +1,6 @@
 {
   "name": "@spudly/components",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/spudly/components.git"
-  },
+  "repository": "git+https://github.com/spudly/components.git",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/spudly/components/issues"
@@ -12,15 +9,38 @@
     "packages/*"
   ],
   "private": true,
-  "devDependencies": {
+  "dependencies": {
+    "@testing-library/react": "^9.3.0",
+    "@types/jest": "^24.0.19",
     "@types/react": "^16.9.9",
-    "eslint": "^6.5.1",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "babel-eslint": "^10.0.0",
     "eslint-config-react-app": "^5.0.2",
+    "eslint-plugin-flowtype": "^3.0.0",
+    "eslint-plugin-import": "^2.0.0",
+    "eslint-plugin-jsx-a11y": "^6.0.0",
+    "eslint-plugin-react-hooks": "^1.0.0",
+    "eslint-plugin-react": "^7.0.0",
+    "eslint": "^6.5.1",
     "husky": "^3.0.9",
+    "jest": "^24.9.0",
     "prettier": "^1.18.2",
-    "pretty-quick": "^2.0.0"
+    "pretty-quick": "^2.0.0",
+    "react-dom": "^16.10.2",
+    "react": "^16.10.2",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.4"
   },
   "eslintConfig": {
     "@extends": "react-app"
+  },
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Stephen John Sorensen <shuoink@gmail.com>",
+  "bolt": {
+    "workspaces": [
+      "packages/*"
+    ]
   }
 }
