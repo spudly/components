@@ -1,13 +1,12 @@
-import {ReactElement} from 'react';
 import range from '@spudly/range';
+import {Props, PageDescriptor} from './types';
 
-type Props = {
-  currentPage: number;
-  totalPages: number;
-  size?: number;
-  render: (
-    pages: Array<{label: string; page: number | null; isCurrentPage: boolean}>,
-  ) => ReactElement | null;
+const types: {[key: string]: PageDescriptor['type']} = {
+  FIRST: 'FIRST',
+  PREV: 'PREV',
+  NUMBER: 'NUMBER',
+  NEXT: 'NEXT',
+  LAST: 'LAST',
 };
 
 const Pagination = ({
@@ -37,11 +36,11 @@ const Pagination = ({
 
   return render(
     [
-      {label: 'first', page: firstPage},
-      {label: 'prev', page: prevPage},
-      ...pageNumbers.map(num => ({label: `${num}`, page: num})),
-      {label: 'next', page: nextPage},
-      {label: 'last', page: lastPage},
+      {type: types.FIRST, page: firstPage},
+      {type: types.PREV, page: prevPage},
+      ...pageNumbers.map(num => ({type: types.NUMBER, page: num})),
+      {type: types.NEXT, page: nextPage},
+      {type: types.LAST, page: lastPage},
     ].map(descriptor => ({
       ...descriptor,
       isCurrentPage: descriptor.page === currentPage,

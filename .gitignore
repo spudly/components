@@ -2,3 +2,5 @@
 node_modules
 core.node.*
 coverage
+build
+.theia

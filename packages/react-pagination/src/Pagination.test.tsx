@@ -14,7 +14,7 @@ test('renders (first page current)', () => {
         <>
           [
           {pages.map(page => (
-            <React.Fragment key={page.label}>
+            <React.Fragment key={page.type}>
               {JSON.stringify(page)}
             </React.Fragment>
           ))}
@@ -27,30 +27,30 @@ test('renders (first page current)', () => {
   expect(container).toMatchInlineSnapshot(`
     <div>
       [
-      {"label":"first","page":0,"isCurrentPage":true}
-      {"label":"prev","page":null,"isCurrentPage":false}
-      {"label":"0","page":0,"isCurrentPage":true}
-      {"label":"1","page":1,"isCurrentPage":false}
-      {"label":"2","page":2,"isCurrentPage":false}
-      {"label":"3","page":3,"isCurrentPage":false}
-      {"label":"4","page":4,"isCurrentPage":false}
-      {"label":"5","page":5,"isCurrentPage":false}
-      {"label":"6","page":6,"isCurrentPage":false}
-      {"label":"7","page":7,"isCurrentPage":false}
-      {"label":"8","page":8,"isCurrentPage":false}
-      {"label":"9","page":9,"isCurrentPage":false}
-      {"label":"10","page":10,"isCurrentPage":false}
-      {"label":"11","page":11,"isCurrentPage":false}
-      {"label":"12","page":12,"isCurrentPage":false}
-      {"label":"13","page":13,"isCurrentPage":false}
-      {"label":"14","page":14,"isCurrentPage":false}
-      {"label":"15","page":15,"isCurrentPage":false}
-      {"label":"16","page":16,"isCurrentPage":false}
-      {"label":"17","page":17,"isCurrentPage":false}
-      {"label":"18","page":18,"isCurrentPage":false}
-      {"label":"19","page":19,"isCurrentPage":false}
-      {"label":"next","page":1,"isCurrentPage":false}
-      {"label":"last","page":19,"isCurrentPage":false}
+      {"type":"first","page":0,"isCurrentPage":true}
+      {"type":"prev","page":null,"isCurrentPage":false}
+      {"type":"0","page":0,"isCurrentPage":true}
+      {"type":"1","page":1,"isCurrentPage":false}
+      {"type":"2","page":2,"isCurrentPage":false}
+      {"type":"3","page":3,"isCurrentPage":false}
+      {"type":"4","page":4,"isCurrentPage":false}
+      {"type":"5","page":5,"isCurrentPage":false}
+      {"type":"6","page":6,"isCurrentPage":false}
+      {"type":"7","page":7,"isCurrentPage":false}
+      {"type":"8","page":8,"isCurrentPage":false}
+      {"type":"9","page":9,"isCurrentPage":false}
+      {"type":"10","page":10,"isCurrentPage":false}
+      {"type":"11","page":11,"isCurrentPage":false}
+      {"type":"12","page":12,"isCurrentPage":false}
+      {"type":"13","page":13,"isCurrentPage":false}
+      {"type":"14","page":14,"isCurrentPage":false}
+      {"type":"15","page":15,"isCurrentPage":false}
+      {"type":"16","page":16,"isCurrentPage":false}
+      {"type":"17","page":17,"isCurrentPage":false}
+      {"type":"18","page":18,"isCurrentPage":false}
+      {"type":"19","page":19,"isCurrentPage":false}
+      {"type":"next","page":1,"isCurrentPage":false}
+      {"type":"last","page":19,"isCurrentPage":false}
       ]
     </div>
   `);
@@ -65,7 +65,7 @@ test('renders (middle page current)', () => {
         <>
           [
           {pages.map(page => (
-            <React.Fragment key={page.label}>
+            <React.Fragment key={page.type}>
               {JSON.stringify(page)}
             </React.Fragment>
           ))}
@@ -78,30 +78,30 @@ test('renders (middle page current)', () => {
   expect(container).toMatchInlineSnapshot(`
     <div>
       [
-      {"label":"first","page":0,"isCurrentPage":false}
-      {"label":"prev","page":9,"isCurrentPage":false}
-      {"label":"0","page":0,"isCurrentPage":false}
-      {"label":"1","page":1,"isCurrentPage":false}
-      {"label":"2","page":2,"isCurrentPage":false}
-      {"label":"3","page":3,"isCurrentPage":false}
-      {"label":"4","page":4,"isCurrentPage":false}
-      {"label":"5","page":5,"isCurrentPage":false}
-      {"label":"6","page":6,"isCurrentPage":false}
-      {"label":"7","page":7,"isCurrentPage":false}
-      {"label":"8","page":8,"isCurrentPage":false}
-      {"label":"9","page":9,"isCurrentPage":false}
-      {"label":"10","page":10,"isCurrentPage":true}
-      {"label":"11","page":11,"isCurrentPage":false}
-      {"label":"12","page":12,"isCurrentPage":false}
-      {"label":"13","page":13,"isCurrentPage":false}
-      {"label":"14","page":14,"isCurrentPage":false}
-      {"label":"15","page":15,"isCurrentPage":false}
-      {"label":"16","page":16,"isCurrentPage":false}
-      {"label":"17","page":17,"isCurrentPage":false}
-      {"label":"18","page":18,"isCurrentPage":false}
-      {"label":"19","page":19,"isCurrentPage":false}
-      {"label":"next","page":11,"isCurrentPage":false}
-      {"label":"last","page":19,"isCurrentPage":false}
+      {"type":"first","page":0,"isCurrentPage":false}
+      {"type":"prev","page":9,"isCurrentPage":false}
+      {"type":"0","page":0,"isCurrentPage":false}
+      {"type":"1","page":1,"isCurrentPage":false}
+      {"type":"2","page":2,"isCurrentPage":false}
+      {"type":"3","page":3,"isCurrentPage":false}
+      {"type":"4","page":4,"isCurrentPage":false}
+      {"type":"5","page":5,"isCurrentPage":false}
+      {"type":"6","page":6,"isCurrentPage":false}
+      {"type":"7","page":7,"isCurrentPage":false}
+      {"type":"8","page":8,"isCurrentPage":false}
+      {"type":"9","page":9,"isCurrentPage":false}
+      {"type":"10","page":10,"isCurrentPage":true}
+      {"type":"11","page":11,"isCurrentPage":false}
+      {"type":"12","page":12,"isCurrentPage":false}
+      {"type":"13","page":13,"isCurrentPage":false}
+      {"type":"14","page":14,"isCurrentPage":false}
+      {"type":"15","page":15,"isCurrentPage":false}
+      {"type":"16","page":16,"isCurrentPage":false}
+      {"type":"17","page":17,"isCurrentPage":false}
+      {"type":"18","page":18,"isCurrentPage":false}
+      {"type":"19","page":19,"isCurrentPage":false}
+      {"type":"next","page":11,"isCurrentPage":false}
+      {"type":"last","page":19,"isCurrentPage":false}
       ]
     </div>
   `);
@@ -116,7 +116,7 @@ test('renders (last page current)', () => {
         <>
           [
           {pages.map(page => (
-            <React.Fragment key={page.label}>
+            <React.Fragment key={page.type}>
               {JSON.stringify(page)}
             </React.Fragment>
           ))}
@@ -129,30 +129,30 @@ test('renders (last page current)', () => {
   expect(container).toMatchInlineSnapshot(`
     <div>
       [
-      {"label":"first","page":0,"isCurrentPage":false}
-      {"label":"prev","page":18,"isCurrentPage":false}
-      {"label":"0","page":0,"isCurrentPage":false}
-      {"label":"1","page":1,"isCurrentPage":false}
-      {"label":"2","page":2,"isCurrentPage":false}
-      {"label":"3","page":3,"isCurrentPage":false}
-      {"label":"4","page":4,"isCurrentPage":false}
-      {"label":"5","page":5,"isCurrentPage":false}
-      {"label":"6","page":6,"isCurrentPage":false}
-      {"label":"7","page":7,"isCurrentPage":false}
-      {"label":"8","page":8,"isCurrentPage":false}
-      {"label":"9","page":9,"isCurrentPage":false}
-      {"label":"10","page":10,"isCurrentPage":false}
-      {"label":"11","page":11,"isCurrentPage":false}
-      {"label":"12","page":12,"isCurrentPage":false}
-      {"label":"13","page":13,"isCurrentPage":false}
-      {"label":"14","page":14,"isCurrentPage":false}
-      {"label":"15","page":15,"isCurrentPage":false}
-      {"label":"16","page":16,"isCurrentPage":false}
-      {"label":"17","page":17,"isCurrentPage":false}
-      {"label":"18","page":18,"isCurrentPage":false}
-      {"label":"19","page":19,"isCurrentPage":true}
-      {"label":"next","page":null,"isCurrentPage":false}
-      {"label":"last","page":19,"isCurrentPage":true}
+      {"type":"first","page":0,"isCurrentPage":false}
+      {"type":"prev","page":18,"isCurrentPage":false}
+      {"type":"0","page":0,"isCurrentPage":false}
+      {"type":"1","page":1,"isCurrentPage":false}
+      {"type":"2","page":2,"isCurrentPage":false}
+      {"type":"3","page":3,"isCurrentPage":false}
+      {"type":"4","page":4,"isCurrentPage":false}
+      {"type":"5","page":5,"isCurrentPage":false}
+      {"type":"6","page":6,"isCurrentPage":false}
+      {"type":"7","page":7,"isCurrentPage":false}
+      {"type":"8","page":8,"isCurrentPage":false}
+      {"type":"9","page":9,"isCurrentPage":false}
+      {"type":"10","page":10,"isCurrentPage":false}
+      {"type":"11","page":11,"isCurrentPage":false}
+      {"type":"12","page":12,"isCurrentPage":false}
+      {"type":"13","page":13,"isCurrentPage":false}
+      {"type":"14","page":14,"isCurrentPage":false}
+      {"type":"15","page":15,"isCurrentPage":false}
+      {"type":"16","page":16,"isCurrentPage":false}
+      {"type":"17","page":17,"isCurrentPage":false}
+      {"type":"18","page":18,"isCurrentPage":false}
+      {"type":"19","page":19,"isCurrentPage":true}
+      {"type":"next","page":null,"isCurrentPage":false}
+      {"type":"last","page":19,"isCurrentPage":true}
       ]
     </div>
   `);
@@ -168,7 +168,7 @@ test('renders (first page current, size: 7)', () => {
         <>
           [
           {pages.map(page => (
-            <React.Fragment key={page.label}>
+            <React.Fragment key={page.type}>
               {JSON.stringify(page)}
             </React.Fragment>
           ))}
@@ -181,17 +181,17 @@ test('renders (first page current, size: 7)', () => {
   expect(container).toMatchInlineSnapshot(`
     <div>
       [
-      {"label":"first","page":0,"isCurrentPage":true}
-      {"label":"prev","page":null,"isCurrentPage":false}
-      {"label":"0","page":0,"isCurrentPage":true}
-      {"label":"1","page":1,"isCurrentPage":false}
-      {"label":"2","page":2,"isCurrentPage":false}
-      {"label":"3","page":3,"isCurrentPage":false}
-      {"label":"4","page":4,"isCurrentPage":false}
-      {"label":"5","page":5,"isCurrentPage":false}
-      {"label":"6","page":6,"isCurrentPage":false}
-      {"label":"next","page":1,"isCurrentPage":false}
-      {"label":"last","page":19,"isCurrentPage":false}
+      {"type":"first","page":0,"isCurrentPage":true}
+      {"type":"prev","page":null,"isCurrentPage":false}
+      {"type":"0","page":0,"isCurrentPage":true}
+      {"type":"1","page":1,"isCurrentPage":false}
+      {"type":"2","page":2,"isCurrentPage":false}
+      {"type":"3","page":3,"isCurrentPage":false}
+      {"type":"4","page":4,"isCurrentPage":false}
+      {"type":"5","page":5,"isCurrentPage":false}
+      {"type":"6","page":6,"isCurrentPage":false}
+      {"type":"next","page":1,"isCurrentPage":false}
+      {"type":"last","page":19,"isCurrentPage":false}
       ]
     </div>
   `);
@@ -207,7 +207,7 @@ test('renders (middle page current, size: 7)', () => {
         <>
           [
           {pages.map(page => (
-            <React.Fragment key={page.label}>
+            <React.Fragment key={page.type}>
               {JSON.stringify(page)}
             </React.Fragment>
           ))}
@@ -220,17 +220,17 @@ test('renders (middle page current, size: 7)', () => {
   expect(container).toMatchInlineSnapshot(`
     <div>
       [
-      {"label":"first","page":0,"isCurrentPage":false}
-      {"label":"prev","page":9,"isCurrentPage":false}
-      {"label":"7","page":7,"isCurrentPage":false}
-      {"label":"8","page":8,"isCurrentPage":false}
-      {"label":"9","page":9,"isCurrentPage":false}
-      {"label":"10","page":10,"isCurrentPage":true}
-      {"label":"11","page":11,"isCurrentPage":false}
-      {"label":"12","page":12,"isCurrentPage":false}
-      {"label":"13","page":13,"isCurrentPage":false}
-      {"label":"next","page":11,"isCurrentPage":false}
-      {"label":"last","page":19,"isCurrentPage":false}
+      {"type":"first","page":0,"isCurrentPage":false}
+      {"type":"prev","page":9,"isCurrentPage":false}
+      {"type":"7","page":7,"isCurrentPage":false}
+      {"type":"8","page":8,"isCurrentPage":false}
+      {"type":"9","page":9,"isCurrentPage":false}
+      {"type":"10","page":10,"isCurrentPage":true}
+      {"type":"11","page":11,"isCurrentPage":false}
+      {"type":"12","page":12,"isCurrentPage":false}
+      {"type":"13","page":13,"isCurrentPage":false}
+      {"type":"next","page":11,"isCurrentPage":false}
+      {"type":"last","page":19,"isCurrentPage":false}
       ]
     </div>
   `);
@@ -246,7 +246,7 @@ test('renders (last page current, size: 7)', () => {
         <>
           [
           {pages.map(page => (
-            <React.Fragment key={page.label}>
+            <React.Fragment key={page.type}>
               {JSON.stringify(page)}
             </React.Fragment>
           ))}
@@ -259,17 +259,17 @@ test('renders (last page current, size: 7)', () => {
   expect(container).toMatchInlineSnapshot(`
     <div>
       [
-      {"label":"first","page":0,"isCurrentPage":false}
-      {"label":"prev","page":18,"isCurrentPage":false}
-      {"label":"13","page":13,"isCurrentPage":false}
-      {"label":"14","page":14,"isCurrentPage":false}
-      {"label":"15","page":15,"isCurrentPage":false}
-      {"label":"16","page":16,"isCurrentPage":false}
-      {"label":"17","page":17,"isCurrentPage":false}
-      {"label":"18","page":18,"isCurrentPage":false}
-      {"label":"19","page":19,"isCurrentPage":true}
-      {"label":"next","page":null,"isCurrentPage":false}
-      {"label":"last","page":19,"isCurrentPage":true}
+      {"type":"first","page":0,"isCurrentPage":false}
+      {"type":"prev","page":18,"isCurrentPage":false}
+      {"type":"13","page":13,"isCurrentPage":false}
+      {"type":"14","page":14,"isCurrentPage":false}
+      {"type":"15","page":15,"isCurrentPage":false}
+      {"type":"16","page":16,"isCurrentPage":false}
+      {"type":"17","page":17,"isCurrentPage":false}
+      {"type":"18","page":18,"isCurrentPage":false}
+      {"type":"19","page":19,"isCurrentPage":true}
+      {"type":"next","page":null,"isCurrentPage":false}
+      {"type":"last","page":19,"isCurrentPage":true}
       ]
     </div>
   `);
@@ -284,7 +284,7 @@ test('renders (0 pages)', () => {
         <>
           [
           {pages.map(page => (
-            <React.Fragment key={page.label}>
+            <React.Fragment key={page.type}>
               {JSON.stringify(page)}
             </React.Fragment>
           ))}
@@ -297,10 +297,10 @@ test('renders (0 pages)', () => {
   expect(container).toMatchInlineSnapshot(`
     <div>
       [
-      {"label":"first","page":null,"isCurrentPage":false}
-      {"label":"prev","page":null,"isCurrentPage":false}
-      {"label":"next","page":null,"isCurrentPage":false}
-      {"label":"last","page":null,"isCurrentPage":false}
+      {"type":"first","page":null,"isCurrentPage":false}
+      {"type":"prev","page":null,"isCurrentPage":false}
+      {"type":"next","page":null,"isCurrentPage":false}
+      {"type":"last","page":null,"isCurrentPage":false}
       ]
     </div>
   `);
