@@ -12,23 +12,21 @@ export type Selection = {
 
 export type EditorState = {
   value: string;
-  position: Position;
-  selection: Selection | null;
+  selection: Selection;
 };
 
 export type EditAction =
-  | {type: 'MOVE_UP'; selection?: boolean}
-  | {type: 'MOVE_RIGHT'; selection?: boolean}
-  | {type: 'MOVE_DOWN'; selection?: boolean}
-  | {type: 'MOVE_LEFT'; selection?: boolean}
+  | {type: 'MOVE_UP'; select?: boolean}
+  | {type: 'MOVE_RIGHT'; select?: boolean}
+  | {type: 'MOVE_DOWN'; select?: boolean}
+  | {type: 'MOVE_LEFT'; select?: boolean}
   | {type: 'DELETE_SELECTED'}
   | {type: 'BACKSPACE'}
   | {type: 'TYPE'; char: string};
 
 export type RenderApi = {
   value: string;
-  position: Position;
-  selection: Selection | null;
+  selection: Selection;
   patch: Patch;
   speed: number;
   elapsed: number;

@@ -29,22 +29,24 @@ const usePatch = (startValue: string, endValue: string) => {
   const editActions = useMemo(
     () =>
       getEdits(
-        {value: startValue, position: {line: 1, column: 1}, selection: null},
+        {
+          value: startValue,
+          selection: {from: {line: 1, column: 1}, to: {line: 1, column: 1}},
+        },
         endValue,
       ),
     [startValue, endValue],
   );
 
-  const {value, position, selection} = editorStateReducer(
+  const {value, selection} = editorStateReducer(
     {
       value: startValue,
-      position: {line: 1, column: 1},
-      selection: null,
+      selection: {from: {line: 1, column: 1}, to: {line: 1, column: 1}},
     } as EditorState,
     editActions.slice(0, editIndex),
   );
 
-  return {value, position, selection, editActions, editIndex, setEditIndex};
+  return {value, selection, editActions, editIndex, setEditIndex};
 };
 
 const useAnimate = (

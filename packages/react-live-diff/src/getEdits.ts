@@ -30,9 +30,9 @@ const getNextPosition = (startPosition: Position, addedText: string) =>
 const move = (
   {edits, state}: EditsAndEditorState,
   to: Position,
-  selection: boolean = false,
+  select: boolean = false,
 ) => {
-  const from = state.position;
+  const from = state.selection.from;
   const newEdits: Array<EditAction> = [];
 
   const lineDiff = Math.abs(from.line - to.line);
@@ -40,13 +40,13 @@ const move = (
   newEdits.push(
     ...times(lineDiff, {
       type: to.line < from.line ? 'MOVE_UP' : 'MOVE_DOWN',
-      selection,
+      select,
     } as EditAction),
   );
   newEdits.push(
     ...times(colDiff, {
       type: to.column < from.column ? 'MOVE_LEFT' : 'MOVE_RIGHT',
-      selection,
+      select,
     } as EditAction),
   );
   return processNewEdits(edits, newEdits, state);
@@ -66,7 +66,7 @@ const remove: EditsReducerFn = (
   // move to end of stuff we want to delete
   const movedEditsAndEditorState = move(
     editsAndEditorState,
-    getNextPosition(editsAndEditorState.state.position, value),
+    getNextPosition(editsAndEditorState.state.selection.to, value),
     true,
   );
   return processNewEdits(
@@ -102,16 +102,13 @@ const getEdits = (
       const nextPosition = getNextPosition(
         changeIndex === 0
           ? {line: 1, column: 1}
-          : editsAndEditorState.state.position,
+          : editsAndEditorState.state.selection.to,
         change.value,
       );
       return move(editsAndEditorState, nextPosition);
     },
     {edits: [], state: initialState} as EditsAndEditorState,
   );
-  // if (editorStateReducer(initialState, edits).value !== endValue) {
-  //   throw new Error('Generated edits are invalid!');
-  // }
   return edits;
 };
 

@@ -1,20 +1,12 @@
 import getCharIndex from './getCharIndex';
-import {Position, Selection} from './types';
+import {Selection} from './types';
 
 const getSelectionIndices = (
   value: string,
-  position: Position,
-  selection: Selection | null,
-): [number, number] => {
-  if (selection) {
-    return [
-      getCharIndex(value, selection.from),
-      getCharIndex(value, selection.to),
-    ];
-  } else {
-    const index = getCharIndex(value, position);
-    return [index, index];
-  }
-};
+  selection: Selection,
+): [number, number] => [
+  getCharIndex(value, selection.from),
+  getCharIndex(value, selection.to),
+];
 
 export default getSelectionIndices;

@@ -22,19 +22,10 @@ const LiveDiffTextarea = ({
 }: Props) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const api = useLiveDiff(initialValue, patches);
-  const [from, to] = getSelectionIndices(
-    // TODO: move this into useLiveDiff. replace position with selection
-    api.value,
-    api.position,
-    api.selection,
-  );
+  const [from, to] = getSelectionIndices(api.value, api.selection);
   useSelectionRange(textareaRef, from, to);
-  useScrollToLine(textareaRef, api.value, api.position.line);
-  const apiWithFocus = useFocus(textareaRef, api, [
-    api.value,
-    api.position,
-    api.selection,
-  ]);
+  useScrollToLine(textareaRef, api.value, api.selection.to.line);
+  const apiWithFocus = useFocus(textareaRef, api, [api.value, api.selection]);
   return render(
     <textarea ref={textareaRef} value={api.value} {...props} />,
     apiWithFocus,
