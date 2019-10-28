@@ -1,4 +1,4 @@
-import React, {ComponentProps, ReactElement} from 'react';
+import React from 'react';
 import Pagination from './Pagination';
 import {Props} from './types';
 

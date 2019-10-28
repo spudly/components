@@ -1,0 +1,56 @@
+Index: filename
+===================================================================
+--- filename	oldHeader
++++ filename	newHeader
+@@ -3,9 +3,9 @@
+ import formatTime from '../utils/formatTime';
+ import {PlayIcon, StopIcon, PauseIcon} from '../widgets/MediaIcons';
+
+ // start
+-class AudioPlayer extends React.Component {
++class AudioPlayerContainer extends React.Component {
+   audioRef = createRef(null);
+   state = {isPlaying: false, elapsed: 0, duration: 0};
+
+   render() {
+@@ -14,11 +14,11 @@
+       state: {isPlaying, elapsed, duration},
+     } = this;
+     return (
+       <div className="audio-player">
+-        <audio
++        <AudioPlayerControls
+           {...props}
+-          ref={this.audioRef}
++          audioRef={this.audioRef}
+           onDurationChange={() =>
+             this.setState({duration: this.audioRef.current.duration})
+           }
+           onEnded={() => this.setState({isPlaying: false, elapsed: 0})}
+@@ -73,5 +73,25 @@
+     );
+   }
+ }
+
+-render(<AudioPlayer src="/audio/bittersweet-symphony.mp3" />);
++const AudioPlayerControls = ({
++  audioRef,
++  onDurationChange,
++  onEnded,
++  onPause,
++  onPlay,
++  onTimeUpdate,
++  ...mediaProps
++}) => (
++  <audio
++    {...mediaProps}
++    ref={audioRef}
++    onDurationChange={onDurationChange}
++    onEnded={onEnded}
++    onPause={onPause}
++    onPlay={onPlay}
++    onTimeUpdate={onTimeUpdate}
++  />
++);
++
++render(<AudioPlayerContainer src="/audio/bittersweet-symphony.mp3" />);

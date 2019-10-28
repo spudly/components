@@ -1,20 +1,38 @@
-module.exports = ({config}) => {
-  config.module.rules.push({
-    test: /\.(ts|tsx)$/,
-    use: [
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+
+module.exports = ({config}) => ({
+  ...config,
+  plugins: [
+    new MonacoWebpackPlugin({
+      languages: ['javascript', 'typescript'],
+    }),
+    ...config.plugins,
+  ],
+  module: {
+    ...config.module,
+    rules: [
+      ...config.module.rules.map(rule => ({
+        ...rule,
+        include:
+          rule.use && rule.use[0].loader === 'babel-loader' ? [] : rule.include,
+      })),
       {
-        loader: require.resolve('awesome-typescript-loader'),
-        options: {
-          isolatedModules: true,
-          declaration: false,
-        },
+        test: /\.(ts|tsx)$/,
+        use: [
+          {
+            loader: require.resolve('awesome-typescript-loader'),
+            options: {
+              isolatedModules: true,
+              declaration: false,
+              module: 'esnext',
+            },
+          },
+        ],
       },
-      // // Optional
-      // {
-      //   loader: require.resolve('react-docgen-typescript-loader'),
-      // },
     ],
-  });
-  config.resolve.extensions.push('.ts', '.tsx');
-  return config;
-};
+  },
+  resolve: {
+    ...config.resolve,
+    extensions: ['.ts', '.tsx', ...config.resolve.extensions],
+  },
+});

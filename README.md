@@ -10,5 +10,6 @@ A monorepo w/ React components (and some other stuff).
 - conventional commits + semantic-release?
 - published storybook link
 - add more components:
-  - PatchPlayer (pseudo live-coding tool using MonacoEditor)
+  - LiveDiff (pseudo live-coding tool)
+  - LiveDiffMonaco
   - Slide

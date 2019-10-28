@@ -1,8 +1,8 @@
 {
-  "name": "@spudly/react-pagination",
+  "name": "@spudly/react-live-diff",
   "version": "1.0.0",
   "description": "",
-  "main": "build/Pagination.js",
+  "main": "build/LiveDiff.js",
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.build.json",
     "prepare": "npm run build",
@@ -12,8 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@spudly/range": "^1.0.0",
-    "@testing-library/react": "^9.3.0",
+    "diff": "^4.0.1",
+    "fast-diff": "^1.2.0",
+    "monaco-editor": "^0.18.1",
     "react": "^16.10.2"
   }
 }
