@@ -1,14 +1,15 @@
 {
   "name": "@spudly/get-number-precision",
-  "version": "1.0.0",
-  "description": "",
   "main": "build/getNumberPrecision.js",
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "test": "jest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": "https://github.com/spudly/components/tree/master/packages/get-number-precision",
+  "files": [
+    "build"
+  ],
+  "version": "0.1.0"
 }

@@ -31,7 +31,10 @@ const usePatch = (startValue: string, endValue: string) => {
       getEdits(
         {
           value: startValue,
-          selection: {from: {line: 1, column: 1}, to: {line: 1, column: 1}},
+          selection: {
+            from: {line: 1, column: 1, index: 0},
+            to: {line: 1, column: 1, index: 0},
+          },
         },
         endValue,
       ),

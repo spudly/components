@@ -9,17 +9,14 @@ const useScrollToLine = (
   line: number,
 ) => {
   useEffect(() => {
-    const el = elRef.current;
-    if (!el) {
-      return;
-    }
-    const {height} = el.getBoundingClientRect();
-    const {scrollHeight} = el;
+    const el = elRef.current!;
+    const {height} = el!.getBoundingClientRect();
+    const {scrollHeight} = el!;
     const {paddingTop, paddingBottom} = getComputedStyle(el);
     const numLines = value.split('\n').length;
     const lineHeight =
       (scrollHeight - parsePx(paddingTop) - parsePx(paddingBottom)) / numLines;
-    el.scrollTo(
+    el!.scrollTo(
       0,
       Math.max(Math.floor(line - height / lineHeight / 2) * lineHeight, 0),
     );

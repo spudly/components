@@ -7,11 +7,7 @@ const useFocus = <API extends {[key: string]: unknown}>(
 ): API => {
   useEffect(
     () => {
-      const el = ref.current;
-      if (!el) {
-        return;
-      }
-      el.focus();
+      ref.current!.focus();
     },
     // eslint-disable-next-line
     focusTriggers,
@@ -21,9 +17,7 @@ const useFocus = <API extends {[key: string]: unknown}>(
     const focusFirst = <ARGS extends Array<any>>(
       fn: (...args: ARGS) => void,
     ) => (...args: ARGS) => {
-      if (ref.current) {
-        ref.current.focus();
-      }
+      ref.current!.focus();
       return fn(...args);
     };
     const newApi: Partial<API> = {};

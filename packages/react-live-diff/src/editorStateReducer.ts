@@ -4,6 +4,7 @@ import getNumLines from './getNumLines';
 import removeCharBefore from './removeCharBefore';
 import insertCharAfter from './insertCharAfter';
 import getCharIndex from './getCharIndex';
+import makePosition from './makePosition';
 
 const updatePosition = (
   state: EditorState,
@@ -25,10 +26,12 @@ const moveUp = (
   if (line <= 1) {
     return state;
   }
-  const nextPosition: Position = {
-    line: line - 1,
-    column: column,
-  };
+  const nextLine = line - 1;
+  const nextColumn = Math.min(column, getNumColumns(state.value, nextLine));
+  const nextPosition: Position = makePosition(state.value, {
+    line: nextLine,
+    column: nextColumn,
+  });
   return updatePosition(state, nextPosition, select);
 };
 
@@ -42,14 +45,16 @@ const moveDown = (
       to: {line, column},
     },
   } = state;
-  const numLines = value.split('\n').length;
+  const numLines = value.split(/(?<=\n)/).length;
   if (line >= numLines) {
     return state;
   }
-  const nextPosition = {
-    line: line + 1,
-    column,
-  };
+  const nextLine = line + 1;
+  const nextColumn = Math.min(column, getNumColumns(state.value, nextLine));
+  const nextPosition = makePosition(state.value, {
+    line: nextLine,
+    column: nextColumn,
+  });
   return updatePosition(state, nextPosition, select);
 };
 
@@ -57,21 +62,20 @@ const moveLeft = (
   state: EditorState,
   select: boolean | undefined,
 ): EditorState => {
-  const {line, column} = state.selection.to;
-  if (column <= 1 && line <= 1) {
+  const {
+    value,
+    selection: {
+      to: {index},
+    },
+  } = state;
+  if (index === 0) {
     return state;
   }
-  if (column <= 1) {
-    return updatePosition(
-      state,
-      {
-        line: line - 1,
-        column: getNumColumns(state.value, line - 1),
-      },
-      select,
-    );
-  }
-  return updatePosition(state, {line, column: column - 1}, select);
+  return updatePosition(
+    state,
+    makePosition(state.value, {index: index - 1}),
+    select,
+  );
 };
 
 const moveRight = (
@@ -81,32 +85,13 @@ const moveRight = (
   const {
     value,
     selection: {
-      to: {line, column},
+      to: {index},
     },
   } = state;
-  const isLastLine = line >= getNumLines(value);
-  const isLastColumn = column >= getNumColumns(value, line);
-  if (isLastColumn && isLastLine) {
+  if (index >= value.length) {
     return state;
   }
-  if (isLastColumn) {
-    return updatePosition(
-      state,
-      {
-        line: line + 1,
-        column: 1,
-      },
-      select,
-    );
-  }
-  return updatePosition(
-    state,
-    {
-      line,
-      column: column + 1,
-    },
-    select,
-  );
+  return updatePosition(state, makePosition(value, {index: index + 1}), select);
 };
 
 const backspace = (state: EditorState): EditorState => ({
@@ -128,8 +113,8 @@ const deleteSelection = ({value, selection}: EditorState): EditorState => {
     throw new Error('no selection!?');
   }
   const {from, to} = selection;
-  const fromIndex = getCharIndex(value, from);
-  const toIndex = getCharIndex(value, to);
+  const fromIndex = getCharIndex(value, from.line, from.column);
+  const toIndex = getCharIndex(value, to.line, to.column);
   const position = fromIndex < toIndex ? from : to;
   return {
     value: `${value.slice(0, Math.min(fromIndex, toIndex))}${value.slice(

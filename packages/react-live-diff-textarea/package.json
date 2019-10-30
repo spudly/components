@@ -1,0 +1,27 @@
+{
+  "name": "@spudly/react-live-diff-textarea",
+  "main": "build/react-live-diff-textarea.js",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "rm -rf build && tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/components/tree/master/packages/react-live-diff-textarea",
+  "files": [
+    "build"
+  ],
+  "dependencies": {
+    "@spudly/react-live-diff": "^0.1.0",
+    "@spudly/react-use-focus": "^0.1.0",
+    "@spudly/react-use-scroll-to-line": "^0.1.0",
+    "@spudly/react-use-selection-range": "^0.1.0"
+  },
+  "peerDependencies": {
+    "react": "^16.10.2"
+  },
+  "devDependencies": {
+    "diff": "^4.0.1"
+  }
+}

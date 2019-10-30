@@ -1,5 +1,5 @@
 import * as diff from 'diff';
-import times from './times';
+import times from '@spudly/times';
 import {EditAction, EditorState, Position} from './types';
 import editorStateReducer from './editorStateReducer';
 
@@ -20,11 +20,11 @@ const processNewEdits = (
 });
 
 const getNextPosition = (startPosition: Position, addedText: string) =>
-  [...addedText].reduce(({line, column}, char): Position => {
+  [...addedText].reduce(({line, column, index}, char): Position => {
     if (char === '\n') {
-      return {line: line + 1, column: 1};
+      return {line: line + 1, column: 1, index: index + 1};
     }
-    return {line, column: column + 1};
+    return {line, column: column + 1, index: index + 1};
   }, startPosition);
 
 const move = (
@@ -101,7 +101,7 @@ const getEdits = (
       }
       const nextPosition = getNextPosition(
         changeIndex === 0
-          ? {line: 1, column: 1}
+          ? {line: 1, column: 1, index: 0}
           : editsAndEditorState.state.selection.to,
         change.value,
       );

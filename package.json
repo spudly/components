@@ -47,7 +47,7 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "npm test && lint-staged"
+      "pre-commit": "yarn depcheck && yarn lint && yarn test && lint-staged"
     }
   },
   "lint-staged": {
@@ -56,21 +56,23 @@
       "git add"
     ]
   },
-  "version": "1.0.0",
-  "main": "index.js",
   "author": "Stephen John Sorensen <shuoink@gmail.com>",
   "bolt": {
     "workspaces": [
       "packages/*"
     ]
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "depcheck": "^0.8.3"
+  },
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest",
     "tsc": "tsc --noEmit",
     "rebolt": "rm -rf node_modules && bolt exec -- rm -rf node_modules && bolt",
     "storybook": "start-storybook -p 3000",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "sync": "node ./scripts/sync.js",
+    "depcheck": "node ./scripts/depcheck.js"
   }
 }

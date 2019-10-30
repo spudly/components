@@ -1,20 +1,22 @@
 {
   "name": "@spudly/react-live-diff",
-  "version": "1.0.0",
-  "description": "",
-  "main": "build/LiveDiff.js",
+  "main": "build/index.js",
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "test": "jest"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
-  "dependencies": {
-    "diff": "^4.0.1",
-    "fast-diff": "^1.2.0",
-    "monaco-editor": "^0.18.1",
+  "repository": "https://github.com/spudly/components/tree/master/packages/react-live-diff",
+  "files": [
+    "build"
+  ],
+  "version": "0.1.0",
+  "peerDependencies": {
     "react": "^16.10.2"
+  },
+  "dependencies": {
+    "@spudly/times": "^0.1.0",
+    "diff": "^4.0.1"
   }
 }

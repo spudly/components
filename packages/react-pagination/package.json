@@ -1,19 +1,24 @@
 {
   "name": "@spudly/react-pagination",
-  "version": "1.0.0",
-  "description": "",
-  "main": "build/Pagination.js",
+  "main": "build/react-pagination.js",
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "test": "jest"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@spudly/range": "^1.0.0",
-    "@testing-library/react": "^9.3.0",
+  "repository": "https://github.com/spudly/components/tree/master/packages/react-pagination",
+  "files": [
+    "build"
+  ],
+  "version": "0.1.0",
+  "peerDependencies": {
     "react": "^16.10.2"
+  },
+  "dependencies": {
+    "@spudly/range": "^0.1.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^9.3.0"
   }
 }

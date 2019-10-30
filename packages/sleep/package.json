@@ -1,0 +1,18 @@
+{
+  "name": "@spudly/sleep",
+  "main": "build/sleep.js",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "rm -rf build && tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/components/tree/master/packages/sleep",
+  "files": [
+    "build"
+  ],
+  "devDependencies": {
+    "jest": "^24.9.0"
+  }
+}

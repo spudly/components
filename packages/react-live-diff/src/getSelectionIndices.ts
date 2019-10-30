@@ -5,8 +5,8 @@ const getSelectionIndices = (
   value: string,
   selection: Selection,
 ): [number, number] => [
-  getCharIndex(value, selection.from),
-  getCharIndex(value, selection.to),
+  getCharIndex(value, selection.from.line, selection.from.column),
+  getCharIndex(value, selection.to.line, selection.to.column),
 ];
 
 export default getSelectionIndices;

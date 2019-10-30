@@ -1,16 +1,15 @@
 import getEdits from './getEdits';
 import editorStateReducer from './editorStateReducer';
-import _fs from 'fs';
-import * as diff from 'diff';
-
-const {readFile} = _fs.promises;
 
 test('returns an array of edit actions', () => {
   expect(
     getEdits(
       {
         value: 'a b c d e',
-        selection: {from: {line: 1, column: 1}, to: {line: 1, column: 1}},
+        selection: {
+          from: {line: 1, column: 1, index: 0},
+          to: {line: 1, column: 1, index: 0},
+        },
       },
       'c d e f g',
     ),
@@ -36,15 +35,17 @@ test('returns an array of edit actions', () => {
 test('moves down, then left', () => {
   const startValue = 'a b c\nd e f\ng h i';
   const endValue = 'a b c\nd e f\nX h i';
-  expect(
-    getEdits(
-      {
-        value: startValue,
-        selection: {from: {line: 1, column: 6}, to: {line: 1, column: 6}},
+  const edits = getEdits(
+    {
+      value: startValue,
+      selection: {
+        from: {line: 1, column: 6, index: 5},
+        to: {line: 1, column: 6, index: 5},
       },
-      endValue,
-    ),
-  ).toEqual([
+    },
+    endValue,
+  );
+  expect(edits).toEqual([
     // start: "a b c|\nd e f\ng h i"
     {type: 'MOVE_DOWN', select: false}, // "a b c\nd e f|\ng h i"
     {type: 'MOVE_DOWN', select: false}, // "a b c\nd e f\ng h i|"
@@ -66,11 +67,14 @@ test('moves down, then right', () => {
     getEdits(
       {
         value: startValue,
-        selection: {from: {line: 1, column: 1}, to: {line: 1, column: 1}},
+        selection: {
+          from: {line: 1, column: 1, index: 0},
+          to: {line: 1, column: 1, index: 0},
+        },
       },
       endValue,
     ),
-  ).toEqual([
+  ).toStrictEqual([
     // start: "|a b c\nd e f\ng h i"
     {type: 'MOVE_DOWN', select: false}, // "a b c\n|d e f\ng h i"
     {type: 'MOVE_DOWN', select: false}, // "a b c\nd e f\n|g h i"
@@ -95,7 +99,10 @@ test('moves up, then right', () => {
     getEdits(
       {
         value: startValue,
-        selection: {from: {line: 3, column: 1}, to: {line: 3, column: 1}},
+        selection: {
+          from: {line: 3, column: 1, index: 6},
+          to: {line: 3, column: 1, index: 6},
+        },
       },
       endValue,
     ),
@@ -124,7 +131,10 @@ test('moves up, then left', () => {
     getEdits(
       {
         value: startValue,
-        selection: {from: {line: 3, column: 6}, to: {line: 3, column: 6}},
+        selection: {
+          from: {line: 3, column: 6, index: 17},
+          to: {line: 3, column: 6, index: 17},
+        },
       },
       endValue,
     ),
@@ -146,34 +156,17 @@ test('moves up, then left', () => {
 test('integrates nicely with editorStateReducer', () => {
   const state = {
     value: 'a b c d e',
-    selection: {from: {line: 1, column: 1}, to: {line: 1, column: 1}},
-  };
-  expect(editorStateReducer(state, getEdits(state, 'c d e f g'))).toStrictEqual(
-    {
-      value: 'c d e f g',
-      selection: {from: {line: 1, column: 10}, to: {line: 1, column: 10}},
-    },
-  );
-});
-
-test('another example with more code. this is a terrible test title. ugh', async () => {
-  const [initialValue, patch] = await Promise.all([
-    readFile(`${__dirname}/../fixtures/AudioPlayer.txt`, 'utf8'),
-    readFile(
-      `${__dirname}/../fixtures/AudioPlayer.withPresentationComponents.txt`,
-      'utf8',
-    ),
-  ]);
-  const endValue = diff.applyPatch(initialValue, patch);
-  const state = {
-    value: initialValue,
-    selection: {from: {line: 1, column: 1}, to: {line: 1, column: 1}},
-  };
-  expect(editorStateReducer(state, getEdits(state, endValue))).toStrictEqual({
-    value: endValue,
     selection: {
-      from: {line: 97, column: 29},
-      to: {line: 97, column: 29},
+      from: {line: 1, column: 1, index: 0},
+      to: {line: 1, column: 1, index: 0},
+    },
+  };
+  const edits = getEdits(state, 'c d e f g');
+  expect(editorStateReducer(state, edits)).toStrictEqual({
+    value: 'c d e f g',
+    selection: {
+      from: {line: 1, column: 10, index: 9},
+      to: {line: 1, column: 10, index: 9},
     },
   });
 });

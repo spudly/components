@@ -3,7 +3,7 @@ export type Patch = {
   code: string;
 };
 
-export type Position = {line: number; column: number};
+export type Position = {line: number; column: number; index: number};
 
 export type Selection = {
   from: Position;

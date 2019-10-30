@@ -1,0 +1,23 @@
+{
+  "name": "@spudly/react-use-focus",
+  "main": "build/useFocus.js",
+  "scripts": {
+    "build": "rm -rf build && tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/components/tree/master/packages/react-use-focus",
+  "files": [
+    "build"
+  ],
+  "version": "0.1.0",
+  "devDependencies": {
+    "@spudly/sleep": "^0.1.0",
+    "jest": "^24.9.0",
+    "react-dom": "^16.10.2"
+  },
+  "peerDependencies": {
+    "react": "^16.10.2"
+  }
+}
