@@ -124,26 +124,63 @@ const deleteSelection = ({value, selection}: EditorState): EditorState => {
   };
 };
 
+const validateActionResult = (
+  {value, selection: {from, to}}: EditorState,
+  {value: newValue, selection: {from: newFrom, to: newTo}}: EditorState,
+  action: EditAction,
+) => {
+  const msg = `edit action (${action.type}) resulted in invalid state`;
+  if (
+    [
+      newValue,
+      newFrom.index,
+      newFrom.line,
+      newFrom.column,
+      newFrom.index,
+      newFrom.line,
+      newFrom.column,
+    ].some(value => value == null || (typeof value == 'number' && isNaN(value)))
+  ) {
+    throw new Error(msg);
+  }
+  try {
+    makePosition(newValue, newFrom);
+    makePosition(newValue, newTo);
+  } catch (error) {
+    throw new Error(msg);
+  }
+};
+
 const reduceEditorState = (state: EditorState, actions: Array<EditAction>) =>
   actions.reduce((state, action) => {
+    let newState: EditorState;
     switch (action.type) {
       case 'MOVE_UP':
-        return moveUp(state, action.select);
+        newState = moveUp(state, action.select);
+        break;
       case 'MOVE_DOWN':
-        return moveDown(state, action.select);
+        newState = moveDown(state, action.select);
+        break;
       case 'MOVE_LEFT':
-        return moveLeft(state, action.select);
+        newState = moveLeft(state, action.select);
+        break;
       case 'MOVE_RIGHT':
-        return moveRight(state, action.select);
+        newState = moveRight(state, action.select);
+        break;
       case 'BACKSPACE':
-        return backspace(state);
+        newState = backspace(state);
+        break;
       case 'TYPE':
-        return type(state, action.char);
+        newState = type(state, action.char);
+        break;
       case 'DELETE_SELECTED':
-        return deleteSelection(state);
+        newState = deleteSelection(state);
+        break;
       default:
         throw new Error(`Unrecognized Action: ${(action as EditAction, type)}`);
     }
+    validateActionResult(state, newState, action);
+    return newState;
   }, state);
 
 export default reduceEditorState;

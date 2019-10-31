@@ -2,24 +2,39 @@ import React, {ComponentProps} from 'react';
 import * as diff from 'diff';
 import LiveDiffTextarea from './LiveDiffTextarea';
 
-const marty = `Ronald Reagon, the actor? Then who's vice president, Jerry Lewis? I suppose Jane Wymann is the first lady. Uh, I think so. Shut your filthy mouth, I'm not that kind of girl. Ah. Whoa. Hey, don't I know you from somewhere?
-Hey Dad, George, hey, you on the bike. That's a Florence Nightingale effect. It happens in hospitals when nurses fall in love with their patients. Go to it, kid. Erased from existence. Lorraine, are you up there? Quiet.
-You're gonna break his arm. Biff, leave him alone. Let him go. Let him go. Well, they're bigger than me. I don't wanna see you in here again. Ah. Whoa. No.`;
+const hello = `import React from 'react';
+import ReactDOM from 'react-dom';
 
-const asPirate = `Ronald Reagon, th' actor? Then who's firs' mate, Jerry Lewis? I suppose Jane Wymann be th' first beauty. Uh, I reckon so. Shut yer filthy mouth, I be nah that kind o' poppet. Sink me. Whoa. Ahoy, don't I know ye from somewhere?
-Ahoy Dad, George, ahoy, ye on th' bike. That's a Florence Nightingale effect. It happens in hospitals when nurses fall in love wit' thar patients. Go t' it, sprog. Erased from existence. Lorraine, are ye up thar? Quiet.
-Ye're gonna break his arm. Biff, leave 'im alone. Let 'im go. Let 'im go. Well, they be bigger than me. I don't wanna see ye in here again. Sink me. Whoa. No.`;
+const Hello = () => <p>Hello World!</p>;
 
-const asYoda = `Ronald reagon, the actor? Then who's vice president, jerry lewis? The first lady I suppose jane wymann is. Uh, so I think. Your filthy mouth shut, i'm not that kind of girl. Ah. Whoa. Hey, I know you from somewhere do not?
-Hey dad, george, hey, you on the bike. That's a florence nightingale effect. In love with their patients it happens in hospitals when nurses fall. To it go, kid. Erased from existence. Lorraine, you up there are? Quiet. his arm
-You're gonna break. Biff, him alone leave. Him go let. Him go let. Well, they're bigger than me. Wanna see you in here again I do not. Ah. Whoa. No.`;
+const root = document.querySelector('#root');
+ReactDOM.render(<Hello />, root);
 
-const asPirateDiff = diff.createPatch('marty', marty, asPirate);
-const asYodaDiff = diff.createPatch('marty', asPirate, asYoda);
+export default React;`;
+
+const whom = `import React from 'react';
+import ReactDOM from 'react-dom';
+
+const Hello = ({whom}) => <p>Hello {whom}!</p>;
+
+const root = document.querySelector('#root');
+ReactDOM.render(<Hello whom="darkness, my old friend" />, root);
+
+export default React;`;
+
+const greeting = `import React from 'react';
+import ReactDOM from 'react-dom';
+
+const Hello = ({greeting, whom}) => <p>{greeting} {whom}!</p>;
+
+const root = document.querySelector('#root');
+ReactDOM.render(<Hello greeting="Greetings," whom="Earthlings" />, root);
+
+export default React;`;
 
 const patches = [
-  {name: 'asPirate', code: asPirateDiff},
-  {name: 'asYoda', code: asYodaDiff},
+  {name: 'whom', code: diff.createPatch('hello', hello, whom)},
+  {name: 'greeting', code: diff.createPatch('hello', whom, greeting)},
 ];
 
 const render: ComponentProps<typeof LiveDiffTextarea>['render'] = (
@@ -58,15 +73,29 @@ const render: ComponentProps<typeof LiveDiffTextarea>['render'] = (
       <button type="button" disabled={api.isFirst} onClick={api.prev}>
         Prev
       </button>
-      <button type="button" onClick={api.play} disabled={api.isPlaying}>
-        play
-      </button>
-      <button type="button" onClick={api.pause} disabled={!api.isPlaying}>
-        pause
-      </button>
-      <button type="button" onClick={api.stop} disabled={!api.isPlaying}>
-        stop
-      </button>
+      {api.isFinished ? (
+        <>
+          <button type="button" onClick={() => api.seek(0)}>
+            restart
+          </button>
+        </>
+      ) : (
+        <>
+          <button
+            type="button"
+            onClick={api.play}
+            disabled={api.isPlaying || api.isFinished}
+          >
+            play
+          </button>
+          <button type="button" onClick={api.pause} disabled={!api.isPlaying}>
+            pause
+          </button>
+          <button type="button" onClick={api.stop} disabled={!api.isPlaying}>
+            stop
+          </button>
+        </>
+      )}
       <button type="button" disabled={api.isLast} onClick={api.next}>
         Next
       </button>
@@ -80,7 +109,7 @@ const render: ComponentProps<typeof LiveDiffTextarea>['render'] = (
 export const liveDiffTextarea = () => {
   return (
     <LiveDiffTextarea
-      initialValue={marty}
+      initialValue={hello}
       patches={patches}
       style={{
         fontFamily: 'monospace',
@@ -93,4 +122,4 @@ export const liveDiffTextarea = () => {
   );
 };
 
-export default {title: 'react-live-diff'};
+export default {title: 'react-live-diff-textarea'};

@@ -1,5 +1,64 @@
+import * as diff from 'diff';
 import getEdits from './getEdits';
 import editorStateReducer from './editorStateReducer';
+import reduceEditorState from './editorStateReducer';
+import {EditorState} from './types';
+import times from '@spudly/times';
+import makePosition from './makePosition';
+
+// TODO: extract into a package: @spudly/string-splice
+const stringSplice = (
+  s: string,
+  start: number,
+  deleteCount: number,
+  chars = '',
+) => {
+  start = Math.min(start, s.length);
+  if (start < 0) {
+    start = s.length + start;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+
+  const before = s.slice(0, start);
+  const after = s.slice(start + Math.max(deleteCount, 0));
+
+  return `${before}${chars}${after}`;
+};
+
+expect.addSnapshotSerializer({
+  test(state) {
+    return (
+      state &&
+      state.value &&
+      state.selection &&
+      state.selection.from &&
+      state.selection.to
+    );
+  },
+  print(state: EditorState, _, indent) {
+    const {
+      value,
+      selection: {from, to},
+    } = state;
+    let result = value;
+    if (from.index !== to.index) {
+      result = stringSplice(result, Math.max(from.index, to.index), 0, '🤛');
+    }
+    result = stringSplice(
+      result,
+      from.index <= to.index ? to.index : from.index,
+      0,
+      '👊',
+    );
+    if (from.index !== to.index) {
+      result = stringSplice(result, Math.min(from.index, to.index), 0, '🤜');
+    }
+    return result;
+    // return indent(result).replace(/\n +\n/g, '\n\n');
+  },
+});
 
 test('returns an array of edit actions', () => {
   expect(
@@ -151,6 +210,82 @@ test('moves up, then left', () => {
     {type: 'DELETE_SELECTED'}, // "| b c\nd e f\ng h i"
     {type: 'TYPE', char: 'X'}, // "X| b c\nd e f\ng h i"
   ]);
+});
+
+test('correctly handles moving to lines with fewer columns', () => {
+  const value = 'abc\n\n1234';
+  const state = {
+    value,
+    selection: {
+      from: makePosition(value, {line: 1, column: 3}),
+      to: makePosition(value, {line: 1, column: 3}),
+    },
+  };
+  const edits = getEdits(state, 'abc\n\n5678');
+  expect(edits).toStrictEqual([
+    ...times(2, {type: 'MOVE_DOWN', select: false}),
+    ...times(4, {type: 'MOVE_RIGHT', select: true}),
+    {type: 'DELETE_SELECTED'},
+    {type: 'TYPE', char: '5'},
+    {type: 'TYPE', char: '6'},
+    {type: 'TYPE', char: '7'},
+    {type: 'TYPE', char: '8'},
+  ]);
+  expect(editorStateReducer(state, edits.slice(0, 1))).toMatchInlineSnapshot(`
+    abc
+    👊
+    1234
+  `);
+  expect(editorStateReducer(state, edits.slice(0, 2))).toMatchInlineSnapshot(`
+    abc
+
+    👊1234
+  `);
+  expect(editorStateReducer(state, edits.slice(0, 3))).toMatchInlineSnapshot(`
+    abc
+
+    🤜1👊🤛234
+  `);
+  expect(editorStateReducer(state, edits.slice(0, 4))).toMatchInlineSnapshot(`
+    abc
+
+    🤜12👊🤛34
+  `);
+  expect(editorStateReducer(state, edits.slice(0, 5))).toMatchInlineSnapshot(`
+    abc
+
+    🤜123👊🤛4
+  `);
+  expect(editorStateReducer(state, edits.slice(0, 6))).toMatchInlineSnapshot(`
+    abc
+
+    🤜1234👊🤛
+  `);
+  expect(editorStateReducer(state, edits.slice(0, 7))).toMatchInlineSnapshot(`
+    abc
+
+    👊
+  `);
+  expect(editorStateReducer(state, edits.slice(0, 8))).toMatchInlineSnapshot(`
+    abc
+
+    5👊
+  `);
+  expect(editorStateReducer(state, edits.slice(0, 9))).toMatchInlineSnapshot(`
+    abc
+
+    56👊
+  `);
+  expect(editorStateReducer(state, edits.slice(0, 10))).toMatchInlineSnapshot(`
+    abc
+
+    567👊
+  `);
+  expect(editorStateReducer(state, edits.slice(0, 11))).toMatchInlineSnapshot(`
+    abc
+
+    5678👊
+  `);
 });
 
 test('integrates nicely with editorStateReducer', () => {

@@ -8,18 +8,26 @@ const exec = promisify(cp.exec);
 const packagesDir = `${__dirname}/../packages`;
 
 const depcheckPkg = async name => {
+  console.log(`checking dependencies for ${name}`);
+  const header = `\n===================\n${name}\n===================`;
   try {
-    await exec(`../../node_modules/.bin/depcheck`, {
-      cwd: `${packagesDir}/${name}`,
-    });
+    await Promise.race([
+      exec(`../../node_modules/.bin/depcheck`, {
+        cwd: `${packagesDir}/${name}`,
+      }),
+      new Promise((resolve, reject) =>
+        setTimeout(
+          () =>
+            reject(new Error(`depcheck(${name}) timed out after 30 seconds`)),
+          30000,
+        ),
+      ),
+    ]);
+    console.log(`${header}\ngood to go`);
   } catch (error) {
     process.exitCode = 1;
     if (error.stdout) {
-      console.log(`
-===================
-${name}
-===================
-`);
+      console.log(header);
       console.log(error.stdout);
       return;
     }
@@ -37,5 +45,6 @@ depcheckAll().then(
   error => {
     process.exitCode = 1;
     console.error({error});
+    process.exit(1);
   },
 );

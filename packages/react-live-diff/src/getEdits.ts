@@ -32,20 +32,22 @@ const move = (
   to: Position,
   select: boolean = false,
 ) => {
-  const from = state.selection.from;
+  // const from = state.selection.from;
   const newEdits: Array<EditAction> = [];
 
-  const lineDiff = Math.abs(from.line - to.line);
-  const colDiff = Math.abs(from.column - to.column);
+  const lineDiff = Math.abs(state.selection.from.line - to.line);
   newEdits.push(
     ...times(lineDiff, {
-      type: to.line < from.line ? 'MOVE_UP' : 'MOVE_DOWN',
+      type: to.line < state.selection.from.line ? 'MOVE_UP' : 'MOVE_DOWN',
       select,
     } as EditAction),
   );
+  const fromColumn = processNewEdits(edits, newEdits, state).state.selection
+    .from.column;
+  const colDiff = Math.abs(fromColumn - to.column);
   newEdits.push(
     ...times(colDiff, {
-      type: to.column < from.column ? 'MOVE_LEFT' : 'MOVE_RIGHT',
+      type: to.column < fromColumn ? 'MOVE_LEFT' : 'MOVE_RIGHT',
       select,
     } as EditAction),
   );
