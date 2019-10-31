@@ -1,10 +1,9 @@
 import * as diff from 'diff';
 import getEdits from './getEdits';
-import editorStateReducer from './editorStateReducer';
-import reduceEditorState from './editorStateReducer';
+import {reduce} from './reducer';
 import {EditorState} from './types';
 import times from '@spudly/times';
-import makePosition from './makePosition';
+import {makePosition} from './utils';
 
 // TODO: extract into a package: @spudly/string-splice
 const stringSplice = (
@@ -231,64 +230,64 @@ test('correctly handles moving to lines with fewer columns', () => {
     {type: 'TYPE', char: '7'},
     {type: 'TYPE', char: '8'},
   ]);
-  expect(editorStateReducer(state, edits.slice(0, 1))).toMatchInlineSnapshot(`
+  expect(reduce(state, edits.slice(0, 1))).toMatchInlineSnapshot(`
     abc
     👊
     1234
   `);
-  expect(editorStateReducer(state, edits.slice(0, 2))).toMatchInlineSnapshot(`
+  expect(reduce(state, edits.slice(0, 2))).toMatchInlineSnapshot(`
     abc
 
     👊1234
   `);
-  expect(editorStateReducer(state, edits.slice(0, 3))).toMatchInlineSnapshot(`
+  expect(reduce(state, edits.slice(0, 3))).toMatchInlineSnapshot(`
     abc
 
     🤜1👊🤛234
   `);
-  expect(editorStateReducer(state, edits.slice(0, 4))).toMatchInlineSnapshot(`
+  expect(reduce(state, edits.slice(0, 4))).toMatchInlineSnapshot(`
     abc
 
     🤜12👊🤛34
   `);
-  expect(editorStateReducer(state, edits.slice(0, 5))).toMatchInlineSnapshot(`
+  expect(reduce(state, edits.slice(0, 5))).toMatchInlineSnapshot(`
     abc
 
     🤜123👊🤛4
   `);
-  expect(editorStateReducer(state, edits.slice(0, 6))).toMatchInlineSnapshot(`
+  expect(reduce(state, edits.slice(0, 6))).toMatchInlineSnapshot(`
     abc
 
     🤜1234👊🤛
   `);
-  expect(editorStateReducer(state, edits.slice(0, 7))).toMatchInlineSnapshot(`
+  expect(reduce(state, edits.slice(0, 7))).toMatchInlineSnapshot(`
     abc
 
     👊
   `);
-  expect(editorStateReducer(state, edits.slice(0, 8))).toMatchInlineSnapshot(`
+  expect(reduce(state, edits.slice(0, 8))).toMatchInlineSnapshot(`
     abc
 
     5👊
   `);
-  expect(editorStateReducer(state, edits.slice(0, 9))).toMatchInlineSnapshot(`
+  expect(reduce(state, edits.slice(0, 9))).toMatchInlineSnapshot(`
     abc
 
     56👊
   `);
-  expect(editorStateReducer(state, edits.slice(0, 10))).toMatchInlineSnapshot(`
+  expect(reduce(state, edits.slice(0, 10))).toMatchInlineSnapshot(`
     abc
 
     567👊
   `);
-  expect(editorStateReducer(state, edits.slice(0, 11))).toMatchInlineSnapshot(`
+  expect(reduce(state, edits.slice(0, 11))).toMatchInlineSnapshot(`
     abc
 
     5678👊
   `);
 });
 
-test('integrates nicely with editorStateReducer', () => {
+test('integrates nicely with reduce', () => {
   const state = {
     value: 'a b c d e',
     selection: {
@@ -297,7 +296,7 @@ test('integrates nicely with editorStateReducer', () => {
     },
   };
   const edits = getEdits(state, 'c d e f g');
-  expect(editorStateReducer(state, edits)).toStrictEqual({
+  expect(reduce(state, edits)).toStrictEqual({
     value: 'c d e f g',
     selection: {
       from: {line: 1, column: 10, index: 9},

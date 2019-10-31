@@ -1,11 +1,11 @@
 import * as diff from 'diff';
 import times from '@spudly/times';
 import {EditAction, EditorState, Position} from './types';
-import editorStateReducer from './editorStateReducer';
+import {reduce} from './reducer';
 
 type EditsAndEditorState = {edits: Array<EditAction>; state: EditorState};
 
-type EditsReducerFn = (
+type EditsreduceFn = (
   {edits, state}: EditsAndEditorState,
   {value, added, removed}: diff.Change,
 ) => EditsAndEditorState;
@@ -16,7 +16,7 @@ const processNewEdits = (
   state: EditorState,
 ): EditsAndEditorState => ({
   edits: [...edits, ...newEdits],
-  state: editorStateReducer(state, newEdits),
+  state: reduce(state, newEdits),
 });
 
 const getNextPosition = (startPosition: Position, addedText: string) =>
@@ -54,14 +54,14 @@ const move = (
   return processNewEdits(edits, newEdits, state);
 };
 
-const add: EditsReducerFn = ({edits, state}, {value}) =>
+const add: EditsreduceFn = ({edits, state}, {value}) =>
   processNewEdits(
     edits,
     value.split('').map(char => ({type: 'TYPE', char} as EditAction)),
     state,
   );
 
-const remove: EditsReducerFn = (
+const remove: EditsreduceFn = (
   editsAndEditorState: EditsAndEditorState,
   {value}: diff.Change,
 ) => {

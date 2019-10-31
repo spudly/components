@@ -2,8 +2,8 @@ import {useState, useEffect, useMemo, Dispatch, SetStateAction} from 'react';
 import * as diff from 'diff';
 import getEdits from './getEdits';
 import {Patch, RenderApi, EditorState} from './types';
-import editorStateReducer from './editorStateReducer';
-import makePosition from './makePosition';
+import {reduce} from './reducer';
+import {makePosition} from './utils';
 
 const usePatches = (initialValue: string = '', patches: Array<Patch>) => {
   if (patches.length === 0) {
@@ -42,7 +42,7 @@ const usePatch = (startValue: string, endValue: string) => {
     [startValue, endValue],
   );
 
-  const {value, selection} = editorStateReducer(
+  const {value, selection} = reduce(
     {
       value: startValue,
       selection: {
