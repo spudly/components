@@ -1,5 +1,10 @@
 import React, {useRef, ReactElement} from 'react';
-import {useLiveDiff, Patch, RenderApi} from '@spudly/react-live-diff';
+import {
+  useLiveDiff,
+  Patch,
+  RenderApi,
+  getPosition,
+} from '@spudly/react-live-diff';
 import useScrollToLine from '@spudly/react-use-scroll-to-line';
 import useSelectionRange from '@spudly/react-use-selection-range';
 import useFocus from '@spudly/react-use-focus';
@@ -20,13 +25,14 @@ const LiveDiffTextarea = ({
 }: Props) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const api = useLiveDiff(initialValue, patches);
-  useSelectionRange(
-    textareaRef,
-    api.selection.from.index,
-    api.selection.to.index,
-  );
-  useScrollToLine(textareaRef, api.value, api.selection.to.line);
-  const apiWithFocus = useFocus(textareaRef, api, [api.value, api.selection]);
+  useSelectionRange(textareaRef, api.selectionStart, api.selectionEnd);
+  const line = getPosition(api.value, api.selectionEnd).line;
+  useScrollToLine(textareaRef, api.value, line);
+  const apiWithFocus = useFocus(textareaRef, api, [
+    api.value,
+    api.selectionStart,
+    api.selectionEnd,
+  ]);
   return render(
     <textarea ref={textareaRef} value={api.value} {...props} />,
     apiWithFocus,

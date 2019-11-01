@@ -17,5 +17,6 @@
   },
   "dependencies": {
     "@spudly/curry": "^0.1.0"
-  }
+  },
+  "mainSrc": "src/stringSplice.ts"
 }

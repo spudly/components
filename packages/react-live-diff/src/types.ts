@@ -6,14 +6,10 @@ export type Patch = {
 
 export type Position = {line: number; column: number};
 
-export type Selection = {
-  from: number;
-  to: number;
-};
-
 export type EditorState = {
   value: string; // TODO: change this to {value, selectionStart, selectionEnd}
-  selection: Selection;
+  selectionStart: number;
+  selectionEnd: number;
 };
 
 export type EditAction =
@@ -27,7 +23,8 @@ export type EditAction =
 
 export type RenderApi = {
   value: string;
-  selection: Selection;
+  selectionStart: number;
+  selectionEnd: number;
   patch: Patch;
   speed: number;
   elapsed: number;

@@ -1,6 +1,6 @@
 {
   "name": "@spudly/react-pagination",
-  "main": "build/react-pagination.js",
+  "main": "build/Pagination.js",
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.build.json",
     "prepare": "npm run build",
@@ -20,5 +20,6 @@
   },
   "devDependencies": {
     "@testing-library/react": "^9.3.0"
-  }
+  },
+  "mainSrc": "src/Pagination.ts"
 }

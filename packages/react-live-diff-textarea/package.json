@@ -1,6 +1,6 @@
 {
   "name": "@spudly/react-live-diff-textarea",
-  "main": "build/react-live-diff-textarea.js",
+  "main": "build/LiveDiffTextarea.js",
   "version": "0.1.0",
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.build.json",
@@ -23,5 +23,6 @@
   },
   "devDependencies": {
     "diff": "^4.0.1"
-  }
+  },
+  "mainSrc": "src/LiveDiffTextarea.ts"
 }

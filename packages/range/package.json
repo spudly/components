@@ -14,5 +14,6 @@
   "version": "0.1.0",
   "dependencies": {
     "@spudly/get-number-precision": "^0.1.0"
-  }
+  },
+  "mainSrc": "src/range.ts"
 }

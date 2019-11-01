@@ -19,5 +19,6 @@
   },
   "peerDependencies": {
     "react": "^16.10.2"
-  }
+  },
+  "mainSrc": "src/useScrollToLine.ts"
 }

@@ -7,6 +7,8 @@ const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 const exec = promisify(cp.exec);
 
+const camelCase = s => s.replace(/-(\w)/g, ($$, $1) => $1.toUpperCase());
+
 const jestConfig = `const {name} = require('./package.json');
 
 module.exports = {
@@ -51,7 +53,8 @@ const syncPackageJson = async (dir, name) => {
   const config = {
     ...oldConfig,
     name: `@spudly/${name}`,
-    main: oldConfig.main || `build/${name}.js`,
+    main: oldConfig.main || `build/${camelCase(name)}.js`,
+    mainSrc: oldConfig.mainSrc || `src/${camelCase(name)}.ts`,
     version: oldConfig.version || '0.1.0',
     scripts: {
       build: 'rm -rf build && tsc -p tsconfig.build.json',

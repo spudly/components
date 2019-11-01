@@ -10,23 +10,34 @@ expect.addSnapshotSerializer({
     return (
       state &&
       state.value &&
-      state.selection &&
-      state.selection.from &&
-      state.selection.to
+      state.selectionStart != null &&
+      state.selectionEnd != null
     );
   },
   print(state: EditorState) {
-    const {
-      value,
-      selection: {from, to},
-    } = state;
+    const {value, selectionStart, selectionEnd} = state;
     let result = value;
-    if (from !== to) {
-      result = stringSplice(Math.max(from, to), 0, '🤛', result);
+    if (selectionStart !== selectionEnd) {
+      result = stringSplice(
+        Math.max(selectionStart, selectionEnd),
+        0,
+        '🤛',
+        result,
+      );
     }
-    result = stringSplice(from <= to ? to : from, 0, '👊', result);
-    if (from !== to) {
-      result = stringSplice(Math.min(from, to), 0, '🤜', result);
+    result = stringSplice(
+      selectionStart <= selectionEnd ? selectionEnd : selectionStart,
+      0,
+      '👊',
+      result,
+    );
+    if (selectionStart !== selectionEnd) {
+      result = stringSplice(
+        Math.min(selectionStart, selectionEnd),
+        0,
+        '🤜',
+        result,
+      );
     }
     return result;
   },
@@ -37,10 +48,8 @@ test('returns an array of edit actions', () => {
     getEdits(
       {
         value: 'a b c d e',
-        selection: {
-          from: 0,
-          to: 0,
-        },
+        selectionStart: 0,
+        selectionEnd: 0,
       },
       'c d e f g',
     ),
@@ -69,10 +78,8 @@ test('moves down, then left', () => {
   const edits = getEdits(
     {
       value: startValue,
-      selection: {
-        from: 5,
-        to: 5,
-      },
+      selectionStart: 5,
+      selectionEnd: 5,
     },
     endValue,
   );
@@ -98,10 +105,8 @@ test('moves down, then right', () => {
     getEdits(
       {
         value: startValue,
-        selection: {
-          from: 0,
-          to: 0,
-        },
+        selectionStart: 0,
+        selectionEnd: 0,
       },
       endValue,
     ),
@@ -130,10 +135,8 @@ test('moves up, then right', () => {
     getEdits(
       {
         value: startValue,
-        selection: {
-          from: 12,
-          to: 12,
-        },
+        selectionStart: 12,
+        selectionEnd: 12,
       },
       endValue,
     ),
@@ -162,10 +165,8 @@ test('moves up, then left', () => {
     getEdits(
       {
         value: startValue,
-        selection: {
-          from: 17,
-          to: 17,
-        },
+        selectionStart: 17,
+        selectionEnd: 17,
       },
       endValue,
     ),
@@ -188,10 +189,8 @@ test('correctly handles moving to lines with fewer columns', () => {
   const value = 'abc\n\n1234';
   const state = {
     value,
-    selection: {
-      from: getIndex(value, 1, 3),
-      to: getIndex(value, 1, 3),
-    },
+    selectionStart: getIndex(value, 1, 3),
+    selectionEnd: getIndex(value, 1, 3),
   };
   const edits = getEdits(state, 'abc\n\n5678');
   expect(edits).toStrictEqual([
@@ -263,17 +262,13 @@ test('correctly handles moving to lines with fewer columns', () => {
 test('integrates nicely with reduce', () => {
   const state = {
     value: 'a b c d e',
-    selection: {
-      from: 0,
-      to: 0,
-    },
+    selectionStart: 0,
+    selectionEnd: 0,
   };
   const edits = getEdits(state, 'c d e f g');
   expect(reduce(state, edits)).toStrictEqual({
     value: 'c d e f g',
-    selection: {
-      from: 9,
-      to: 9,
-    },
+    selectionStart: 9,
+    selectionEnd: 9,
   });
 });

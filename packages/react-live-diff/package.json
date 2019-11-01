@@ -21,5 +21,6 @@
   },
   "devDependencies": {
     "@spudly/string-splice": "^0.1.0"
-  }
+  },
+  "mainSrc": "src/index.ts"
 }

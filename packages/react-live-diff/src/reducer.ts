@@ -8,17 +8,15 @@ const updatePosition = (
   select?: boolean | undefined,
 ): EditorState => ({
   ...state,
-  selection: {
-    from: select ? state.selection.from : nextIndex,
-    to: nextIndex,
-  },
+  selectionStart: select ? state.selectionStart : nextIndex,
+  selectionEnd: nextIndex,
 });
 
 const moveUp = (
   state: EditorState,
   select: boolean | undefined,
 ): EditorState => {
-  const {line, column} = getPosition(state.value, state.selection.to);
+  const {line, column} = getPosition(state.value, state.selectionEnd);
   if (line <= 1) {
     return state;
   }
@@ -32,7 +30,7 @@ const moveDown = (
   state: EditorState,
   select: boolean | undefined,
 ): EditorState => {
-  const {line, column} = getPosition(state.value, state.selection.to);
+  const {line, column} = getPosition(state.value, state.selectionEnd);
   const numLines = getNumLines(state.value);
   if (line >= numLines) {
     return state;
@@ -47,46 +45,56 @@ const moveLeft = (
   state: EditorState,
   select: boolean | undefined,
 ): EditorState => {
-  if (state.selection.to === 0) {
+  if (state.selectionEnd === 0) {
     return state;
   }
-  return updatePosition(state, state.selection.to - 1, select);
+  return updatePosition(state, state.selectionEnd - 1, select);
 };
 
 const moveRight = (
   state: EditorState,
   select: boolean | undefined,
 ): EditorState => {
-  if (state.selection.to >= state.value.length) {
+  if (state.selectionEnd >= state.value.length) {
     return state;
   }
-  return updatePosition(state, state.selection.to + 1, select);
+  return updatePosition(state, state.selectionEnd + 1, select);
 };
 
-const backspace = (state: EditorState): EditorState => ({
-  value: stringSplice(state.selection.to - 1, 1, '', state.value),
-  selection: moveLeft(state, false).selection,
-});
-
-const type = (state: EditorState, char: string): EditorState => {
-  const value = stringSplice(state.selection.to, 0, char, state.value);
+const backspace = (state: EditorState): EditorState => {
+  if (state.selectionEnd === 0) {
+    throw new Error('nothing to delete');
+  }
+  const nextIndex = Math.max(state.selectionEnd - 1, 0);
   return {
-    ...state,
-    value,
-    selection: moveRight({...state, value}, false).selection,
+    value: stringSplice(state.selectionEnd - 1, 1, '', state.value),
+    selectionStart: nextIndex,
+    selectionEnd: nextIndex,
   };
 };
 
-const deleteSelection = ({value, selection}: EditorState): EditorState => {
-  if (!selection) {
-    throw new Error('no selection!?');
-  }
-  const {from, to} = selection;
-  const firstIndex = Math.min(from, to);
-  const lastIndex = Math.max(from, to);
+const type = (state: EditorState, char: string): EditorState => {
+  const value = stringSplice(state.selectionEnd, 0, char, state.value);
+  const nextIndex = state.selectionStart + 1;
+  return {
+    ...state,
+    value,
+    selectionStart: nextIndex,
+    selectionEnd: nextIndex,
+  };
+};
+
+const deleteSelection = ({
+  value,
+  selectionStart,
+  selectionEnd,
+}: EditorState): EditorState => {
+  const firstIndex = Math.min(selectionStart, selectionEnd);
+  const lastIndex = Math.max(selectionStart, selectionEnd);
   return {
     value: `${value.slice(0, firstIndex)}${value.slice(lastIndex)}`,
-    selection: {from: firstIndex, to: firstIndex},
+    selectionStart: firstIndex,
+    selectionEnd: firstIndex,
   };
 };
 
@@ -98,18 +106,19 @@ const validateActionResult = (
   const msg = `edit action (${action.type}) resulted in invalid state`;
   const {
     value: newValue,
-    selection: {from: newFrom, to: newTo},
+    selectionStart: newSelectionStart,
+    selectionEnd: newSelectionEnd,
   } = nextState;
   if (
-    [newValue, newFrom, newTo].some(
+    [newValue, newSelectionStart, newSelectionEnd].some(
       value => value == null || (typeof value == 'number' && isNaN(value)),
     )
   ) {
     throw new Error(msg);
   }
   try {
-    getPosition(newValue, newFrom);
-    getPosition(newValue, newTo);
+    getPosition(newValue, newSelectionStart);
+    getPosition(newValue, newSelectionEnd);
   } catch (error) {
     console.error(msg, {prevState, action, nextState});
     throw new Error(msg);

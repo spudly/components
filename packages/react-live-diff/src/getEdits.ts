@@ -22,7 +22,7 @@ const move = (
 ) => {
   const newEdits: Array<EditAction> = [];
 
-  const prevPosition = getPosition(state.value, state.selection.to);
+  const prevPosition = getPosition(state.value, state.selectionEnd);
   const nextPosition = getPosition(state.value, next);
 
   const lineDiff = Math.abs(prevPosition.line - nextPosition.line);
@@ -35,7 +35,7 @@ const move = (
   const afterMovingLines = processNewEdits(edits, newEdits, state);
   const columnAfterMovingLines = getPosition(
     afterMovingLines.state.value,
-    afterMovingLines.state.selection.from,
+    afterMovingLines.state.selectionStart,
   ).column;
   const colDiff = Math.abs(columnAfterMovingLines - nextPosition.column);
   newEdits.push(
@@ -68,7 +68,7 @@ const remove = (
   // move to end of stuff we want to delete
   const movedEditsAndEditorState = move(
     editsAndEditorState,
-    editsAndEditorState.state.selection.to + value.length,
+    editsAndEditorState.state.selectionEnd + value.length,
     true,
   );
   return processNewEdits(
@@ -101,7 +101,7 @@ const getEdits = (
       }
       return move(
         next,
-        (changeIndex === 0 ? 0 : next.state.selection.to) + change.value.length,
+        (changeIndex === 0 ? 0 : next.state.selectionEnd) + change.value.length,
       );
     },
     {edits: [], state: initialState} as EditsAndEditorState,

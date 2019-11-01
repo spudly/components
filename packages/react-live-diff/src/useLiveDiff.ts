@@ -31,28 +31,32 @@ const usePatch = (startValue: string, endValue: string) => {
       getEdits(
         {
           value: startValue,
-          selection: {
-            from: 0,
-            to: 0,
-          },
+          selectionStart: 0,
+          selectionEnd: 0,
         },
         endValue,
       ),
     [startValue, endValue],
   );
 
-  const {value, selection} = reduce(
+  const {value, selectionStart, selectionEnd} = reduce(
     {
+      // TODO: why are we repeating this object twice!?
       value: startValue,
-      selection: {
-        from: 0,
-        to: 0,
-      },
+      selectionStart: 0,
+      selectionEnd: 0,
     } as EditorState,
     editActions.slice(0, editIndex),
   );
 
-  return {value, selection, editActions, editIndex, setEditIndex};
+  return {
+    value,
+    selectionStart,
+    selectionEnd,
+    editActions,
+    editIndex,
+    setEditIndex,
+  };
 };
 
 const useAnimate = (
