@@ -1,30 +1,9 @@
-import * as diff from 'diff';
+import stringSplice from '@spudly/string-splice';
 import getEdits from './getEdits';
 import {reduce} from './reducer';
 import {EditorState} from './types';
 import times from '@spudly/times';
 import {makePosition} from './utils';
-
-// TODO: extract into a package: @spudly/string-splice
-const stringSplice = (
-  s: string,
-  start: number,
-  deleteCount: number,
-  chars = '',
-) => {
-  start = Math.min(start, s.length);
-  if (start < 0) {
-    start = s.length + start;
-    if (start < 0) {
-      start = 0;
-    }
-  }
-
-  const before = s.slice(0, start);
-  const after = s.slice(start + Math.max(deleteCount, 0));
-
-  return `${before}${chars}${after}`;
-};
 
 expect.addSnapshotSerializer({
   test(state) {
@@ -43,16 +22,16 @@ expect.addSnapshotSerializer({
     } = state;
     let result = value;
     if (from.index !== to.index) {
-      result = stringSplice(result, Math.max(from.index, to.index), 0, '🤛');
+      result = stringSplice(Math.max(from.index, to.index), 0, '🤛', result);
     }
     result = stringSplice(
-      result,
       from.index <= to.index ? to.index : from.index,
       0,
       '👊',
+      result,
     );
     if (from.index !== to.index) {
-      result = stringSplice(result, Math.min(from.index, to.index), 0, '🤜');
+      result = stringSplice(Math.min(from.index, to.index), 0, '🤜', result);
     }
     return result;
     // return indent(result).replace(/\n +\n/g, '\n\n');

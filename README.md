@@ -4,6 +4,8 @@ A monorepo w/ React components (and some other stuff).
 
 # TODOs
 
+- 100% test coverage
+- README.md file in root + each package
 - build badge
 - coverage badge
 - changelog

@@ -18,5 +18,8 @@
   "dependencies": {
     "@spudly/times": "^0.1.0",
     "diff": "^4.0.1"
+  },
+  "devDependencies": {
+    "@spudly/string-splice": "^0.1.0"
   }
 }
