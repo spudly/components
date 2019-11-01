@@ -1,17 +1,18 @@
 export type Patch = {
+  // TODO: deprecate this. just use 'code' directly and get name from code header
   name: string;
   code: string;
 };
 
-export type Position = {line: number; column: number; index: number};
+export type Position = {line: number; column: number};
 
 export type Selection = {
-  from: Position;
-  to: Position;
+  from: number;
+  to: number;
 };
 
 export type EditorState = {
-  value: string;
+  value: string; // TODO: change this to {value, selectionStart, selectionEnd}
   selection: Selection;
 };
 

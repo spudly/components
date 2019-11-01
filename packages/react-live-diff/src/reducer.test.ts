@@ -1,5 +1,5 @@
 import {reduce} from './reducer';
-import {makePosition} from './utils';
+import {getIndex} from './utils';
 import {EditorState, EditAction} from './types';
 
 const value = 'one\ntwo\nthree';
@@ -7,8 +7,8 @@ const value = 'one\ntwo\nthree';
 const state: EditorState = {
   value,
   selection: {
-    from: makePosition(value, {line: 2, column: 2}),
-    to: makePosition(value, {line: 2, column: 2}),
+    from: getIndex(value, 2, 2),
+    to: getIndex(value, 2, 2),
   },
 };
 
@@ -17,8 +17,8 @@ describe('MOVE_UP', () => {
     expect(reduce(state, [{type: 'MOVE_UP'}])).toStrictEqual({
       ...state,
       selection: {
-        from: makePosition(value, {line: 1, column: 2}),
-        to: makePosition(value, {line: 1, column: 2}),
+        from: getIndex(value, 1, 2),
+        to: getIndex(value, 1, 2),
       },
     });
   });
@@ -27,14 +27,8 @@ describe('MOVE_UP', () => {
     const myState = {
       ...state,
       selection: {
-        from: makePosition(value, {
-          line: 1,
-          column: 2,
-        }),
-        to: makePosition(value, {
-          line: 1,
-          column: 2,
-        }),
+        from: getIndex(value, 1, 2),
+        to: getIndex(value, 1, 2),
       },
     };
     expect(reduce(myState, [{type: 'MOVE_UP'}])).toBe(myState);
@@ -46,14 +40,8 @@ describe('MOVE_DOWN', () => {
     expect(reduce(state, [{type: 'MOVE_DOWN'}])).toStrictEqual({
       ...state,
       selection: {
-        from: makePosition(value, {
-          line: 3,
-          column: 2,
-        }),
-        to: makePosition(value, {
-          line: 3,
-          column: 2,
-        }),
+        from: getIndex(value, 3, 2),
+        to: getIndex(value, 3, 2),
       },
     });
   });
@@ -62,14 +50,8 @@ describe('MOVE_DOWN', () => {
     const myState = {
       ...state,
       selection: {
-        from: makePosition(value, {
-          line: 3,
-          column: 2,
-        }),
-        to: makePosition(value, {
-          line: 3,
-          column: 2,
-        }),
+        from: getIndex(value, 3, 2),
+        to: getIndex(value, 3, 2),
       },
     };
     expect(reduce(myState, [{type: 'MOVE_DOWN'}])).toBe(myState);
@@ -81,14 +63,8 @@ describe('MOVE_LEFT', () => {
     expect(reduce(state, [{type: 'MOVE_LEFT'}])).toStrictEqual({
       value: 'one\ntwo\nthree',
       selection: {
-        from: makePosition(value, {
-          line: 2,
-          column: 1,
-        }),
-        to: makePosition(value, {
-          line: 2,
-          column: 1,
-        }),
+        from: getIndex(value, 2, 1),
+        to: getIndex(value, 2, 1),
       },
     });
   });
@@ -97,21 +73,15 @@ describe('MOVE_LEFT', () => {
     const myState = {
       ...state,
       selection: {
-        from: makePosition(value, {
-          line: 2,
-          column: 1,
-        }),
-        to: makePosition(value, {
-          line: 2,
-          column: 1,
-        }),
+        from: getIndex(value, 2, 1),
+        to: getIndex(value, 2, 1),
       },
     };
     expect(reduce(myState, [{type: 'MOVE_LEFT'}])).toStrictEqual({
       ...state,
       selection: {
-        from: makePosition(value, {line: 1, column: 4}),
-        to: makePosition(value, {line: 1, column: 4}),
+        from: getIndex(value, 1, 4),
+        to: getIndex(value, 1, 4),
       },
     });
   });
@@ -120,14 +90,8 @@ describe('MOVE_LEFT', () => {
     const myState = {
       ...state,
       selection: {
-        from: makePosition(value, {
-          line: 1,
-          column: 1,
-        }),
-        to: makePosition(value, {
-          line: 1,
-          column: 1,
-        }),
+        from: getIndex(value, 1, 1),
+        to: getIndex(value, 1, 1),
       },
     };
     expect(reduce(myState, [{type: 'MOVE_LEFT'}])).toBe(myState);
@@ -139,14 +103,8 @@ describe('MOVE_RIGHT', () => {
     expect(reduce(state, [{type: 'MOVE_RIGHT'}])).toStrictEqual({
       value: 'one\ntwo\nthree',
       selection: {
-        from: makePosition(value, {
-          line: 2,
-          column: 3,
-        }),
-        to: makePosition(value, {
-          line: 2,
-          column: 3,
-        }),
+        from: getIndex(value, 2, 3),
+        to: getIndex(value, 2, 3),
       },
     });
   });
@@ -155,27 +113,15 @@ describe('MOVE_RIGHT', () => {
     const myState = {
       ...state,
       selection: {
-        from: makePosition(value, {
-          line: 2,
-          column: 4,
-        }),
-        to: makePosition(value, {
-          line: 2,
-          column: 4,
-        }),
+        from: getIndex(value, 2, 4),
+        to: getIndex(value, 2, 4),
       },
     };
     expect(reduce(myState, [{type: 'MOVE_RIGHT'}])).toStrictEqual({
       ...state,
       selection: {
-        from: makePosition(value, {
-          line: 3,
-          column: 1,
-        }),
-        to: makePosition(value, {
-          line: 3,
-          column: 1,
-        }),
+        from: getIndex(value, 3, 1),
+        to: getIndex(value, 3, 1),
       },
     });
   });
@@ -184,14 +130,8 @@ describe('MOVE_RIGHT', () => {
     const myState = {
       ...state,
       selection: {
-        from: makePosition(value, {
-          line: 3,
-          column: 6,
-        }),
-        to: makePosition(value, {
-          line: 3,
-          column: 6,
-        }),
+        from: getIndex(value, 3, 6),
+        to: getIndex(value, 3, 6),
       },
     };
     expect(reduce(myState, [{type: 'MOVE_RIGHT'}])).toBe(myState);
@@ -203,16 +143,16 @@ describe('DELETE_SELECTED', () => {
     const myState: EditorState = {
       value: 'one\ntwo\nthree',
       selection: {
-        from: makePosition(value, {line: 3, column: 2}),
-        to: makePosition(value, {line: 3, column: 5}),
+        from: getIndex(value, 3, 2),
+        to: getIndex(value, 3, 5),
       },
     };
 
     expect(reduce(myState, [{type: 'DELETE_SELECTED'}])).toStrictEqual({
       value: 'one\ntwo\nte',
       selection: {
-        from: makePosition(value, {line: 3, column: 2}),
-        to: makePosition(value, {line: 3, column: 2}),
+        from: getIndex(value, 3, 2),
+        to: getIndex(value, 3, 2),
       },
     });
   });
@@ -221,16 +161,16 @@ describe('DELETE_SELECTED', () => {
     const myState: EditorState = {
       value: 'one\ntwo\nthree',
       selection: {
-        from: makePosition(value, {line: 3, column: 5}),
-        to: makePosition(value, {line: 3, column: 2}),
+        from: getIndex(value, 3, 5),
+        to: getIndex(value, 3, 2),
       },
     };
 
     expect(reduce(myState, [{type: 'DELETE_SELECTED'}])).toStrictEqual({
       value: 'one\ntwo\nte',
       selection: {
-        from: makePosition(value, {line: 3, column: 2}),
-        to: makePosition(value, {line: 3, column: 2}),
+        from: getIndex(value, 3, 2),
+        to: getIndex(value, 3, 2),
       },
     });
   });
@@ -239,16 +179,16 @@ describe('DELETE_SELECTED', () => {
     const myState: EditorState = {
       value: 'one\ntwo\nthree',
       selection: {
-        from: makePosition(value, {line: 2, column: 2}),
-        to: makePosition(value, {line: 3, column: 5}),
+        from: getIndex(value, 2, 2),
+        to: getIndex(value, 3, 5),
       },
     };
 
     expect(reduce(myState, [{type: 'DELETE_SELECTED'}])).toStrictEqual({
       value: 'one\nte',
       selection: {
-        from: makePosition(value, {line: 2, column: 2}),
-        to: makePosition(value, {line: 2, column: 2}),
+        from: getIndex(value, 2, 2),
+        to: getIndex(value, 2, 2),
       },
     });
   });
@@ -257,16 +197,16 @@ describe('DELETE_SELECTED', () => {
     const myState: EditorState = {
       value: 'one\ntwo\nthree',
       selection: {
-        from: makePosition(value, {line: 3, column: 5}),
-        to: makePosition(value, {line: 2, column: 2}),
+        from: getIndex(value, 3, 5),
+        to: getIndex(value, 2, 2),
       },
     };
 
     expect(reduce(myState, [{type: 'DELETE_SELECTED'}])).toStrictEqual({
       value: 'one\nte',
       selection: {
-        from: makePosition(value, {line: 2, column: 2}),
-        to: makePosition(value, {line: 2, column: 2}),
+        from: getIndex(value, 2, 2),
+        to: getIndex(value, 2, 2),
       },
     });
   });
@@ -277,14 +217,8 @@ describe('BACKSPACE', () => {
     expect(reduce(state, [{type: 'BACKSPACE'}])).toStrictEqual({
       value: 'one\nwo\nthree',
       selection: {
-        from: makePosition(value, {
-          line: 2,
-          column: 1,
-        }),
-        to: makePosition(value, {
-          line: 2,
-          column: 1,
-        }),
+        from: getIndex(value, 2, 1),
+        to: getIndex(value, 2, 1),
       },
     });
   });
@@ -295,8 +229,8 @@ describe('BACKSPACE', () => {
         {
           ...state,
           selection: {
-            from: makePosition(value, {line: 2, column: 1}),
-            to: makePosition(value, {line: 2, column: 1}),
+            from: getIndex(value, 2, 1),
+            to: getIndex(value, 2, 1),
           },
         },
         [{type: 'BACKSPACE'}],
@@ -304,8 +238,8 @@ describe('BACKSPACE', () => {
     ).toStrictEqual({
       value: 'onetwo\nthree',
       selection: {
-        from: makePosition(value, {line: 1, column: 4}),
-        to: makePosition(value, {line: 1, column: 4}),
+        from: getIndex(value, 1, 4),
+        to: getIndex(value, 1, 4),
       },
     });
   });
@@ -316,8 +250,8 @@ describe('TYPE', () => {
     expect(reduce(state, [{type: 'TYPE', char: 'X'}])).toStrictEqual({
       value: 'one\ntXwo\nthree',
       selection: {
-        from: makePosition(value, {line: 2, column: 3}),
-        to: makePosition(value, {line: 2, column: 3}),
+        from: getIndex(value, 2, 3),
+        to: getIndex(value, 2, 3),
       },
     });
   });
@@ -352,8 +286,8 @@ describe('integration', () => {
         {
           value: before,
           selection: {
-            from: makePosition(before, {line: 1, column: 1}),
-            to: makePosition(before, {line: 1, column: 1}),
+            from: getIndex(before, 1, 1),
+            to: getIndex(before, 1, 1),
           },
         },
         edits,
@@ -361,8 +295,8 @@ describe('integration', () => {
     ).toStrictEqual({
       value: after,
       selection: {
-        from: makePosition(after, {line: 1, column: 10}),
-        to: makePosition(after, {line: 1, column: 10}),
+        from: getIndex(after, 1, 10),
+        to: getIndex(after, 1, 10),
       },
     });
   });
@@ -371,120 +305,120 @@ describe('integration', () => {
     let state = {
       value: 'a b c d e',
       selection: {
-        from: makePosition('a b c d e', {line: 1, column: 1}),
-        to: makePosition('a b c d e', {line: 1, column: 1}),
+        from: getIndex('a b c d e', 1, 1),
+        to: getIndex('a b c d e', 1, 1),
       },
     };
     state = reduce(state, [{type: 'MOVE_RIGHT', select: true}]);
     expect(state).toStrictEqual({
       value: 'a b c d e',
       selection: {
-        from: makePosition('a b c d e', {line: 1, column: 1}),
-        to: makePosition('a b c d e', {line: 1, column: 2}),
+        from: getIndex('a b c d e', 1, 1),
+        to: getIndex('a b c d e', 1, 2),
       },
     });
     state = reduce(state, [{type: 'MOVE_RIGHT', select: true}]);
     expect(state).toStrictEqual({
       value: 'a b c d e',
       selection: {
-        from: makePosition('a b c d e', {line: 1, column: 1}),
-        to: makePosition('a b c d e', {line: 1, column: 3}),
+        from: getIndex('a b c d e', 1, 1),
+        to: getIndex('a b c d e', 1, 3),
       },
     });
     state = reduce(state, [{type: 'MOVE_RIGHT', select: true}]);
     expect(state).toStrictEqual({
       value: 'a b c d e',
       selection: {
-        from: makePosition('a b c d e', {line: 1, column: 1}),
-        to: makePosition('a b c d e', {line: 1, column: 4}),
+        from: getIndex('a b c d e', 1, 1),
+        to: getIndex('a b c d e', 1, 4),
       },
     });
     state = reduce(state, [{type: 'MOVE_RIGHT', select: true}]);
     expect(state).toStrictEqual({
       value: 'a b c d e',
       selection: {
-        from: makePosition('a b c d e', {line: 1, column: 1}),
-        to: makePosition('a b c d e', {line: 1, column: 5}),
+        from: getIndex('a b c d e', 1, 1),
+        to: getIndex('a b c d e', 1, 5),
       },
     });
     state = reduce(state, [{type: 'DELETE_SELECTED'}]);
     expect(state).toStrictEqual({
       value: 'c d e',
       selection: {
-        from: makePosition('c d e', {line: 1, column: 1}),
-        to: makePosition('c d e', {line: 1, column: 1}),
+        from: getIndex('c d e', 1, 1),
+        to: getIndex('c d e', 1, 1),
       },
     });
     state = reduce(state, [{type: 'MOVE_RIGHT', select: false}]);
     expect(state).toStrictEqual({
       value: 'c d e',
       selection: {
-        from: makePosition('c d e', {line: 1, column: 2}),
-        to: makePosition('c d e', {line: 1, column: 2}),
+        from: getIndex('c d e', 1, 2),
+        to: getIndex('c d e', 1, 2),
       },
     });
     state = reduce(state, [{type: 'MOVE_RIGHT', select: false}]);
     expect(state).toStrictEqual({
       value: 'c d e',
       selection: {
-        from: makePosition('c d e', {line: 1, column: 3}),
-        to: makePosition('c d e', {line: 1, column: 3}),
+        from: getIndex('c d e', 1, 3),
+        to: getIndex('c d e', 1, 3),
       },
     });
     state = reduce(state, [{type: 'MOVE_RIGHT', select: false}]);
     expect(state).toStrictEqual({
       value: 'c d e',
       selection: {
-        from: makePosition('c d e', {line: 1, column: 4}),
-        to: makePosition('c d e', {line: 1, column: 4}),
+        from: getIndex('c d e', 1, 4),
+        to: getIndex('c d e', 1, 4),
       },
     });
     state = reduce(state, [{type: 'MOVE_RIGHT', select: false}]);
     expect(state).toStrictEqual({
       value: 'c d e',
       selection: {
-        from: makePosition('c d e', {line: 1, column: 5}),
-        to: makePosition('c d e', {line: 1, column: 5}),
+        from: getIndex('c d e', 1, 5),
+        to: getIndex('c d e', 1, 5),
       },
     });
     state = reduce(state, [{type: 'MOVE_RIGHT', select: false}]);
     expect(state).toStrictEqual({
       value: 'c d e',
       selection: {
-        from: makePosition('c d e', {line: 1, column: 6}),
-        to: makePosition('c d e', {line: 1, column: 6}),
+        from: getIndex('c d e', 1, 6),
+        to: getIndex('c d e', 1, 6),
       },
     });
     state = reduce(state, [{type: 'TYPE', char: ' '}]);
     expect(state).toStrictEqual({
       value: 'c d e ',
       selection: {
-        from: makePosition('c d e ', {line: 1, column: 7}),
-        to: makePosition('c d e ', {line: 1, column: 7}),
+        from: getIndex('c d e ', 1, 7),
+        to: getIndex('c d e ', 1, 7),
       },
     });
     state = reduce(state, [{type: 'TYPE', char: 'f'}]);
     expect(state).toStrictEqual({
       value: 'c d e f',
       selection: {
-        from: makePosition('c d e f', {line: 1, column: 8}),
-        to: makePosition('c d e f', {line: 1, column: 8}),
+        from: getIndex('c d e f', 1, 8),
+        to: getIndex('c d e f', 1, 8),
       },
     });
     state = reduce(state, [{type: 'TYPE', char: ' '}]);
     expect(state).toStrictEqual({
       value: 'c d e f ',
       selection: {
-        from: makePosition('c d e f ', {line: 1, column: 9}),
-        to: makePosition('c d e f ', {line: 1, column: 9}),
+        from: getIndex('c d e f ', 1, 9),
+        to: getIndex('c d e f ', 1, 9),
       },
     });
     state = reduce(state, [{type: 'TYPE', char: 'g'}]);
     expect(state).toStrictEqual({
       value: 'c d e f g',
       selection: {
-        from: makePosition('c d e f g', {line: 1, column: 10}),
-        to: makePosition('c d e f g', {line: 1, column: 10}),
+        from: getIndex('c d e f g', 1, 10),
+        to: getIndex('c d e f g', 1, 10),
       },
     });
   });
@@ -495,8 +429,8 @@ describe('integration', () => {
     let state = {
       value: startValue,
       selection: {
-        from: makePosition(startValue, {line: 1, column: 6}),
-        to: makePosition(startValue, {line: 1, column: 6}),
+        from: getIndex(startValue, 1, 6),
+        to: getIndex(startValue, 1, 6),
       },
     };
 
@@ -504,80 +438,80 @@ describe('integration', () => {
     expect(state).toStrictEqual({
       value: 'a b c\nd e f\ng h i',
       selection: {
-        from: makePosition('a b c\nd e f\ng h i', {line: 2, column: 6}),
-        to: makePosition('a b c\nd e f\ng h i', {line: 2, column: 6}),
+        from: getIndex('a b c\nd e f\ng h i', 2, 6),
+        to: getIndex('a b c\nd e f\ng h i', 2, 6),
       },
     });
     state = reduce(state, [{type: 'MOVE_DOWN', select: false}]);
     expect(state).toStrictEqual({
       value: 'a b c\nd e f\ng h i',
       selection: {
-        from: makePosition('a b c\nd e f\ng h i', {line: 3, column: 6}),
-        to: makePosition('a b c\nd e f\ng h i', {line: 3, column: 6}),
+        from: getIndex('a b c\nd e f\ng h i', 3, 6),
+        to: getIndex('a b c\nd e f\ng h i', 3, 6),
       },
     });
     state = reduce(state, [{type: 'MOVE_LEFT', select: false}]);
     expect(state).toStrictEqual({
       value: 'a b c\nd e f\ng h i',
       selection: {
-        from: makePosition('a b c\nd e f\ng h i', {line: 3, column: 5}),
-        to: makePosition('a b c\nd e f\ng h i', {line: 3, column: 5}),
+        from: getIndex('a b c\nd e f\ng h i', 3, 5),
+        to: getIndex('a b c\nd e f\ng h i', 3, 5),
       },
     });
     state = reduce(state, [{type: 'MOVE_LEFT', select: false}]);
     expect(state).toStrictEqual({
       value: 'a b c\nd e f\ng h i',
       selection: {
-        from: makePosition('a b c\nd e f\ng h i', {line: 3, column: 4}),
-        to: makePosition('a b c\nd e f\ng h i', {line: 3, column: 4}),
+        from: getIndex('a b c\nd e f\ng h i', 3, 4),
+        to: getIndex('a b c\nd e f\ng h i', 3, 4),
       },
     });
     state = reduce(state, [{type: 'MOVE_LEFT', select: false}]);
     expect(state).toStrictEqual({
       value: 'a b c\nd e f\ng h i',
       selection: {
-        from: makePosition('a b c\nd e f\ng h i', {line: 3, column: 3}),
-        to: makePosition('a b c\nd e f\ng h i', {line: 3, column: 3}),
+        from: getIndex('a b c\nd e f\ng h i', 3, 3),
+        to: getIndex('a b c\nd e f\ng h i', 3, 3),
       },
     });
     state = reduce(state, [{type: 'MOVE_LEFT', select: false}]);
     expect(state).toStrictEqual({
       value: 'a b c\nd e f\ng h i',
       selection: {
-        from: makePosition('a b c\nd e f\ng h i', {line: 3, column: 2}),
-        to: makePosition('a b c\nd e f\ng h i', {line: 3, column: 2}),
+        from: getIndex('a b c\nd e f\ng h i', 3, 2),
+        to: getIndex('a b c\nd e f\ng h i', 3, 2),
       },
     });
     state = reduce(state, [{type: 'MOVE_LEFT', select: false}]);
     expect(state).toStrictEqual({
       value: 'a b c\nd e f\ng h i',
       selection: {
-        from: makePosition('a b c\nd e f\ng h i', {line: 3, column: 1}),
-        to: makePosition('a b c\nd e f\ng h i', {line: 3, column: 1}),
+        from: getIndex('a b c\nd e f\ng h i', 3, 1),
+        to: getIndex('a b c\nd e f\ng h i', 3, 1),
       },
     });
     state = reduce(state, [{type: 'MOVE_RIGHT', select: true}]);
     expect(state).toStrictEqual({
       value: 'a b c\nd e f\ng h i',
       selection: {
-        from: makePosition('a b c\nd e f\ng h i', {line: 3, column: 1}),
-        to: makePosition('a b c\nd e f\ng h i', {line: 3, column: 2}),
+        from: getIndex('a b c\nd e f\ng h i', 3, 1),
+        to: getIndex('a b c\nd e f\ng h i', 3, 2),
       },
     });
     state = reduce(state, [{type: 'DELETE_SELECTED'}]);
     expect(state).toStrictEqual({
       value: 'a b c\nd e f\n h i',
       selection: {
-        from: makePosition('a b c\nd e f\n h i', {line: 3, column: 1}),
-        to: makePosition('a b c\nd e f\n h i', {line: 3, column: 1}),
+        from: getIndex('a b c\nd e f\n h i', 3, 1),
+        to: getIndex('a b c\nd e f\n h i', 3, 1),
       },
     });
     state = reduce(state, [{type: 'TYPE', char: 'X'}]);
     expect(state).toStrictEqual({
       value: 'a b c\nd e f\nX h i',
       selection: {
-        from: makePosition('a b c\nd e f\nX h i', {line: 3, column: 2}),
-        to: makePosition('a b c\nd e f\nX h i', {line: 3, column: 2}),
+        from: getIndex('a b c\nd e f\nX h i', 3, 2),
+        to: getIndex('a b c\nd e f\nX h i', 3, 2),
       },
     });
 

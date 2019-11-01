@@ -3,7 +3,6 @@ import * as diff from 'diff';
 import getEdits from './getEdits';
 import {Patch, RenderApi, EditorState} from './types';
 import {reduce} from './reducer';
-import {makePosition} from './utils';
 
 const usePatches = (initialValue: string = '', patches: Array<Patch>) => {
   if (patches.length === 0) {
@@ -33,8 +32,8 @@ const usePatch = (startValue: string, endValue: string) => {
         {
           value: startValue,
           selection: {
-            from: {line: 1, column: 1, index: 0},
-            to: {line: 1, column: 1, index: 0},
+            from: 0,
+            to: 0,
           },
         },
         endValue,
@@ -46,8 +45,8 @@ const usePatch = (startValue: string, endValue: string) => {
     {
       value: startValue,
       selection: {
-        from: makePosition(startValue, {line: 1, column: 1}),
-        to: makePosition(startValue, {line: 1, column: 1}),
+        from: 0,
+        to: 0,
       },
     } as EditorState,
     editActions.slice(0, editIndex),

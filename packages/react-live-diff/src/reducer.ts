@@ -1,21 +1,16 @@
-import {EditorState, EditAction, Position} from './types';
-import {
-  getNumColumns,
-  getCharIndex,
-  insertCharAfter,
-  makePosition,
-  removeCharBefore,
-} from './utils';
+import {EditorState, EditAction} from './types';
+import {getNumColumns, getPosition, getIndex, getNumLines} from './utils';
+import stringSplice from '@spudly/string-splice';
 
 const updatePosition = (
   state: EditorState,
-  nextPosition: Position,
+  nextIndex: number,
   select?: boolean | undefined,
 ): EditorState => ({
   ...state,
   selection: {
-    from: select ? state.selection.from : nextPosition,
-    to: nextPosition,
+    from: select ? state.selection.from : nextIndex,
+    to: nextIndex,
   },
 });
 
@@ -23,84 +18,58 @@ const moveUp = (
   state: EditorState,
   select: boolean | undefined,
 ): EditorState => {
-  const {line, column} = state.selection.to;
+  const {line, column} = getPosition(state.value, state.selection.to);
   if (line <= 1) {
     return state;
   }
   const nextLine = line - 1;
   const nextColumn = Math.min(column, getNumColumns(state.value, nextLine));
-  const nextPosition: Position = makePosition(state.value, {
-    line: nextLine,
-    column: nextColumn,
-  });
-  return updatePosition(state, nextPosition, select);
+  const nextIndex = getIndex(state.value, nextLine, nextColumn);
+  return updatePosition(state, nextIndex, select);
 };
 
 const moveDown = (
   state: EditorState,
   select: boolean | undefined,
 ): EditorState => {
-  const {
-    value,
-    selection: {
-      to: {line, column},
-    },
-  } = state;
-  const numLines = value.split(/(?<=\n)/).length;
+  const {line, column} = getPosition(state.value, state.selection.to);
+  const numLines = getNumLines(state.value);
   if (line >= numLines) {
     return state;
   }
   const nextLine = line + 1;
   const nextColumn = Math.min(column, getNumColumns(state.value, nextLine));
-  const nextPosition = makePosition(state.value, {
-    line: nextLine,
-    column: nextColumn,
-  });
-  return updatePosition(state, nextPosition, select);
+  const nextIndex = getIndex(state.value, nextLine, nextColumn);
+  return updatePosition(state, nextIndex, select);
 };
 
 const moveLeft = (
   state: EditorState,
   select: boolean | undefined,
 ): EditorState => {
-  const {
-    selection: {
-      to: {index},
-    },
-  } = state;
-  if (index === 0) {
+  if (state.selection.to === 0) {
     return state;
   }
-  return updatePosition(
-    state,
-    makePosition(state.value, {index: index - 1}),
-    select,
-  );
+  return updatePosition(state, state.selection.to - 1, select);
 };
 
 const moveRight = (
   state: EditorState,
   select: boolean | undefined,
 ): EditorState => {
-  const {
-    value,
-    selection: {
-      to: {index},
-    },
-  } = state;
-  if (index >= value.length) {
+  if (state.selection.to >= state.value.length) {
     return state;
   }
-  return updatePosition(state, makePosition(value, {index: index + 1}), select);
+  return updatePosition(state, state.selection.to + 1, select);
 };
 
 const backspace = (state: EditorState): EditorState => ({
-  value: removeCharBefore(state.value, state.selection.to),
+  value: stringSplice(state.selection.to - 1, 1, '', state.value),
   selection: moveLeft(state, false).selection,
 });
 
 const type = (state: EditorState, char: string): EditorState => {
-  const value = insertCharAfter(state.value, state.selection.to, char);
+  const value = stringSplice(state.selection.to, 0, char, state.value);
   return {
     ...state,
     value,
@@ -113,40 +82,36 @@ const deleteSelection = ({value, selection}: EditorState): EditorState => {
     throw new Error('no selection!?');
   }
   const {from, to} = selection;
-  const fromIndex = getCharIndex(value, from.line, from.column);
-  const toIndex = getCharIndex(value, to.line, to.column);
-  const position = fromIndex < toIndex ? from : to;
+  const firstIndex = Math.min(from, to);
+  const lastIndex = Math.max(from, to);
   return {
-    value: `${value.slice(0, Math.min(fromIndex, toIndex))}${value.slice(
-      Math.max(fromIndex, toIndex),
-    )}`,
-    selection: {from: position, to: position},
+    value: `${value.slice(0, firstIndex)}${value.slice(lastIndex)}`,
+    selection: {from: firstIndex, to: firstIndex},
   };
 };
 
 const validateActionResult = (
-  {value, selection: {from, to}}: EditorState,
-  {value: newValue, selection: {from: newFrom, to: newTo}}: EditorState,
+  prevState: EditorState,
+  nextState: EditorState,
   action: EditAction,
 ) => {
   const msg = `edit action (${action.type}) resulted in invalid state`;
+  const {
+    value: newValue,
+    selection: {from: newFrom, to: newTo},
+  } = nextState;
   if (
-    [
-      newValue,
-      newFrom.index,
-      newFrom.line,
-      newFrom.column,
-      newFrom.index,
-      newFrom.line,
-      newFrom.column,
-    ].some(value => value == null || (typeof value == 'number' && isNaN(value)))
+    [newValue, newFrom, newTo].some(
+      value => value == null || (typeof value == 'number' && isNaN(value)),
+    )
   ) {
     throw new Error(msg);
   }
   try {
-    makePosition(newValue, newFrom);
-    makePosition(newValue, newTo);
+    getPosition(newValue, newFrom);
+    getPosition(newValue, newTo);
   } catch (error) {
+    console.error(msg, {prevState, action, nextState});
     throw new Error(msg);
   }
 };

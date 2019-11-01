@@ -1,14 +1,10 @@
 import * as diff from 'diff';
 import times from '@spudly/times';
-import {EditAction, EditorState, Position} from './types';
+import {EditAction, EditorState} from './types';
 import {reduce} from './reducer';
+import {getPosition} from './utils';
 
 type EditsAndEditorState = {edits: Array<EditAction>; state: EditorState};
-
-type EditsreduceFn = (
-  {edits, state}: EditsAndEditorState,
-  {value, added, removed}: diff.Change,
-) => EditsAndEditorState;
 
 const processNewEdits = (
   edits: Array<EditAction>,
@@ -19,56 +15,60 @@ const processNewEdits = (
   state: reduce(state, newEdits),
 });
 
-const getNextPosition = (startPosition: Position, addedText: string) =>
-  [...addedText].reduce(({line, column, index}, char): Position => {
-    if (char === '\n') {
-      return {line: line + 1, column: 1, index: index + 1};
-    }
-    return {line, column: column + 1, index: index + 1};
-  }, startPosition);
-
 const move = (
   {edits, state}: EditsAndEditorState,
-  to: Position,
+  next: number,
   select: boolean = false,
 ) => {
-  // const from = state.selection.from;
   const newEdits: Array<EditAction> = [];
 
-  const lineDiff = Math.abs(state.selection.from.line - to.line);
+  const prevPosition = getPosition(state.value, state.selection.to);
+  const nextPosition = getPosition(state.value, next);
+
+  const lineDiff = Math.abs(prevPosition.line - nextPosition.line);
   newEdits.push(
     ...times(lineDiff, {
-      type: to.line < state.selection.from.line ? 'MOVE_UP' : 'MOVE_DOWN',
+      type: nextPosition.line < prevPosition.line ? 'MOVE_UP' : 'MOVE_DOWN',
       select,
     } as EditAction),
   );
-  const fromColumn = processNewEdits(edits, newEdits, state).state.selection
-    .from.column;
-  const colDiff = Math.abs(fromColumn - to.column);
+  const afterMovingLines = processNewEdits(edits, newEdits, state);
+  const columnAfterMovingLines = getPosition(
+    afterMovingLines.state.value,
+    afterMovingLines.state.selection.from,
+  ).column;
+  const colDiff = Math.abs(columnAfterMovingLines - nextPosition.column);
   newEdits.push(
     ...times(colDiff, {
-      type: to.column < fromColumn ? 'MOVE_LEFT' : 'MOVE_RIGHT',
+      type:
+        nextPosition.column < columnAfterMovingLines
+          ? 'MOVE_LEFT'
+          : 'MOVE_RIGHT',
       select,
     } as EditAction),
   );
-  return processNewEdits(edits, newEdits, state);
+  const nextResult = processNewEdits(edits, newEdits, state);
+  return nextResult;
 };
 
-const add: EditsreduceFn = ({edits, state}, {value}) =>
+const add = (
+  {edits, state}: EditsAndEditorState,
+  {value}: diff.Change,
+): EditsAndEditorState =>
   processNewEdits(
     edits,
     value.split('').map(char => ({type: 'TYPE', char} as EditAction)),
     state,
   );
 
-const remove: EditsreduceFn = (
+const remove = (
   editsAndEditorState: EditsAndEditorState,
   {value}: diff.Change,
-) => {
+): EditsAndEditorState => {
   // move to end of stuff we want to delete
   const movedEditsAndEditorState = move(
     editsAndEditorState,
-    getNextPosition(editsAndEditorState.state.selection.to, value),
+    editsAndEditorState.state.selection.to + value.length,
     true,
   );
   return processNewEdits(
@@ -83,31 +83,26 @@ const getEdits = (
   endValue: string,
 ): Array<EditAction> => {
   const changes = diff.diffWordsWithSpace(initialState.value, endValue);
-  changes.unshift();
-  if (changes[0].added || changes[0].removed) {
-    // first chars are changing, so inject a empty change first,
-    // which makes it move to 1,1 before executing the changes
-    changes.unshift({value: ''});
-  }
   const {edits} = changes.reduce(
     (editsAndEditorState, change, changeIndex) => {
       if (editsAndEditorState.state.value === endValue) {
         // we're done. no need to look at the other changes
         return editsAndEditorState;
       }
+      let next = editsAndEditorState;
+      if (changeIndex === 0 && (change.added || change.removed)) {
+        next = move(editsAndEditorState, 0);
+      }
       if (change.added) {
-        return add(editsAndEditorState, change);
+        return add(next, change);
       }
       if (change.removed) {
-        return remove(editsAndEditorState, change);
+        return remove(next, change);
       }
-      const nextPosition = getNextPosition(
-        changeIndex === 0
-          ? {line: 1, column: 1, index: 0}
-          : editsAndEditorState.state.selection.to,
-        change.value,
+      return move(
+        next,
+        (changeIndex === 0 ? 0 : next.state.selection.to) + change.value.length,
       );
-      return move(editsAndEditorState, nextPosition);
     },
     {edits: [], state: initialState} as EditsAndEditorState,
   );

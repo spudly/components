@@ -3,7 +3,7 @@ import getEdits from './getEdits';
 import {reduce} from './reducer';
 import {EditorState} from './types';
 import times from '@spudly/times';
-import {makePosition} from './utils';
+import {getIndex} from './utils';
 
 expect.addSnapshotSerializer({
   test(state) {
@@ -15,26 +15,20 @@ expect.addSnapshotSerializer({
       state.selection.to
     );
   },
-  print(state: EditorState, _, indent) {
+  print(state: EditorState) {
     const {
       value,
       selection: {from, to},
     } = state;
     let result = value;
-    if (from.index !== to.index) {
-      result = stringSplice(Math.max(from.index, to.index), 0, '🤛', result);
+    if (from !== to) {
+      result = stringSplice(Math.max(from, to), 0, '🤛', result);
     }
-    result = stringSplice(
-      from.index <= to.index ? to.index : from.index,
-      0,
-      '👊',
-      result,
-    );
-    if (from.index !== to.index) {
-      result = stringSplice(Math.min(from.index, to.index), 0, '🤜', result);
+    result = stringSplice(from <= to ? to : from, 0, '👊', result);
+    if (from !== to) {
+      result = stringSplice(Math.min(from, to), 0, '🤜', result);
     }
     return result;
-    // return indent(result).replace(/\n +\n/g, '\n\n');
   },
 });
 
@@ -44,8 +38,8 @@ test('returns an array of edit actions', () => {
       {
         value: 'a b c d e',
         selection: {
-          from: {line: 1, column: 1, index: 0},
-          to: {line: 1, column: 1, index: 0},
+          from: 0,
+          to: 0,
         },
       },
       'c d e f g',
@@ -76,8 +70,8 @@ test('moves down, then left', () => {
     {
       value: startValue,
       selection: {
-        from: {line: 1, column: 6, index: 5},
-        to: {line: 1, column: 6, index: 5},
+        from: 5,
+        to: 5,
       },
     },
     endValue,
@@ -105,8 +99,8 @@ test('moves down, then right', () => {
       {
         value: startValue,
         selection: {
-          from: {line: 1, column: 1, index: 0},
-          to: {line: 1, column: 1, index: 0},
+          from: 0,
+          to: 0,
         },
       },
       endValue,
@@ -137,8 +131,8 @@ test('moves up, then right', () => {
       {
         value: startValue,
         selection: {
-          from: {line: 3, column: 1, index: 6},
-          to: {line: 3, column: 1, index: 6},
+          from: 12,
+          to: 12,
         },
       },
       endValue,
@@ -169,8 +163,8 @@ test('moves up, then left', () => {
       {
         value: startValue,
         selection: {
-          from: {line: 3, column: 6, index: 17},
-          to: {line: 3, column: 6, index: 17},
+          from: 17,
+          to: 17,
         },
       },
       endValue,
@@ -195,8 +189,8 @@ test('correctly handles moving to lines with fewer columns', () => {
   const state = {
     value,
     selection: {
-      from: makePosition(value, {line: 1, column: 3}),
-      to: makePosition(value, {line: 1, column: 3}),
+      from: getIndex(value, 1, 3),
+      to: getIndex(value, 1, 3),
     },
   };
   const edits = getEdits(state, 'abc\n\n5678');
@@ -270,16 +264,16 @@ test('integrates nicely with reduce', () => {
   const state = {
     value: 'a b c d e',
     selection: {
-      from: {line: 1, column: 1, index: 0},
-      to: {line: 1, column: 1, index: 0},
+      from: 0,
+      to: 0,
     },
   };
   const edits = getEdits(state, 'c d e f g');
   expect(reduce(state, edits)).toStrictEqual({
     value: 'c d e f g',
     selection: {
-      from: {line: 1, column: 10, index: 9},
-      to: {line: 1, column: 10, index: 9},
+      from: 9,
+      to: 9,
     },
   });
 });
