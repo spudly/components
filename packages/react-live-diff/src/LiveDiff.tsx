@@ -1,4 +1,4 @@
-import React, {ReactElement} from 'react';
+import {ReactElement} from 'react';
 import useLiveDiff from './useLiveDiff';
 import {Patch, RenderApi} from './types';
 

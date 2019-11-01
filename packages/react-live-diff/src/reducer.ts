@@ -1,7 +1,6 @@
 import {EditorState, EditAction, Position} from './types';
 import {
   getNumColumns,
-  getNumLines,
   getCharIndex,
   insertCharAfter,
   makePosition,
@@ -65,7 +64,6 @@ const moveLeft = (
   select: boolean | undefined,
 ): EditorState => {
   const {
-    value,
     selection: {
       to: {index},
     },
