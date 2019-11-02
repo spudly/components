@@ -4,19 +4,19 @@ import {Action, State} from './types';
 import {reduce} from './reducer';
 import {getPosition} from './utils';
 
-type EditsAndState = {edits: Array<Action>; state: State};
+type ActionsAndState = {edits: Array<Action>; state: State};
 
-const processNewEdits = (
+const processNewActions = (
   edits: Array<Action>,
   newEdits: Array<Action>,
   state: State,
-): EditsAndState => ({
+): ActionsAndState => ({
   edits: [...edits, ...newEdits],
   state: reduce(state, newEdits),
 });
 
 const move = (
-  {edits, state}: EditsAndState,
+  {edits, state}: ActionsAndState,
   next: number,
   select: boolean = false,
 ) => {
@@ -32,7 +32,7 @@ const move = (
       select,
     } as Action),
   );
-  const afterMovingLines = processNewEdits(edits, newEdits, state);
+  const afterMovingLines = processNewActions(edits, newEdits, state);
   const [, columnAfterMovingLines] = getPosition(
     afterMovingLines.state.value,
     afterMovingLines.state.selectionStart,
@@ -44,45 +44,48 @@ const move = (
       select,
     } as Action),
   );
-  const nextResult = processNewEdits(edits, newEdits, state);
+  const nextResult = processNewActions(edits, newEdits, state);
   return nextResult;
 };
 
-const add = ({edits, state}: EditsAndState, {value}: Change): EditsAndState =>
-  processNewEdits(
+const add = (
+  {edits, state}: ActionsAndState,
+  {value}: Change,
+): ActionsAndState =>
+  processNewActions(
     edits,
     value.split('').map(char => ({type: 'TYPE', char} as Action)),
     state,
   );
 
 const remove = (
-  editsAndState: EditsAndState,
+  ActionsAndState: ActionsAndState,
   {value}: Change,
-): EditsAndState => {
+): ActionsAndState => {
   // move to end of stuff we want to delete
-  const movedEditsAndState = move(
-    editsAndState,
-    editsAndState.state.selectionEnd + value.length,
+  const movedActionsAndState = move(
+    ActionsAndState,
+    ActionsAndState.state.selectionEnd + value.length,
     true,
   );
-  return processNewEdits(
-    movedEditsAndState.edits,
+  return processNewActions(
+    movedActionsAndState.edits,
     [{type: 'DELETE_SELECTED'}],
-    movedEditsAndState.state,
+    movedActionsAndState.state,
   );
 };
 
-const getEdits = (initialState: State, endValue: string): Array<Action> => {
+const getActions = (initialState: State, endValue: string): Array<Action> => {
   const changes = diffWordsWithSpace(initialState.value, endValue);
   const {edits} = changes.reduce(
-    (editsAndState, change, changeIndex) => {
-      if (editsAndState.state.value === endValue) {
+    (ActionsAndState, change, changeIndex) => {
+      if (ActionsAndState.state.value === endValue) {
         // we're done. no need to look at the other changes
-        return editsAndState;
+        return ActionsAndState;
       }
-      let next = editsAndState;
+      let next = ActionsAndState;
       if (changeIndex === 0 && (change.added || change.removed)) {
-        next = move(editsAndState, 0);
+        next = move(ActionsAndState, 0);
       }
       if (change.added) {
         return add(next, change);
@@ -95,9 +98,9 @@ const getEdits = (initialState: State, endValue: string): Array<Action> => {
         (changeIndex === 0 ? 0 : next.state.selectionEnd) + change.value.length,
       );
     },
-    {edits: [], state: initialState} as EditsAndState,
+    {edits: [], state: initialState} as ActionsAndState,
   );
   return edits;
 };
 
-export default getEdits;
+export default getActions;
