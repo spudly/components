@@ -1,5 +1,5 @@
 {
-  "name": "@spudly/react-pagination",
+  "name": "@spudly/pagination",
   "main": "build/Pagination.js",
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.build.json",

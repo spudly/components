@@ -1,18 +1,12 @@
-export type Patch = {
-  // TODO: deprecate this. just use 'code' directly and get name from code header
-  name: string;
-  code: string;
-};
+import {ParsedDiff} from 'diff';
 
-export type Position = {line: number; column: number};
-
-export type EditorState = {
-  value: string; // TODO: change this to {value, selectionStart, selectionEnd}
+export type State = {
+  value: string;
   selectionStart: number;
   selectionEnd: number;
 };
 
-export type EditAction =
+export type Action =
   | {type: 'MOVE_UP'; select?: boolean}
   | {type: 'MOVE_RIGHT'; select?: boolean}
   | {type: 'MOVE_DOWN'; select?: boolean}
@@ -25,7 +19,7 @@ export type RenderApi = {
   value: string;
   selectionStart: number;
   selectionEnd: number;
-  patch: Patch;
+  patch: ParsedDiff;
   speed: number;
   elapsed: number;
   duration: number;

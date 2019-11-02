@@ -30,9 +30,10 @@ const Demo = ({line}: {line: number}) => {
 
 const _getBoundingClientRect = HTMLElement.prototype.getBoundingClientRect;
 beforeAll(() => {
-  HTMLElement.prototype.getBoundingClientRect = () => ({
-    height: 100,
-  } as any);
+  HTMLElement.prototype.getBoundingClientRect = () =>
+    ({
+      height: 100,
+    } as any);
   Object.defineProperty(HTMLTextAreaElement.prototype, 'scrollHeight', {
     value: value.split('\n').length * 18 + 4,
     configurable: true,

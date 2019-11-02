@@ -1,10 +1,10 @@
 import {reduce} from './reducer';
 import {getIndex} from './utils';
-import {EditorState, EditAction} from './types';
+import {State, Action} from './types';
 
 const value = 'one\ntwo\nthree';
 
-const state: EditorState = {
+const state: State = {
   value,
   selectionStart: getIndex(value, 2, 2),
   selectionEnd: getIndex(value, 2, 2),
@@ -114,7 +114,7 @@ describe('MOVE_RIGHT', () => {
 
 describe('DELETE_SELECTED', () => {
   test('from < to', () => {
-    const myState: EditorState = {
+    const myState: State = {
       value: 'one\ntwo\nthree',
       selectionStart: getIndex(value, 3, 2),
       selectionEnd: getIndex(value, 3, 5),
@@ -128,7 +128,7 @@ describe('DELETE_SELECTED', () => {
   });
 
   test('to > from', () => {
-    const myState: EditorState = {
+    const myState: State = {
       value: 'one\ntwo\nthree',
       selectionStart: getIndex(value, 3, 5),
       selectionEnd: getIndex(value, 3, 2),
@@ -142,7 +142,7 @@ describe('DELETE_SELECTED', () => {
   });
 
   test('from < to (multi-line)', () => {
-    const myState: EditorState = {
+    const myState: State = {
       value: 'one\ntwo\nthree',
       selectionStart: getIndex(value, 2, 2),
       selectionEnd: getIndex(value, 3, 5),
@@ -156,7 +156,7 @@ describe('DELETE_SELECTED', () => {
   });
 
   test('from > to (multi-line)', () => {
-    const myState: EditorState = {
+    const myState: State = {
       value: 'one\ntwo\nthree',
       selectionStart: getIndex(value, 3, 5),
       selectionEnd: getIndex(value, 2, 2),
@@ -211,7 +211,7 @@ describe('integration', () => {
   test('transforms one string into another', () => {
     const before = 'a b c d e';
     const after = 'c d e f g';
-    const edits: Array<EditAction> = [
+    const edits: Array<Action> = [
       // start: "|a b c d e"
       {type: 'MOVE_RIGHT'}, // "a| b c d e"
       {type: 'MOVE_RIGHT'}, // "a |b c d e"

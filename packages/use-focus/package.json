@@ -1,5 +1,5 @@
 {
-  "name": "@spudly/react-use-focus",
+  "name": "@spudly/use-focus",
   "main": "build/useFocus.js",
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.build.json",
@@ -7,7 +7,7 @@
     "test": "jest"
   },
   "license": "ISC",
-  "repository": "https://github.com/spudly/components/tree/master/packages/react-use-focus",
+  "repository": "https://github.com/spudly/components/tree/master/packages/use-focus",
   "files": [
     "build"
   ],

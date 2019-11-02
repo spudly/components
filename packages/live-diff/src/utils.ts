@@ -1,5 +1,3 @@
-import {Position} from './types';
-
 export const getIndex = (
   value: string,
   line: number,
@@ -35,13 +33,12 @@ export const getNumColumns = (value: string, line: number) => {
 
 export const getNumLines = (value: string) => value.split('\n').length;
 
-export const getPosition = (value: string, index: number): Position => {
+export const getPosition = (value: string, index: number): [number, number] => {
   if (index < 0 || index > value.length) {
     throw new Error('out of bounds');
   }
   const lines = (value + ' ').slice(0, index + 1).split(/(?<=\n)/);
-  return {
-    line: lines.length,
-    column: lines[lines.length - 1].length,
-  };
+  const line = lines.length;
+  const column = lines[lines.length - 1].length;
+  return [line, column];
 };

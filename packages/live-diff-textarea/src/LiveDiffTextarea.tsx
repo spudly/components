@@ -1,13 +1,8 @@
 import React, {useRef, ReactElement} from 'react';
-import {
-  useLiveDiff,
-  Patch,
-  RenderApi,
-  getPosition,
-} from '@spudly/react-live-diff';
-import useScrollToLine from '@spudly/react-use-scroll-to-line';
-import useSelectionRange from '@spudly/react-use-selection-range';
-import useFocus from '@spudly/react-use-focus';
+import {useLiveDiff, Patch, RenderApi, getPosition} from '@spudly/live-diff';
+import useScrollToLine from '@spudly/use-scroll-to-line';
+import useSelectionRange from '@spudly/use-selection-range';
+import useFocus from '@spudly/use-focus';
 
 type Props = JSX.IntrinsicElements['textarea'] & {
   initialValue: string;

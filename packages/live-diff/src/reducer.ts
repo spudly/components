@@ -1,22 +1,19 @@
-import {EditorState, EditAction} from './types';
+import {State, Action} from './types';
 import {getNumColumns, getPosition, getIndex, getNumLines} from './utils';
 import stringSplice from '@spudly/string-splice';
 
 const updatePosition = (
-  state: EditorState,
+  state: State,
   nextIndex: number,
   select?: boolean | undefined,
-): EditorState => ({
+): State => ({
   ...state,
   selectionStart: select ? state.selectionStart : nextIndex,
   selectionEnd: nextIndex,
 });
 
-const moveUp = (
-  state: EditorState,
-  select: boolean | undefined,
-): EditorState => {
-  const {line, column} = getPosition(state.value, state.selectionEnd);
+const moveUp = (state: State, select: boolean | undefined): State => {
+  const [line, column] = getPosition(state.value, state.selectionEnd);
   if (line <= 1) {
     return state;
   }
@@ -26,11 +23,8 @@ const moveUp = (
   return updatePosition(state, nextIndex, select);
 };
 
-const moveDown = (
-  state: EditorState,
-  select: boolean | undefined,
-): EditorState => {
-  const {line, column} = getPosition(state.value, state.selectionEnd);
+const moveDown = (state: State, select: boolean | undefined): State => {
+  const [line, column] = getPosition(state.value, state.selectionEnd);
   const numLines = getNumLines(state.value);
   if (line >= numLines) {
     return state;
@@ -41,27 +35,21 @@ const moveDown = (
   return updatePosition(state, nextIndex, select);
 };
 
-const moveLeft = (
-  state: EditorState,
-  select: boolean | undefined,
-): EditorState => {
+const moveLeft = (state: State, select: boolean | undefined): State => {
   if (state.selectionEnd === 0) {
     return state;
   }
   return updatePosition(state, state.selectionEnd - 1, select);
 };
 
-const moveRight = (
-  state: EditorState,
-  select: boolean | undefined,
-): EditorState => {
+const moveRight = (state: State, select: boolean | undefined): State => {
   if (state.selectionEnd >= state.value.length) {
     return state;
   }
   return updatePosition(state, state.selectionEnd + 1, select);
 };
 
-const backspace = (state: EditorState): EditorState => {
+const backspace = (state: State): State => {
   if (state.selectionEnd === 0) {
     throw new Error('nothing to delete');
   }
@@ -73,7 +61,7 @@ const backspace = (state: EditorState): EditorState => {
   };
 };
 
-const type = (state: EditorState, char: string): EditorState => {
+const type = (state: State, char: string): State => {
   const value = stringSplice(state.selectionEnd, 0, char, state.value);
   const nextIndex = state.selectionStart + 1;
   return {
@@ -88,7 +76,7 @@ const deleteSelection = ({
   value,
   selectionStart,
   selectionEnd,
-}: EditorState): EditorState => {
+}: State): State => {
   const firstIndex = Math.min(selectionStart, selectionEnd);
   const lastIndex = Math.max(selectionStart, selectionEnd);
   return {
@@ -99,9 +87,9 @@ const deleteSelection = ({
 };
 
 const validateActionResult = (
-  prevState: EditorState,
-  nextState: EditorState,
-  action: EditAction,
+  prevState: State,
+  nextState: State,
+  action: Action,
 ) => {
   const msg = `edit action (${action.type}) resulted in invalid state`;
   const {
@@ -125,8 +113,8 @@ const validateActionResult = (
   }
 };
 
-export const reducer = (state: EditorState, action: EditAction) => {
-  let newState: EditorState;
+export const reducer = (state: State, action: Action) => {
+  let newState: State;
   switch (action.type) {
     case 'MOVE_UP':
       newState = moveUp(state, action.select);
@@ -150,11 +138,11 @@ export const reducer = (state: EditorState, action: EditAction) => {
       newState = deleteSelection(state);
       break;
     default:
-      throw new Error(`Unrecognized Action: ${(action as EditAction, type)}`);
+      throw new Error(`Unrecognized Action: ${(action as Action, type)}`);
   }
   validateActionResult(state, newState, action);
   return newState;
 };
 
-export const reduce = (state: EditorState, actions: Array<EditAction>) =>
+export const reduce = (state: State, actions: Array<Action>) =>
   actions.reduce(reducer, state);

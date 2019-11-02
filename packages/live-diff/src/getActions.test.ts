@@ -1,7 +1,7 @@
 import stringSplice from '@spudly/string-splice';
-import getEdits from './getEdits';
+import getActions from './getActions';
 import {reduce} from './reducer';
-import {EditorState} from './types';
+import {State} from './types';
 import times from '@spudly/times';
 import {getIndex} from './utils';
 
@@ -14,7 +14,7 @@ expect.addSnapshotSerializer({
       state.selectionEnd != null
     );
   },
-  print(state: EditorState) {
+  print(state: State) {
     const {value, selectionStart, selectionEnd} = state;
     let result = value;
     if (selectionStart !== selectionEnd) {
@@ -45,7 +45,7 @@ expect.addSnapshotSerializer({
 
 test('returns an array of edit actions', () => {
   expect(
-    getEdits(
+    getActions(
       {
         value: 'a b c d e',
         selectionStart: 0,
@@ -75,7 +75,7 @@ test('returns an array of edit actions', () => {
 test('moves down, then left', () => {
   const startValue = 'a b c\nd e f\ng h i';
   const endValue = 'a b c\nd e f\nX h i';
-  const edits = getEdits(
+  const edits = getActions(
     {
       value: startValue,
       selectionStart: 5,
@@ -102,7 +102,7 @@ test('moves down, then right', () => {
   const startValue = 'a b c\nd e f\ng h i';
   const endValue = 'a b c\nd e f\ng h i j k l';
   expect(
-    getEdits(
+    getActions(
       {
         value: startValue,
         selectionStart: 0,
@@ -132,7 +132,7 @@ test('moves up, then right', () => {
   const startValue = 'a b c\nd e f\ng h i';
   const endValue = 'a b c 1 2 3\nd e f\ng h i';
   expect(
-    getEdits(
+    getActions(
       {
         value: startValue,
         selectionStart: 12,
@@ -162,7 +162,7 @@ test('moves up, then left', () => {
   const startValue = 'a b c\nd e f\ng h i';
   const endValue = 'X b c\nd e f\ng h i';
   expect(
-    getEdits(
+    getActions(
       {
         value: startValue,
         selectionStart: 17,
@@ -192,7 +192,7 @@ test('correctly handles moving to lines with fewer columns', () => {
     selectionStart: getIndex(value, 1, 3),
     selectionEnd: getIndex(value, 1, 3),
   };
-  const edits = getEdits(state, 'abc\n\n5678');
+  const edits = getActions(state, 'abc\n\n5678');
   expect(edits).toStrictEqual([
     ...times(2, {type: 'MOVE_DOWN', select: false}),
     ...times(4, {type: 'MOVE_RIGHT', select: true}),
@@ -265,7 +265,7 @@ test('integrates nicely with reduce', () => {
     selectionStart: 0,
     selectionEnd: 0,
   };
-  const edits = getEdits(state, 'c d e f g');
+  const edits = getActions(state, 'c d e f g');
   expect(reduce(state, edits)).toStrictEqual({
     value: 'c d e f g',
     selectionStart: 9,

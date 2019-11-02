@@ -54,7 +54,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "eslint --fix",
+      "eslint --ext .js,.jsx,.ts,.tsx --max-warnings=0 --fix",
       "git add"
     ]
   },
@@ -65,7 +65,7 @@
     ]
   },
   "scripts": {
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
     "test": "jest",
     "tsc": "tsc --noEmit",
     "rebolt": "rm -rf node_modules && bolt exec -- rm -rf node_modules && bolt",
