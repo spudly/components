@@ -1,0 +1,24 @@
+{
+  "name": "@spudly/animated-textarea",
+  "main": "build/AnimatedDiffTextarea.js",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "rm -rf build && tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/components/tree/masterpackages/components/animated-textarea",
+  "files": [
+    "build"
+  ],
+  "dependencies": {
+    "@spudly/use-animated-diff": "^0.1.0",
+    "react": "^16.10.2"
+  },
+  "devDependencies": {
+    "diff": "^4.0.1"
+  },
+  "mainSrc": "src/AnimatedDiffTextarea.tsx",
+  "sideEffects": false
+}

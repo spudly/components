@@ -1,0 +1,25 @@
+{
+  "name": "@spudly/animated-react-live",
+  "main": "build/animatedDiffReactLive.js",
+  "mainSrc": "src/animatedDiffReactLive.ts",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "rm -rf build && tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/components/tree/masterpackages/components/animated-react-live",
+  "files": [
+    "build"
+  ],
+  "dependencies": {
+    "@spudly/animated-monaco": "^0.1.0",
+    "@spudly/icons": "^0.1.0",
+    "react": "^16.10.2",
+    "react-live": "^2.2.1",
+    "react-split": "^2.0.7",
+    "react-split-grid": "^1.0.2"
+  },
+  "sideEffects": false
+}

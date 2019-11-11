@@ -1,0 +1,20 @@
+{
+  "name": "@spudly/times",
+  "main": "build/times.js",
+  "scripts": {
+    "build": "rm -rf build && tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/components/tree/masterpackages/utils/times",
+  "files": [
+    "build"
+  ],
+  "version": "0.1.0",
+  "devDependencies": {
+    "jest": "^24.9.0"
+  },
+  "mainSrc": "src/times.ts",
+  "sideEffects": false
+}

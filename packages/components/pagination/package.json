@@ -1,0 +1,24 @@
+{
+  "name": "@spudly/pagination",
+  "main": "build/Pagination.js",
+  "scripts": {
+    "build": "rm -rf build && tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/components/tree/masterpackages/components/pagination",
+  "files": [
+    "build"
+  ],
+  "version": "0.1.0",
+  "dependencies": {
+    "@spudly/range": "^0.1.0",
+    "react": "^16.10.2"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^9.3.0"
+  },
+  "mainSrc": "src/Pagination.ts",
+  "sideEffects": false
+}

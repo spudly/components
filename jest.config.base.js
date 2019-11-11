@@ -1,13 +1,14 @@
 const path = require('path');
 const fs = require('fs');
+const getPackages = require('./scripts/getPackages');
 
-const packagesDir = `${__dirname}/packages`;
-const dirs = fs.readdirSync(packagesDir);
+const packages = getPackages();
 
-const moduleNameMapper = dirs.reduce((map, dir) => {
-  const pkgDir = `${packagesDir}/${dir}`;
-  const {name, mainSrc} = JSON.parse(fs.readFileSync(`${pkgDir}/package.json`));
-  return {...map, [`^${name}$`]: path.resolve(pkgDir, mainSrc)};
+const moduleNameMapper = packages.reduce((map, pkg) => {
+  const {name, mainSrc} = JSON.parse(
+    fs.readFileSync(`${__dirname}/${pkg.location}/package.json`),
+  );
+  return {...map, [`^${name}$`]: path.resolve(pkg.location, mainSrc)};
 }, {});
 
 module.exports = {

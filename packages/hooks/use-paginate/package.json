@@ -1,0 +1,21 @@
+{
+  "name": "@spudly/use-paginate",
+  "version": "0.1.0",
+  "main": "build/usePaginate.js",
+  "mainSrc": "src/usePaginate.ts",
+  "scripts": {
+    "build": "rm -rf build && tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/components/tree/masterpackages/hooks/use-paginate",
+  "files": [
+    "build"
+  ],
+  "dependencies": {
+    "@spudly/paginate": "^0.1.0",
+    "react": "^16.10.2"
+  },
+  "sideEffects": false
+}

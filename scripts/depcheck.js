@@ -1,20 +1,15 @@
-const fs = require('fs');
 const cp = require('child_process');
 const {promisify} = require('util');
+const getPackages = require('./getPackages');
 
-const readdir = promisify(fs.readdir);
 const exec = promisify(cp.exec);
 
-const packagesDir = `${__dirname}/../packages`;
-
-const depcheckPkg = async name => {
+const depcheckPkg = async ({name, location}) => {
   console.log(`checking dependencies for ${name}`);
   const header = `\n===================\n${name}\n===================`;
   try {
     await Promise.race([
-      exec(`../../node_modules/.bin/depcheck`, {
-        cwd: `${packagesDir}/${name}`,
-      }),
+      exec(`../../../node_modules/.bin/depcheck`, {cwd: location}),
       new Promise((resolve, reject) =>
         setTimeout(
           () =>
@@ -36,8 +31,8 @@ const depcheckPkg = async name => {
 };
 
 const depcheckAll = async () => {
-  const names = await readdir(packagesDir);
-  await Promise.all(names.map(depcheckPkg));
+  const packages = getPackages();
+  await Promise.all(packages.map(depcheckPkg));
 };
 
 depcheckAll().then(

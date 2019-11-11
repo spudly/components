@@ -3,7 +3,7 @@
     "esModuleInterop": true,
     "strict": true,
     "jsx": "react",
-    "target": "esnext",
+    "target": "es2015",
     "moduleResolution": "node",
     "declaration": true,
     "module": "commonjs"
