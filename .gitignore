@@ -4,3 +4,4 @@ core.node.*
 coverage
 build
 .theia
+.gitpod.yml
