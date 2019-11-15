@@ -6,7 +6,55 @@
     "target": "es2015",
     "moduleResolution": "node",
     "declaration": true,
-    "module": "commonjs"
+    "module": "commonjs",
+    "composite": true
   },
-  "include": ["packages/*/src/**/*"]
+  "include": ["packages/*/src/**/*"],
+  "references": [
+    {
+      "path": "packages/components/animated-monaco"
+    },
+    {
+      "path": "packages/components/animated-react-live"
+    },
+    {
+      "path": "packages/components/animated-textarea"
+    },
+    {
+      "path": "packages/components/icons"
+    },
+    {
+      "path": "packages/components/pagination"
+    },
+    {
+      "path": "packages/hooks/use-animate"
+    },
+    {
+      "path": "packages/hooks/use-animated-diff"
+    },
+    {
+      "path": "packages/hooks/use-paginate"
+    },
+    {
+      "path": "packages/utils/curry"
+    },
+    {
+      "path": "packages/utils/get-number-precision"
+    },
+    {
+      "path": "packages/utils/paginate"
+    },
+    {
+      "path": "packages/utils/range"
+    },
+    {
+      "path": "packages/utils/sleep"
+    },
+    {
+      "path": "packages/utils/string-splice"
+    },
+    {
+      "path": "packages/utils/times"
+    }
+  ]
 }

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const cp = require('child_process');
 const {promisify} = require('util');
+const path = require('path');
 const getPackages = require('./getPackages');
 
 const readFile = promisify(fs.readFile);
@@ -18,25 +19,6 @@ module.exports = {
 };
 `;
 
-const tsConfig = `{
-  "compilerOptions": {
-    "outDir": "build"
-  },
-  "extends": "../../../tsconfig",
-  "include": ["src/**/*"]
-}
-`;
-
-const tsConfigBuild = `{
-  "compilerOptions": {
-    "outDir": "build"
-  },
-  "extends": "../../../tsconfig",
-  "include": ["src/**/*"],
-  "exclude": ["**/*.test.*", "**/*.stories.*"]
-}
-`;
-
 const readPackageJson = async file => {
   try {
     return JSON.parse(await readFile(file, 'utf-8'));
@@ -49,7 +31,6 @@ const syncPackageJson = async pkg => {
   const configFile = `${pkg.location}/package.json`;
   const oldConfig = await readPackageJson(configFile);
   const fileName = camelCase(pkg.name.replace(/^@\w+\//, ''));
-  console.log(fileName);
   const config = {
     ...oldConfig,
     name: pkg.name,
@@ -57,7 +38,7 @@ const syncPackageJson = async pkg => {
     mainSrc: oldConfig.mainSrc || `src/${fileName}.ts`,
     version: oldConfig.version || '0.1.0',
     scripts: {
-      build: 'rm -rf build && tsc -p tsconfig.build.json',
+      build: 'tsc -b tsconfig.json',
       prepare: 'npm run build',
       test: 'jest',
     },
@@ -69,13 +50,32 @@ const syncPackageJson = async pkg => {
   await writeFile(configFile, JSON.stringify(config, null, 2));
 };
 
-const syncPackage = async pkg => {
+const syncTypescriptConfig = async (pkg, packages) => {
+  const tsConfig = {
+    compilerOptions: {
+      outDir: 'build',
+      composite: true,
+      rootDir: 'src',
+    },
+    extends: '../../../tsconfig',
+    include: ['src/**/*'],
+    references: pkg.dependencies.map(name => {
+      const depPkg = packages.find(p => p.name === name);
+      return {path: path.relative(pkg.location, depPkg.location)};
+    }),
+  };
+  await writeFile(
+    `${pkg.location}/tsconfig.json`,
+    JSON.stringify(tsConfig, null, 2),
+  );
+};
+
+const syncPackage = async (pkg, index, allPackages) => {
   await exec(`mkdir -p ${pkg.location}/src`);
   await Promise.all([
     syncPackageJson(pkg),
     writeFile(`${pkg.location}/jest.config.js`, jestConfig),
-    writeFile(`${pkg.location}/tsconfig.json`, tsConfig),
-    writeFile(`${pkg.location}/tsconfig.build.json`, tsConfigBuild),
+    syncTypescriptConfig(pkg, allPackages),
   ]);
 };
 
@@ -93,11 +93,31 @@ const syncGlobalJestConfig = async packages => {
   );
 };
 
+const syncGlobalTypescriptConfig = async packages => {
+  const dir = path.resolve(__dirname, '..');
+  const file = path.resolve(dir, 'tsconfig.json');
+  const config = require(file);
+  await writeFile(
+    file,
+    JSON.stringify(
+      {
+        ...config,
+        references: packages.map(pkg => ({
+          path: path.relative(dir, pkg.location),
+        })),
+      },
+      null,
+      2,
+    ),
+  );
+};
+
 const sync = async () => {
   const packages = getPackages();
   await Promise.all([
     ...packages.map(syncPackage),
     syncGlobalJestConfig(packages),
+    syncGlobalTypescriptConfig(packages),
   ]);
 };
 

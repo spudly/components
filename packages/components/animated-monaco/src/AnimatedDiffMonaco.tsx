@@ -177,5 +177,5 @@ const AnimatedDiffMonaco = forwardRef(
   },
 );
 
-export * from '../../use-animated-diff/build';
+export * from '@spudly/use-animated-diff';
 export default AnimatedDiffMonaco;

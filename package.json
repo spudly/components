@@ -69,7 +69,7 @@
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
     "test": "jest",
-    "tsc": "tsc --noEmit",
+    "build": "tsc -b tsconfig.json",
     "storybook": "start-storybook -p 3000",
     "build-storybook": "build-storybook",
     "sync": "node ./scripts/sync.js",

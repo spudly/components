@@ -1,7 +1,20 @@
 {
   "compilerOptions": {
-    "outDir": "build"
+    "outDir": "build",
+    "composite": true,
+    "rootDir": "src"
   },
   "extends": "../../../tsconfig",
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "../../utils/string-splice"
+    },
+    {
+      "path": "../../utils/times"
+    },
+    {
+      "path": "../use-animate"
+    }
+  ]
 }

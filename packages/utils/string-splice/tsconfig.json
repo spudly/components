@@ -1,7 +1,14 @@
 {
   "compilerOptions": {
-    "outDir": "build"
+    "outDir": "build",
+    "composite": true,
+    "rootDir": "src"
   },
   "extends": "../../../tsconfig",
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "../curry"
+    }
+  ]
 }

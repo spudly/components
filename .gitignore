@@ -5,3 +5,4 @@ coverage
 build
 .theia
 .gitpod.yml
+tsconfig.tsbuildinfo

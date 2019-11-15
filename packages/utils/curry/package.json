@@ -3,7 +3,7 @@
   "main": "build/curry.js",
   "version": "0.1.0",
   "scripts": {
-    "build": "rm -rf build && tsc -p tsconfig.build.json",
+    "build": "tsc -b tsconfig.json",
     "prepare": "npm run build",
     "test": "jest"
   },

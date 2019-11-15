@@ -2,7 +2,7 @@
   "name": "@spudly/times",
   "main": "build/times.js",
   "scripts": {
-    "build": "rm -rf build && tsc -p tsconfig.build.json",
+    "build": "tsc -b tsconfig.json",
     "prepare": "npm run build",
     "test": "jest"
   },
