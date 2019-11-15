@@ -26,8 +26,9 @@ module.exports = {
   coveragePathIgnorePatterns: [
     '/node_modules/',
     '/build/',
-    '\\.config\\.js',
+    '[.]config[.]js',
     '/coverage/',
   ],
+  testPathIgnorePatterns: ['build', '[.]stories[.]'],
   moduleNameMapper,
 };

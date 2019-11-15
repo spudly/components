@@ -4,26 +4,11 @@
 import React from 'react';
 import {render, cleanup} from '@testing-library/react';
 import Pagination from './Pagination';
-import {PageDescriptor} from './types';
-
-const renderProp = (pages: Array<PageDescriptor>) => (
-  <>
-    [
-    {pages.map(descriptor => (
-      <React.Fragment key={`${descriptor.type}-${descriptor.page}`}>
-        {JSON.stringify(descriptor)}
-      </React.Fragment>
-    ))}
-    ]
-  </>
-);
 
 afterEach(cleanup);
 
 test('renders (first page current)', () => {
-  const {container} = render(
-    <Pagination currentPage={0} totalPages={20} render={renderProp} />,
-  );
+  const {container} = render(<Pagination currentPage={0} totalPages={20} />);
 
   expect(container).toMatchInlineSnapshot(`
     <div>
@@ -288,9 +273,7 @@ test('renders (first page current)', () => {
 });
 
 test('renders (middle page current)', () => {
-  const {container} = render(
-    <Pagination currentPage={10} totalPages={20} render={renderProp} />,
-  );
+  const {container} = render(<Pagination currentPage={10} totalPages={20} />);
 
   expect(container).toMatchInlineSnapshot(`
     <div>
@@ -563,9 +546,7 @@ test('renders (middle page current)', () => {
 });
 
 test('renders (last page current)', () => {
-  const {container} = render(
-    <Pagination currentPage={19} totalPages={20} render={renderProp} />,
-  );
+  const {container} = render(<Pagination currentPage={19} totalPages={20} />);
 
   expect(container).toMatchInlineSnapshot(`
     <div>
@@ -831,7 +812,7 @@ test('renders (last page current)', () => {
 
 test('renders (first page current, size: 7)', () => {
   const {container} = render(
-    <Pagination currentPage={0} totalPages={20} size={7} render={renderProp} />,
+    <Pagination currentPage={0} totalPages={20} size={7} />,
   );
 
   expect(container).toMatchInlineSnapshot(`
@@ -955,12 +936,7 @@ test('renders (first page current, size: 7)', () => {
 
 test('renders (middle page current, size: 7)', () => {
   const {container} = render(
-    <Pagination
-      currentPage={10}
-      totalPages={20}
-      size={7}
-      render={renderProp}
-    />,
+    <Pagination currentPage={10} totalPages={20} size={7} />,
   );
 
   expect(container).toMatchInlineSnapshot(`
@@ -1092,12 +1068,7 @@ test('renders (middle page current, size: 7)', () => {
 
 test('renders (last page current, size: 7)', () => {
   const {container} = render(
-    <Pagination
-      currentPage={19}
-      totalPages={20}
-      size={7}
-      render={renderProp}
-    />,
+    <Pagination currentPage={19} totalPages={20} size={7} />,
   );
 
   expect(container).toMatchInlineSnapshot(`
@@ -1220,9 +1191,7 @@ test('renders (last page current, size: 7)', () => {
 });
 
 test('renders (0 pages)', () => {
-  const {container} = render(
-    <Pagination currentPage={0} totalPages={0} render={renderProp} />,
-  );
+  const {container} = render(<Pagination currentPage={0} totalPages={0} />);
 
   expect(container).toMatchInlineSnapshot(`
     <div>
