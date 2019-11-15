@@ -38,6 +38,10 @@ const paginate = (
           currentPage + Math.ceil(size / 2),
         );
 
+  if (totalPages <= 0) {
+    return [];
+  }
+
   return [
     {type: types.FIRST, page: firstPage},
     {type: types.PREV, page: prevPage},

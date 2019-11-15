@@ -1228,36 +1228,7 @@ test('renders (0 pages)', () => {
     <div>
       <ul
         style="list-style: none; margin: 0px auto;"
-      >
-        <li
-          style="list-style: none; display: inline;"
-        >
-           
-          FIRST
-           
-        </li>
-        <li
-          style="list-style: none; display: inline;"
-        >
-           
-          PREV
-           
-        </li>
-        <li
-          style="list-style: none; display: inline;"
-        >
-           
-          NEXT
-           
-        </li>
-        <li
-          style="list-style: none; display: inline;"
-        >
-           
-          LAST
-           
-        </li>
-      </ul>
+      />
     </div>
   `);
 });

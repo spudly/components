@@ -1,5 +1,5 @@
 import {useMemo} from 'react';
-import paginate from '@spudly/paginate';
+import paginate, {PageDescriptor} from '@spudly/paginate';
 
 const usePaginate = (
   currentPage: number,
@@ -12,4 +12,5 @@ const usePaginate = (
     size,
   ]);
 
+export {PageDescriptor};
 export default usePaginate;

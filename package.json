@@ -70,7 +70,6 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
     "test": "jest",
     "tsc": "tsc --noEmit",
-    "rebolt": "rm -rf node_modules && bolt exec -- rm -rf node_modules && bolt",
     "storybook": "start-storybook -p 3000",
     "build-storybook": "build-storybook",
     "sync": "node ./scripts/sync.js",
