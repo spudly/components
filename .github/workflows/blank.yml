@@ -4,14 +4,15 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - name: build
-      run: yarn build
-    - name: lint
-      run: yarn lint
-    - name: test
-      run: yarn test --coverage
+      - uses: actions/checkout@v1
+      - name: install
+        run: yarn
+      - name: build
+        run: yarn build
+      - name: lint
+        run: yarn lint
+      - name: test
+        run: yarn test --coverage
