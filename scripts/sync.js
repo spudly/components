@@ -85,6 +85,7 @@ const syncGlobalJestConfig = async packages => {
     file,
     `module.exports = ${JSON.stringify(
       {
+        collectCoverageFrom: ['**/*.{ts,tsx,js,jsx}', '!**/node_modules/**'],
         projects: packages.map(pkg => `${pkg.location}/jest.config.js`),
       },
       null,

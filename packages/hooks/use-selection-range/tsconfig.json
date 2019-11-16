@@ -6,12 +6,5 @@
   },
   "extends": "../../../tsconfig",
   "include": ["src/**/*"],
-  "references": [
-    {
-      "path": "../../hooks/use-animated-diff"
-    },
-    {
-      "path": "../../hooks/use-selection-range"
-    }
-  ]
+  "references": []
 }

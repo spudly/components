@@ -19,7 +19,8 @@
     "react": "^16.10.2"
   },
   "devDependencies": {
-    "@spudly/string-splice": "*"
+    "@spudly/string-splice": "*",
+    "@spudly/use-selection-range": "*"
   },
   "mainSrc": "src/index.ts",
   "sideEffects": false

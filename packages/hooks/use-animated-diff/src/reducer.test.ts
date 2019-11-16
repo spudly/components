@@ -1,4 +1,4 @@
-import {reduce} from './reducer';
+import {reduce, validateActionResult} from './reducer';
 import {getIndex} from './utils';
 import {State, Action} from './types';
 
@@ -195,6 +195,19 @@ describe('BACKSPACE', () => {
       selectionEnd: getIndex(value, 1, 4),
     });
   });
+
+  test('throws if selectionEnd is 0 (nothing to delete)', () => {
+    expect(() =>
+      reduce(
+        {
+          ...state,
+          selectionStart: 0,
+          selectionEnd: 0,
+        },
+        [{type: 'BACKSPACE'}],
+      ),
+    ).toThrow('nothing to delete');
+  });
 });
 
 describe('TYPE', () => {
@@ -204,6 +217,15 @@ describe('TYPE', () => {
       selectionStart: getIndex(value, 2, 3),
       selectionEnd: getIndex(value, 2, 3),
     });
+  });
+});
+
+describe('invalid action', () => {
+  test('throws', () => {
+    const action: any = {type: 'MAKE_ME_A_SANDWICH', char: 'X'};
+    expect(() => reduce(state, [action])).toThrow(
+      'Unrecognized Action: MAKE_ME_A_SANDWICH',
+    );
   });
 });
 
@@ -410,5 +432,67 @@ describe('integration', () => {
     });
 
     expect(state.value).toBe(endValue);
+  });
+});
+
+describe('validateActionResult', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+  afterEach(() => {
+    (console.error as jest.MockedFunction<typeof console.error>).mockRestore();
+  });
+  test('does not throw if the new state is valid', () => {
+    expect(() =>
+      validateActionResult(state, state, {type: 'BACKSPACE'}),
+    ).not.toThrow();
+  });
+
+  test('throws if the new selectionStart is invalid', () => {
+    expect(() =>
+      validateActionResult(
+        state,
+        {...state, selectionStart: null as any},
+        {type: 'BACKSPACE'},
+      ),
+    ).toThrow();
+    expect(() =>
+      validateActionResult(
+        state,
+        {...state, selectionStart: NaN},
+        {type: 'BACKSPACE'},
+      ),
+    ).toThrow();
+    expect(() =>
+      validateActionResult(
+        state,
+        {...state, selectionStart: -1},
+        {type: 'BACKSPACE'},
+      ),
+    ).toThrow();
+  });
+
+  test('throws if the new selectionEnd is invalid', () => {
+    expect(() =>
+      validateActionResult(
+        state,
+        {...state, selectionEnd: null as any},
+        {type: 'BACKSPACE'},
+      ),
+    ).toThrow();
+    expect(() =>
+      validateActionResult(
+        state,
+        {...state, selectionEnd: NaN},
+        {type: 'BACKSPACE'},
+      ),
+    ).toThrow();
+    expect(() =>
+      validateActionResult(
+        state,
+        {...state, selectionEnd: -1},
+        {type: 'BACKSPACE'},
+      ),
+    ).toThrow();
   });
 });

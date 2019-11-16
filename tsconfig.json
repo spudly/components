@@ -36,6 +36,9 @@
       "path": "packages/hooks/use-paginate"
     },
     {
+      "path": "packages/hooks/use-selection-range"
+    },
+    {
       "path": "packages/utils/curry"
     },
     {

@@ -86,7 +86,7 @@ const deleteSelection = ({
   };
 };
 
-const validateActionResult = (
+export const validateActionResult = (
   prevState: State,
   nextState: State,
   action: Action,
@@ -138,7 +138,7 @@ export const reducer = (state: State, action: Action) => {
       newState = deleteSelection(state);
       break;
     default:
-      throw new Error(`Unrecognized Action: ${(action as Action, type)}`);
+      throw new Error(`Unrecognized Action: ${(action as Action).type}`);
   }
   validateActionResult(state, newState, action);
   return newState;

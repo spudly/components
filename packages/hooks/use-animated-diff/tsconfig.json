@@ -11,6 +11,9 @@
       "path": "../../utils/string-splice"
     },
     {
+      "path": "../use-selection-range"
+    },
+    {
       "path": "../../utils/times"
     },
     {

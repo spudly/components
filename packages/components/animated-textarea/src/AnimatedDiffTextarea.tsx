@@ -4,6 +4,7 @@ import {
   RenderApi,
   getPosition,
 } from '@spudly/use-animated-diff';
+import useSelectionRange from '@spudly/use-selection-range';
 
 const useFocus = (
   ref: RefObject<HTMLTextAreaElement>,
@@ -20,26 +21,6 @@ const useFocus = (
 
 const parsePx = (value: string | null): number =>
   value != null ? parseInt(value, 10) : 0;
-
-const useSelectionRange = (
-  ref: RefObject<HTMLTextAreaElement>,
-  selectionStart: number,
-  selectionEnd: number,
-) => {
-  useEffect(() => {
-    const textarea = ref.current;
-    if (!textarea) {
-      return;
-    }
-    const direction =
-      selectionStart === selectionEnd
-        ? 'none'
-        : selectionStart < selectionEnd
-        ? 'forward'
-        : 'backward';
-    textarea.setSelectionRange(selectionStart, selectionEnd, direction);
-  }, [selectionStart, ref, selectionEnd]);
-};
 
 const useScrollToLine = (
   elRef: RefObject<HTMLElement>,
