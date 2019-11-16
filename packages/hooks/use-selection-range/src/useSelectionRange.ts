@@ -6,17 +6,17 @@ const useSelectionRange = (
   selectionEnd: number,
 ) => {
   useEffect(() => {
-    const textarea = ref.current;
-    if (!textarea) {
-      return;
-    }
     const direction =
       selectionStart === selectionEnd
         ? 'none'
         : selectionStart < selectionEnd
         ? 'forward'
         : 'backward';
-    textarea.setSelectionRange(selectionStart, selectionEnd, direction);
+    ref.current!.setSelectionRange(
+      Math.min(selectionStart, selectionEnd),
+      Math.max(selectionStart, selectionEnd),
+      direction,
+    );
   }, [selectionStart, ref, selectionEnd]);
 };
 
