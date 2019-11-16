@@ -10,10 +10,11 @@ const useAnimate = (
   duration: number,
   elapsed: number,
   seek: Dispatch<SetStateAction<number>>,
+  baseSpeed: number = 1,
 ) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [speed, _setSpeed] = useState(50);
+  const [speed, _setSpeed] = useState(100);
   const isFinished = elapsed >= duration;
 
   useEffect(() => {
@@ -25,13 +26,13 @@ const useAnimate = (
           return;
         }
         const timeElapsed = Date.now() - startTime!;
-        seek(Math.floor((timeElapsed / 25) * (speed / 100)));
+        seek(Math.min(timeElapsed * baseSpeed * (speed / 100), duration));
         requestAnimationFrame(effect);
       }
     };
     effect();
     return () => void (expired = true);
-  }, [startTime, isPlaying, speed, duration, isFinished, seek]);
+  }, [startTime, isPlaying, speed, duration, isFinished, seek, baseSpeed]);
 
   const play = useCallback(() => {
     setIsPlaying(true);
@@ -49,12 +50,12 @@ const useAnimate = (
 
   const setSpeed = useCallback(
     (speed: number) => {
-      const newTimeElapsed = (elapsed / (speed / 100)) * 25;
+      const newTimeElapsed = elapsed / (speed / 100) / baseSpeed;
       const newStartTime = Date.now() - newTimeElapsed;
       setStartTime(newStartTime);
       _setSpeed(speed);
     },
-    [elapsed],
+    [baseSpeed, elapsed],
   );
 
   return {isPlaying, isFinished, speed, setSpeed, play, pause, stop};
