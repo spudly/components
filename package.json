@@ -1,9 +1,9 @@
 {
-  "name": "@spudly/components",
-  "repository": "git+https://github.com/spudly/components.git",
+  "name": "@spudly/sandbox",
+  "repository": "git+https://github.com/spudly/sandbox.git",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/spudly/components/issues"
+    "url": "https://github.com/spudly/sandbox/issues"
   },
   "private": true,
   "dependencies": {

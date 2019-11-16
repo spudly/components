@@ -1,6 +1,7 @@
-# @spudly/components
+# @spudly/sandbox
 
-A monorepo w/ React components (and some other stuff).
+A springboard for creating npm packages. Packages created here should eventually
+make their way into individual repositories & the npm registry.
 
 # TODOs
 

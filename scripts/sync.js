@@ -43,7 +43,7 @@ const syncPackageJson = async pkg => {
       test: 'jest',
     },
     license: 'ISC',
-    repository: `https://github.com/spudly/components/tree/master${pkg.location}`,
+    repository: `https://github.com/spudly/sandbox/tree/master${pkg.location}`,
     files: ['build'],
     sideEffects: false, // enables webpack treeshaking
   };
