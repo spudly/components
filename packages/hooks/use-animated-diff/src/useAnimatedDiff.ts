@@ -1,7 +1,7 @@
 import {useState, useMemo, useCallback} from 'react';
 import {parsePatch, applyPatch} from 'diff';
 import useAnimate from '@spudly/use-animate';
-import getEdits from './getActions';
+import getActions from './getActions';
 import {RenderApi, State} from './types';
 import {reduce} from './reducer';
 
@@ -15,6 +15,7 @@ const useAnimatedDiff = (
 
   const [patchIndex, _setPatchIndex] = useState(0);
   const [editIndex, setEditIndex] = useState(0);
+  const [dynamicState, setDynamicState] = useState<State | null>(null);
 
   const patchNames = useMemo(
     () =>
@@ -33,15 +34,32 @@ const useAnimatedDiff = (
   }, [initialValue, patches, patchIndex]);
 
   const [editActions, {value, selectionStart, selectionEnd}] = useMemo(() => {
-    const initialState: State = {
+    const initialState: State = dynamicState ?? {
       value: startValue,
       selectionStart: 0,
       selectionEnd: 0,
     };
-    const actions = getEdits(initialState, endValue);
+    const actions = getActions(initialState, endValue);
     const state = reduce(initialState, actions.slice(0, editIndex));
     return [actions, state];
-  }, [startValue, endValue, editIndex]);
+  }, [dynamicState, startValue, endValue, editIndex]);
+
+  const setPatchIndex = useCallback(
+    (index: number) => {
+      _setPatchIndex(index);
+      if (index < patchIndex) {
+        setDynamicState(null);
+      }
+      setEditIndex(0);
+    },
+    [patchIndex],
+  );
+
+  const handleFinished = useCallback(() => {
+    if (patchIndex < patches.length - 1) {
+      setPatchIndex(patchIndex + 1);
+    }
+  }, [patchIndex, patches.length, setPatchIndex]);
 
   const {
     isPlaying,
@@ -51,12 +69,24 @@ const useAnimatedDiff = (
     play,
     pause,
     stop,
-  } = useAnimate(editActions.length, editIndex, setEditIndex);
+  } = useAnimate(
+    editActions.length,
+    editIndex,
+    setEditIndex,
+    0.02,
+    handleFinished,
+  );
 
-  const setPatchIndex = useCallback((index: number) => {
-    _setPatchIndex(index);
-    setEditIndex(0);
-  }, []);
+  const handleChange = useCallback(
+    (value, selectionStart, selectionEnd) => {
+      if (isPlaying) {
+        pause();
+      }
+      setEditIndex(0);
+      setDynamicState({value, selectionStart, selectionEnd});
+    },
+    [isPlaying, pause],
+  );
 
   return {
     value,
@@ -75,6 +105,7 @@ const useAnimatedDiff = (
     duration: editActions.length,
     elapsed: editIndex,
     seek: setEditIndex,
+    onChange: handleChange,
   };
 };
 

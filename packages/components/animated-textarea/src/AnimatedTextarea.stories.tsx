@@ -1,6 +1,6 @@
 import React from 'react';
 import * as diff from 'diff';
-import AnimatedDiffTextarea from './AnimatedDiffTextarea';
+import AnimatedTextarea from './AnimatedTextarea';
 
 const hello = `import React from 'react';
 import ReactDOM from 'react-dom';
@@ -37,16 +37,16 @@ const patches = [
   diff.createPatch('greeting', whom, greeting),
 ];
 
-export const animatedDiffTextarea = () => {
+export const animatedTextarea = () => {
   return (
-    <AnimatedDiffTextarea
+    <AnimatedTextarea
       initialValue={hello}
       patches={patches}
       style={{
         fontFamily: 'monospace',
         fontSize: 16,
         width: '80vw',
-        height: '80vh',
+        height: '40vh',
       }}
       render={(
         textarea,
@@ -85,7 +85,7 @@ export const animatedDiffTextarea = () => {
               Speed{' '}
               <input
                 type="range"
-                min={0}
+                min={1}
                 step={1}
                 max={100}
                 value={speed}
@@ -163,4 +163,4 @@ export const animatedDiffTextarea = () => {
   );
 };
 
-export default {title: 'animated-diff-textarea'};
+export default {title: 'animated-textarea'};

@@ -1,6 +1,6 @@
 {
   "name": "@spudly/animated-textarea",
-  "main": "build/AnimatedDiffTextarea.js",
+  "main": "build/AnimatedTextarea.js",
   "version": "0.1.0",
   "scripts": {
     "build": "tsc -b tsconfig.json",
@@ -20,6 +20,6 @@
   "devDependencies": {
     "diff": "^4.0.1"
   },
-  "mainSrc": "src/AnimatedDiffTextarea.tsx",
+  "mainSrc": "src/AnimatedTextarea.tsx",
   "sideEffects": false
 }

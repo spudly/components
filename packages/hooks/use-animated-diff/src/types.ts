@@ -30,4 +30,9 @@ export type RenderApi = {
   stop: () => void;
   setSpeed: (speed: number) => void;
   seek: (elapsed: number) => void;
+  onChange: (
+    value: string,
+    selectionStart: number,
+    selectionEnd: number,
+  ) => void;
 };

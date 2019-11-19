@@ -32,5 +32,6 @@ module.exports = ({config}) => ({
   resolve: {
     ...config.resolve,
     extensions: ['.ts', '.tsx', ...config.resolve.extensions],
+    mainFields: ['mainSrc', 'module', 'main'],
   },
 });

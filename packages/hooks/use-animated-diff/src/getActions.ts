@@ -4,56 +4,56 @@ import {Action, State} from './types';
 import {reduce} from './reducer';
 import {getPosition} from './utils';
 
-type ActionsAndState = {edits: Array<Action>; state: State};
+type ActionsAndState = {actions: Array<Action>; state: State};
 
 const processNewActions = (
-  edits: Array<Action>,
-  newEdits: Array<Action>,
+  actions: Array<Action>,
+  newActions: Array<Action>,
   state: State,
 ): ActionsAndState => ({
-  edits: [...edits, ...newEdits],
-  state: reduce(state, newEdits),
+  actions: [...actions, ...newActions],
+  state: reduce(state, newActions),
 });
 
 const move = (
-  {edits, state}: ActionsAndState,
+  {actions, state}: ActionsAndState,
   next: number,
   select: boolean = false,
 ) => {
-  const newEdits: Array<Action> = [];
+  const newActions: Array<Action> = [];
 
   const [prevLine] = getPosition(state.value, state.selectionEnd);
   const [nextLine, nextColumn] = getPosition(state.value, next);
 
   const lineDiff = Math.abs(prevLine - nextLine);
-  newEdits.push(
+  newActions.push(
     ...times(lineDiff, {
       type: nextLine < prevLine ? 'MOVE_UP' : 'MOVE_DOWN',
       select,
     } as Action),
   );
-  const afterMovingLines = processNewActions(edits, newEdits, state);
+  const afterMovingLines = processNewActions(actions, newActions, state);
   const [, columnAfterMovingLines] = getPosition(
     afterMovingLines.state.value,
     afterMovingLines.state.selectionStart,
   );
   const colDiff = Math.abs(columnAfterMovingLines - nextColumn);
-  newEdits.push(
+  newActions.push(
     ...times(colDiff, {
       type: nextColumn < columnAfterMovingLines ? 'MOVE_LEFT' : 'MOVE_RIGHT',
       select,
     } as Action),
   );
-  const nextResult = processNewActions(edits, newEdits, state);
+  const nextResult = processNewActions(actions, newActions, state);
   return nextResult;
 };
 
 const add = (
-  {edits, state}: ActionsAndState,
+  {actions, state}: ActionsAndState,
   {value}: Change,
 ): ActionsAndState =>
   processNewActions(
-    edits,
+    actions,
     value.split('').map(char => ({type: 'TYPE', char} as Action)),
     state,
   );
@@ -69,7 +69,7 @@ const remove = (
     true,
   );
   return processNewActions(
-    movedActionsAndState.edits,
+    movedActionsAndState.actions,
     [{type: 'DELETE_SELECTED'}],
     movedActionsAndState.state,
   );
@@ -77,7 +77,7 @@ const remove = (
 
 const getActions = (initialState: State, endValue: string): Array<Action> => {
   const changes = diffWordsWithSpace(initialState.value, endValue);
-  const {edits} = changes.reduce(
+  const {actions} = changes.reduce(
     (ActionsAndState, change, changeIndex) => {
       if (ActionsAndState.state.value === endValue) {
         // we're done. no need to look at the other changes
@@ -98,9 +98,9 @@ const getActions = (initialState: State, endValue: string): Array<Action> => {
         (changeIndex === 0 ? 0 : next.state.selectionEnd) + change.value.length,
       );
     },
-    {edits: [], state: initialState} as ActionsAndState,
+    {actions: [], state: initialState} as ActionsAndState,
   );
-  return edits;
+  return actions;
 };
 
 export default getActions;

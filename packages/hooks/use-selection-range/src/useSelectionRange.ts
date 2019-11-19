@@ -17,7 +17,7 @@ const useSelectionRange = (
       Math.max(selectionStart, selectionEnd),
       direction,
     );
-  }, [selectionStart, ref, selectionEnd]);
+  }, [ref, selectionStart, selectionEnd]);
 };
 
 export default useSelectionRange;

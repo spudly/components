@@ -50,7 +50,7 @@ type Props = JSX.IntrinsicElements['textarea'] & {
   render: (textarea: ReactElement, api: RenderApi) => ReactElement;
 };
 
-const AnimatedDiffTextarea = ({
+const AnimatedTextarea = ({
   initialValue,
   patches,
   onChange,
@@ -59,14 +59,31 @@ const AnimatedDiffTextarea = ({
 }: Props) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const api = useAnimatedDiff(initialValue, patches);
+  useEffect(() => {
+    const t = textareaRef.current!;
+    if (t.value !== api.value) {
+      t.value = api.value;
+    }
+  }, [api.value]);
   useSelectionRange(textareaRef, api.selectionStart, api.selectionEnd);
   const [line] = getPosition(api.value, api.selectionEnd);
   useScrollToLine(textareaRef, api.value, line);
   useFocus(textareaRef, api.value, api.selectionStart, api.selectionEnd);
+
   return render(
-    <textarea ref={textareaRef} value={api.value} {...props} />,
+    <textarea
+      ref={textareaRef}
+      onChange={e =>
+        api.onChange(
+          e.currentTarget.value,
+          e.currentTarget.selectionStart,
+          e.currentTarget.selectionEnd,
+        )
+      }
+      {...props}
+    />,
     api,
   );
 };
 
-export default AnimatedDiffTextarea;
+export default AnimatedTextarea;

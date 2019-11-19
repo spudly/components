@@ -11,6 +11,7 @@ const useAnimate = (
   elapsed: number,
   seek: Dispatch<SetStateAction<number>>,
   baseSpeed: number = 1,
+  onFinish?: () => void,
 ) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -23,6 +24,8 @@ const useAnimate = (
       if (!expired) {
         if (isFinished) {
           setIsPlaying(false);
+          // eslint-disable-next-line no-unused-expressions
+          onFinish?.();
           return;
         }
         const timeElapsed = Date.now() - startTime!;
@@ -32,7 +35,16 @@ const useAnimate = (
     };
     effect();
     return () => void (expired = true);
-  }, [startTime, isPlaying, speed, duration, isFinished, seek, baseSpeed]);
+  }, [
+    startTime,
+    isPlaying,
+    speed,
+    duration,
+    isFinished,
+    seek,
+    baseSpeed,
+    onFinish,
+  ]);
 
   const play = useCallback(() => {
     setIsPlaying(true);

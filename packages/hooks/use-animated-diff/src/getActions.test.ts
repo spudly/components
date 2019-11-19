@@ -21,21 +21,21 @@ expect.addSnapshotSerializer({
       result = stringSplice(
         Math.max(selectionStart, selectionEnd),
         0,
-        '🤛',
+        ']',
         result,
       );
     }
     result = stringSplice(
       selectionStart <= selectionEnd ? selectionEnd : selectionStart,
       0,
-      '👊',
+      '|',
       result,
     );
     if (selectionStart !== selectionEnd) {
       result = stringSplice(
         Math.min(selectionStart, selectionEnd),
         0,
-        '🤜',
+        '[',
         result,
       );
     }
@@ -204,58 +204,58 @@ test('correctly handles moving to lines with fewer columns', () => {
   ]);
   expect(reduce(state, edits.slice(0, 1))).toMatchInlineSnapshot(`
     abc
-    👊
+    |
     1234
   `);
   expect(reduce(state, edits.slice(0, 2))).toMatchInlineSnapshot(`
     abc
 
-    👊1234
+    |1234
   `);
   expect(reduce(state, edits.slice(0, 3))).toMatchInlineSnapshot(`
     abc
 
-    🤜1👊🤛234
+    [1|]234
   `);
   expect(reduce(state, edits.slice(0, 4))).toMatchInlineSnapshot(`
     abc
 
-    🤜12👊🤛34
+    [12|]34
   `);
   expect(reduce(state, edits.slice(0, 5))).toMatchInlineSnapshot(`
     abc
 
-    🤜123👊🤛4
+    [123|]4
   `);
   expect(reduce(state, edits.slice(0, 6))).toMatchInlineSnapshot(`
     abc
 
-    🤜1234👊🤛
+    [1234|]
   `);
   expect(reduce(state, edits.slice(0, 7))).toMatchInlineSnapshot(`
     abc
 
-    👊
+    |
   `);
   expect(reduce(state, edits.slice(0, 8))).toMatchInlineSnapshot(`
     abc
 
-    5👊
+    5|
   `);
   expect(reduce(state, edits.slice(0, 9))).toMatchInlineSnapshot(`
     abc
 
-    56👊
+    56|
   `);
   expect(reduce(state, edits.slice(0, 10))).toMatchInlineSnapshot(`
     abc
 
-    567👊
+    567|
   `);
   expect(reduce(state, edits.slice(0, 11))).toMatchInlineSnapshot(`
     abc
 
-    5678👊
+    5678|
   `);
 });
 
