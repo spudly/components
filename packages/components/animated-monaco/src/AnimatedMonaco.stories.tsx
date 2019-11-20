@@ -1,6 +1,6 @@
 import React from 'react';
 import * as diff from 'diff';
-import AnimatedDiffMonaco from './AnimatedDiffMonaco';
+import AnimatedMonaco from './AnimatedMonaco';
 
 const hello = `import React from 'react';
 import ReactDOM from 'react-dom';
@@ -39,9 +39,9 @@ const patches = [
   diff.createPatch('greeting', whom, greeting),
 ];
 
-export const animatedDiffMonaco = () => {
+export const animatedMonaco = () => {
   return (
-    <AnimatedDiffMonaco
+    <AnimatedMonaco
       initialValue={initialValue}
       patches={patches}
       options={{
@@ -50,7 +50,7 @@ export const animatedDiffMonaco = () => {
       }}
       style={{
         width: '80vw',
-        height: '100px',
+        height: '300px',
       }}
       render={(
         editor,

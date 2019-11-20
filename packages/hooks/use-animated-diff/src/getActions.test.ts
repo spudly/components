@@ -5,6 +5,34 @@ import {State} from './types';
 import times from '@spudly/times';
 import {getIndex} from './utils';
 
+const stateToString = (state: State) => {
+  const {value, selectionStart, selectionEnd} = state;
+  let result = value;
+  if (selectionStart !== selectionEnd) {
+    result = stringSplice(
+      Math.max(selectionStart, selectionEnd),
+      0,
+      ']',
+      result,
+    );
+  }
+  result = stringSplice(
+    selectionStart <= selectionEnd ? selectionEnd : selectionStart,
+    0,
+    '|',
+    result,
+  );
+  if (selectionStart !== selectionEnd) {
+    result = stringSplice(
+      Math.min(selectionStart, selectionEnd),
+      0,
+      '[',
+      result,
+    );
+  }
+  return result;
+};
+
 expect.addSnapshotSerializer({
   test(state) {
     return (
@@ -15,31 +43,7 @@ expect.addSnapshotSerializer({
     );
   },
   print(state: State) {
-    const {value, selectionStart, selectionEnd} = state;
-    let result = value;
-    if (selectionStart !== selectionEnd) {
-      result = stringSplice(
-        Math.max(selectionStart, selectionEnd),
-        0,
-        ']',
-        result,
-      );
-    }
-    result = stringSplice(
-      selectionStart <= selectionEnd ? selectionEnd : selectionStart,
-      0,
-      '|',
-      result,
-    );
-    if (selectionStart !== selectionEnd) {
-      result = stringSplice(
-        Math.min(selectionStart, selectionEnd),
-        0,
-        '[',
-        result,
-      );
-    }
-    return result;
+    return stateToString(state);
   },
 });
 

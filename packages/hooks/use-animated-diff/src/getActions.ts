@@ -35,7 +35,7 @@ const move = (
   const afterMovingLines = processNewActions(actions, newActions, state);
   const [, columnAfterMovingLines] = getPosition(
     afterMovingLines.state.value,
-    afterMovingLines.state.selectionStart,
+    afterMovingLines.state.selectionEnd,
   );
   const colDiff = Math.abs(columnAfterMovingLines - nextColumn);
   newActions.push(
@@ -45,6 +45,11 @@ const move = (
     } as Action),
   );
   const nextResult = processNewActions(actions, newActions, state);
+  if (nextResult.state.selectionEnd !== next) {
+    throw new Error(
+      `expected nextResult to have position ${next} but got ${nextResult.state.selectionEnd}`,
+    );
+  }
   return nextResult;
 };
 

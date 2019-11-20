@@ -2,25 +2,35 @@ import React from 'react';
 import * as diff from 'diff';
 import AnimatedTextarea from './AnimatedTextarea';
 
-const hello = `import React from 'react';
-import ReactDOM from 'react-dom';
+// const hello = `import React from 'react';
+// import ReactDOM from 'react-dom';
 
-const Hello = () => <p>Hello World!</p>;
+// const Hello = () => <p>Hello World!</p>;
 
-const root = document.querySelector('#root');
-ReactDOM.render(<Hello />, root);
+// const root = document.querySelector('#root');
+// ReactDOM.render(<Hello />, root);
 
-export default React;`;
+// export default React;`;
 
-const whom = `import React from 'react';
-import ReactDOM from 'react-dom';
+const hello = `a
+bb
 
-const Hello = ({whom}) => <p>Hello {whom}!</p>;
+d`;
 
-const root = document.querySelector('#root');
-ReactDOM.render(<Hello whom="darkness, my old friend" />, root);
+const whom = `a
+bb
 
-export default React;`;
+df`;
+
+// const whom = `import React from 'react';
+// import ReactDOM from 'react-dom';
+
+// const Hello = ({whom}) => <p>Hello {whom}!</p>;
+
+// const root = document.querySelector('#root');
+// ReactDOM.render(<Hello whom="darkness, my old friend" />, root);
+
+// export default React;`;
 
 const greeting = `import React from 'react';
 import ReactDOM from 'react-dom';

@@ -12,6 +12,7 @@ import {
   useAnimatedDiff,
   RenderApi,
   getPosition,
+  getIndex,
 } from '@spudly/use-animated-diff';
 import * as monaco from 'monaco-editor';
 import {diffChars} from 'diff';
@@ -39,9 +40,11 @@ const useScrollMonacoEditorToLine = (
 
 const useSetMonacoEditorValue = (
   editorRef: RefObject<monaco.editor.IStandaloneCodeEditor>,
+  ignoreChangeEventRef: MutableRefObject<boolean>,
   value: string,
 ) => {
   useEffect(() => {
+    ignoreChangeEventRef.current = true;
     const editor = editorRef.current;
     if (!editor) {
       return;
@@ -84,7 +87,8 @@ const useSetMonacoEditorValue = (
         },
       ]);
     });
-  }, [editorRef, value]);
+    ignoreChangeEventRef.current = false;
+  }, [editorRef, ignoreChangeEventRef, value]);
 };
 
 const useSetMonacoEditorScrollPosition = (
@@ -149,16 +153,59 @@ const useFocusMonacoEditor = (
   }, [editorRef, value, selectionStart, selectionEnd]);
 };
 
+const useOnChange = (
+  editorRef: RefObject<monaco.editor.IStandaloneCodeEditor>,
+  ignoreChangeEventRef: MutableRefObject<boolean>,
+  onChange: (value: string) => void,
+) => {
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor) {
+      return;
+    }
+    const subscription = editor.onDidChangeModelContent(e => {
+      if (!ignoreChangeEventRef.current) {
+        onChange(editor.getValue());
+      }
+    });
+    return () => subscription.dispose();
+  });
+};
+
 const AnimatedDiffMonaco = forwardRef(
   (
     {initialValue, patches, onChange, render, options, ...props}: Props,
     ref: Ref<RenderApi>,
   ) => {
     const [containerRef, editorRef] = useCreateMonacoEditor(options);
+    const ignoreChangeEventRef = useRef(false);
     const api = useAnimatedDiff(initialValue, patches);
+    useOnChange(editorRef, ignoreChangeEventRef, () => {
+      // GOTCHA: callback gets called before selection is updated. To workaround this, we
+      // defer to the next tick using setTimeout(fn, 0)
+      setTimeout(() => {
+        try {
+          const val = editorRef.current!.getValue();
+          const selection = editorRef.current!.getSelection()!;
+          const selectionStart = getIndex(
+            val,
+            selection.startLineNumber,
+            selection.startColumn,
+          );
+          const selectionEnd = getIndex(
+            val,
+            selection?.endLineNumber,
+            selection.endColumn,
+          );
+          api.onChange(val, selectionStart, selectionEnd);
+        } catch (error) {
+          debugger;
+        }
+      }, 0);
+    });
     useImperativeHandle<RenderApi, RenderApi>(ref, () => api, [api]);
     const [line] = getPosition(api.value, api.selectionEnd);
-    useSetMonacoEditorValue(editorRef, api.value);
+    useSetMonacoEditorValue(editorRef, ignoreChangeEventRef, api.value);
     useFocusMonacoEditor(
       editorRef,
       api.value,

@@ -58,6 +58,7 @@ const useAnimatedDiff = (
   const handleFinished = useCallback(() => {
     if (patchIndex < patches.length - 1) {
       setPatchIndex(patchIndex + 1);
+      setDynamicState(null);
     }
   }, [patchIndex, patches.length, setPatchIndex]);
 

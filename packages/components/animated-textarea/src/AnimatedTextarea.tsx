@@ -50,6 +50,12 @@ type Props = JSX.IntrinsicElements['textarea'] & {
   render: (textarea: ReactElement, api: RenderApi) => ReactElement;
 };
 
+type SelectionInfo = {
+  selectionStart: number;
+  selectionEnd: number;
+  selectionDirection: string;
+};
+
 const AnimatedTextarea = ({
   initialValue,
   patches,
@@ -73,13 +79,13 @@ const AnimatedTextarea = ({
   return render(
     <textarea
       ref={textareaRef}
-      onChange={e =>
+      onChange={e => {
         api.onChange(
           e.currentTarget.value,
           e.currentTarget.selectionStart,
           e.currentTarget.selectionEnd,
-        )
-      }
+        );
+      }}
       {...props}
     />,
     api,
