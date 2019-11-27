@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outDir": "build",
+    "composite": true,
+    "rootDir": "src"
+  },
+  "extends": "../../tsconfig",
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "../use-animated-diff"
+    }
+  ]
+}

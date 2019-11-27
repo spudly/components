@@ -13,7 +13,7 @@ const camelCase = s => s.replace(/-(\w)/g, (_, $1) => $1.toUpperCase());
 const jestConfig = `const {name} = require('./package.json');
 
 module.exports = {
-  ...require('../../../jest.config.base.js'),
+  ...require('../../jest.config.base.js'),
   displayName: name,
   rootDir: __dirname,
 };
@@ -57,7 +57,7 @@ const syncTypescriptConfig = async (pkg, packages) => {
       composite: true,
       rootDir: 'src',
     },
-    extends: '../../../tsconfig',
+    extends: '../../tsconfig',
     include: ['src/**/*'],
     references: pkg.dependencies.map(name => {
       const depPkg = packages.find(p => p.name === name);

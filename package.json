@@ -65,7 +65,7 @@
   },
   "author": "Stephen John Sorensen <shuoink@gmail.com>",
   "workspaces": [
-    "packages/*/*"
+    "packages/*"
   ],
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",

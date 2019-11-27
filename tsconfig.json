@@ -12,55 +12,55 @@
   "include": ["packages/*/src/**/*"],
   "references": [
     {
-      "path": "packages/components/animated-monaco"
+      "path": "packages/animated-monaco"
     },
     {
-      "path": "packages/components/animated-react-live"
+      "path": "packages/animated-react-live"
     },
     {
-      "path": "packages/components/animated-textarea"
+      "path": "packages/animated-textarea"
     },
     {
-      "path": "packages/components/icons"
+      "path": "packages/curry"
     },
     {
-      "path": "packages/components/pagination"
+      "path": "packages/get-number-precision"
     },
     {
-      "path": "packages/components/use-player"
+      "path": "packages/icons"
     },
     {
-      "path": "packages/hooks/use-animate"
+      "path": "packages/paginate"
     },
     {
-      "path": "packages/hooks/use-animated-diff"
+      "path": "packages/pagination"
     },
     {
-      "path": "packages/hooks/use-paginate"
+      "path": "packages/range"
     },
     {
-      "path": "packages/hooks/use-selection-range"
+      "path": "packages/sleep"
     },
     {
-      "path": "packages/utils/curry"
+      "path": "packages/string-splice"
     },
     {
-      "path": "packages/utils/get-number-precision"
+      "path": "packages/times"
     },
     {
-      "path": "packages/utils/paginate"
+      "path": "packages/use-animate"
     },
     {
-      "path": "packages/utils/range"
+      "path": "packages/use-animated-diff"
     },
     {
-      "path": "packages/utils/sleep"
+      "path": "packages/use-paginate"
     },
     {
-      "path": "packages/utils/string-splice"
+      "path": "packages/use-player"
     },
     {
-      "path": "packages/utils/times"
+      "path": "packages/use-selection-range"
     }
   ]
 }

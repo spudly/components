@@ -1,0 +1,23 @@
+{
+  "name": "@spudly/string-splice",
+  "main": "build/stringSplice.js",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/sandbox/tree/master/packages/string-splice",
+  "files": [
+    "build"
+  ],
+  "devDependencies": {
+    "jest": "^24.9.0"
+  },
+  "dependencies": {
+    "@spudly/curry": "^0.0.0"
+  },
+  "mainSrc": "src/stringSplice.ts",
+  "sideEffects": false
+}

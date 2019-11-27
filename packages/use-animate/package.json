@@ -1,0 +1,23 @@
+{
+  "name": "@spudly/use-animate",
+  "main": "build/useAnimate.js",
+  "mainSrc": "src/useAnimate.ts",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/sandbox/tree/master/packages/use-animate",
+  "files": [
+    "build"
+  ],
+  "sideEffects": false,
+  "dependencies": {
+    "react": "^16.10.2"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4"
+  }
+}

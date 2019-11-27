@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "outDir": "build",
+    "composite": true,
+    "rootDir": "src"
+  },
+  "extends": "../../tsconfig",
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "../string-splice"
+    },
+    {
+      "path": "../use-selection-range"
+    },
+    {
+      "path": "../times"
+    },
+    {
+      "path": "../use-animate"
+    }
+  ]
+}
