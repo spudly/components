@@ -6,7 +6,13 @@ import {render, cleanup, fireEvent, wait} from '@testing-library/react';
 import useAnimate from './useAnimate';
 import '@testing-library/jest-dom/extend-expect';
 
-const Progress = ({baseSpeed}: {baseSpeed?: number}) => {
+const Progress = ({
+  baseSpeed,
+  onFinish,
+}: {
+  baseSpeed?: number;
+  onFinish?: () => void;
+}) => {
   const duration = 100;
   const [elapsed, seek] = useState(0);
   const {
@@ -17,7 +23,7 @@ const Progress = ({baseSpeed}: {baseSpeed?: number}) => {
     play,
     pause,
     stop,
-  } = useAnimate(duration, elapsed, seek, baseSpeed);
+  } = useAnimate(duration, elapsed, seek, baseSpeed, onFinish);
   return (
     <>
       <div
@@ -114,6 +120,16 @@ test('play: baseSpeed: 2', async () => {
   await wait(() => expect(getByRole('progressbar')).toHaveStyle(`width: 100%`));
   await wait(() => expect(getByLabelText('Is Playing?')).not.toBeChecked());
   expect(getByLabelText('Is Finished?')).toBeChecked();
+});
+
+test('calls onFinish if provided', async () => {
+  const onFinish = jest.fn();
+  (Date.now as MockNow).mockReturnValue(0);
+  const {getByText, getByLabelText} = render(<Progress onFinish={onFinish} />);
+  fireEvent.click(getByText('play'));
+  (Date.now as MockNow).mockReturnValue(101);
+  await wait(() => expect(getByLabelText('Is Finished?')).toBeChecked());
+  expect(onFinish).toHaveBeenCalledTimes(1);
 });
 
 test('pause', async () => {

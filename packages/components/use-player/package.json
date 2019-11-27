@@ -1,0 +1,17 @@
+{
+  "name": "@spudly/use-player",
+  "version": "0.0.0",
+  "main": "build/usePlayer.js",
+  "mainSrc": "src/usePlayer.ts",
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/sandbox/tree/master/packages/components/use-player",
+  "files": [
+    "build"
+  ],
+  "sideEffects": false
+}

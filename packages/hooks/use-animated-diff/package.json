@@ -7,14 +7,14 @@
     "test": "jest"
   },
   "license": "ISC",
-  "repository": "https://github.com/spudly/components/tree/masterpackages/hooks/use-animated-diff",
+  "repository": "https://github.com/spudly/sandbox/tree/master/packages/hooks/use-animated-diff",
   "files": [
     "build"
   ],
-  "version": "0.1.0",
+  "version": "0.0.0",
   "dependencies": {
-    "@spudly/times": "^0.1.0",
-    "@spudly/use-animate": "^0.1.0",
+    "@spudly/times": "^0.0.0",
+    "@spudly/use-animate": "^0.0.0",
     "diff": "^4.0.1",
     "react": "^16.10.2"
   },

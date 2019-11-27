@@ -1,19 +1,19 @@
 {
   "name": "@spudly/animated-monaco",
   "main": "build/AnimatedMonaco.js",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "scripts": {
     "build": "tsc -b tsconfig.json",
     "prepare": "npm run build",
     "test": "jest"
   },
   "license": "ISC",
-  "repository": "https://github.com/spudly/components/tree/masterpackages/components/animated-monaco",
+  "repository": "https://github.com/spudly/sandbox/tree/master/packages/components/animated-monaco",
   "files": [
     "build"
   ],
   "dependencies": {
-    "@spudly/use-animated-diff": "^0.1.0",
+    "@spudly/use-animated-diff": "^0.0.0",
     "diff": "^4.0.1",
     "monaco-editor": "^0.18.1",
     "react": "^16.10.2"

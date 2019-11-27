@@ -6,12 +6,5 @@
   },
   "extends": "../../../tsconfig",
   "include": ["src/**/*"],
-  "references": [
-    {
-      "path": "../animated-monaco"
-    },
-    {
-      "path": "../icons"
-    }
-  ]
+  "references": []
 }

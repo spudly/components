@@ -1,6 +1,6 @@
 {
   "name": "@spudly/use-selection-range",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "main": "build/useSelectionRange.js",
   "mainSrc": "src/useSelectionRange.ts",
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "license": "ISC",
-  "repository": "https://github.com/spudly/components/tree/masterpackages/hooks/use-selection-range",
+  "repository": "https://github.com/spudly/sandbox/tree/master/packages/hooks/use-selection-range",
   "files": [
     "build"
   ],

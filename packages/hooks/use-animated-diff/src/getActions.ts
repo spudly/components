@@ -45,11 +45,6 @@ const move = (
     } as Action),
   );
   const nextResult = processNewActions(actions, newActions, state);
-  if (nextResult.state.selectionEnd !== next) {
-    throw new Error(
-      `expected nextResult to have position ${next} but got ${nextResult.state.selectionEnd}`,
-    );
-  }
   return nextResult;
 };
 

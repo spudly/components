@@ -16,6 +16,7 @@ const useAnimatedDiff = (
   const [patchIndex, _setPatchIndex] = useState(0);
   const [editIndex, setEditIndex] = useState(0);
   const [dynamicState, setDynamicState] = useState<State | null>(null);
+  const seek = useCallback(elapsed => setEditIndex(Math.floor(elapsed)), []);
 
   const patchNames = useMemo(
     () =>
@@ -50,9 +51,9 @@ const useAnimatedDiff = (
       if (index < patchIndex) {
         setDynamicState(null);
       }
-      setEditIndex(0);
+      seek(0);
     },
-    [patchIndex],
+    [patchIndex, seek],
   );
 
   const handleFinished = useCallback(() => {
@@ -70,23 +71,17 @@ const useAnimatedDiff = (
     play,
     pause,
     stop,
-  } = useAnimate(
-    editActions.length,
-    editIndex,
-    setEditIndex,
-    0.02,
-    handleFinished,
-  );
+  } = useAnimate(editActions.length, editIndex, seek, 0.02, handleFinished);
 
   const handleChange = useCallback(
     (value, selectionStart, selectionEnd) => {
       if (isPlaying) {
         pause();
       }
-      setEditIndex(0);
+      seek(0);
       setDynamicState({value, selectionStart, selectionEnd});
     },
-    [isPlaying, pause],
+    [isPlaying, pause, seek],
   );
 
   return {
@@ -105,7 +100,7 @@ const useAnimatedDiff = (
     patchNames,
     duration: editActions.length,
     elapsed: editIndex,
-    seek: setEditIndex,
+    seek,
     onChange: handleChange,
   };
 };

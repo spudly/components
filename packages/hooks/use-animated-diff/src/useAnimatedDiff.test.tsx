@@ -3,7 +3,7 @@
  **/
 import React, {useRef} from 'react';
 import useSelectionRange from '@spudly/use-selection-range';
-import {render, cleanup, fireEvent} from '@testing-library/react';
+import {render, cleanup, fireEvent, wait} from '@testing-library/react';
 import * as diff from 'diff';
 import useAnimatedDiff from './useAnimatedDiff';
 import '@testing-library/jest-dom/extend-expect';
@@ -56,12 +56,32 @@ const AnimatedTextarea = ({
   return (
     <>
       <div data-testid="names">{api.patchNames.join(', ')}</div>
+      <div data-testid="isPlaying">{String(api.isPlaying)}</div>
       <label>
         Code
-        <textarea ref={textareaRef} value={api.value} readOnly />
+        <textarea
+          ref={textareaRef}
+          value={api.value}
+          onChange={e => {
+            api.onChange(
+              e.currentTarget.value,
+              e.currentTarget.selectionStart,
+              e.currentTarget.selectionEnd,
+            );
+          }}
+        />
       </label>
-      <button type="button" onClick={() => api.setPatchIndex(1)}>
+      <button
+        type="button"
+        onClick={() => api.setPatchIndex(api.patchIndex + 1)}
+      >
         next patch
+      </button>
+      <button
+        type="button"
+        onClick={() => api.setPatchIndex(api.patchIndex - 1)}
+      >
+        prev patch
       </button>
       <button type="button" onClick={api.play}>
         play
@@ -72,7 +92,14 @@ const AnimatedTextarea = ({
       <button type="button" onClick={api.stop}>
         stop
       </button>
-      {/* <button type="button" onClick={api.setSpeed: (speed: number) => void; */}
+      <label>
+        Speed
+        <input
+          type="number"
+          value={api.speed}
+          onChange={e => api.setSpeed(Number(e.currentTarget.value))}
+        />
+      </label>
       {/* <button type="button" onClick={api.seek: (elapsed: number) => void; */}
     </>
   );
@@ -83,7 +110,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  (console.error as jest.MockedFunction<typeof console.error>).mockRestore();
+  // (console.error as jest.MockedFunction<typeof console.error>).mockRestore();
   cleanup();
 });
 
@@ -100,12 +127,57 @@ test('if patches.length is 0, throws', () => {
   ).toThrow('You must provide at least one patch!');
 });
 
+test('plays through all the patches', async () => {
+  const {getByTestId, getByLabelText, getByText} = render(
+    <AnimatedTextarea initialValue={hello} patches={patches} />,
+  );
+  const code = getByLabelText('Code') as HTMLTextAreaElement;
+  expect(code).toHaveValue(hello);
+  fireEvent.change(getByLabelText('Speed'), {target: {value: '1000'}});
+
+  fireEvent.click(getByText('play'));
+  expect(getByTestId('isPlaying')).toHaveTextContent('true');
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  await wait(() => expect(getByTestId('isPlaying')).toHaveTextContent('false'));
+  expect(code).toHaveValue(whom);
+
+  fireEvent.click(getByText('play'));
+  expect(getByTestId('isPlaying')).toHaveTextContent('true');
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  await wait(() => expect(getByTestId('isPlaying')).toHaveTextContent('false'));
+  expect(code).toHaveValue(greeting);
+});
+
 test('setPatchIndex', () => {
   const {getByText, getByLabelText} = render(
     <AnimatedTextarea initialValue={hello} patches={patches} />,
   );
   fireEvent.click(getByText('next patch'));
   expect(getByLabelText('Code')).toHaveValue(whom);
+});
+
+test('setPatchIndex: resets changes if new patchIndex < old patch index, then plays to next patch', async () => {
+  const {getByText, getByTestId, getByLabelText} = render(
+    <AnimatedTextarea initialValue={hello} patches={patches} />,
+  );
+  fireEvent.click(getByText('next patch'));
+  fireEvent.change(getByLabelText('Code'), {
+    target: {
+      value: 'new value',
+      selectionStart: 0,
+      selectionEnd: 0,
+    },
+  });
+  const code = getByLabelText('Code');
+  expect(code).toHaveValue('new value');
+  fireEvent.click(getByText('prev patch'));
+  expect(code).toHaveValue(hello);
+  fireEvent.change(getByLabelText('Speed'), {target: {value: '1000'}});
+  fireEvent.click(getByText('play'));
+  expect(getByTestId('isPlaying')).toHaveTextContent('true');
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  await wait(() => expect(getByTestId('isPlaying')).toHaveTextContent('false'));
+  expect(code).toHaveValue(whom);
 });
 
 test('defaults initialValue to empty string', () => {
@@ -126,4 +198,75 @@ test('if patch filename is empty, uses index instead', () => {
     />,
   );
   expect(getByTestId('names')).toHaveTextContent('0, 1, 2');
+});
+
+test('on change, then play, transforms user-edited code to next patch result', async () => {
+  const {getByTestId, getByLabelText, getByText} = render(
+    <AnimatedTextarea initialValue={hello} patches={patches} />,
+  );
+  const code = getByLabelText('Code') as HTMLTextAreaElement;
+  expect(code).toHaveValue(hello);
+  const newValue = `import React from 'react';
+import ReactDOM from 'react-dom';
+😂🥺🔥😍😊🥰👍🤔
+const Hello = () => <p>Hello World!</p>;
+
+const root = document.querySelector('#root');
+ReactDOM.render(<Hello />, root);
+
+export default React;`;
+  code.selectionStart = code.selectionEnd = 69;
+  fireEvent.change(getByLabelText('Code'), {
+    target: {
+      value: newValue,
+      selectionStart: 69,
+      selectionEnd: 69,
+    },
+  });
+  expect(code).toHaveValue(newValue);
+  expect(code).toHaveProperty('selectionStart', 69);
+  expect(code).toHaveProperty('selectionEnd', 69);
+  fireEvent.change(getByLabelText('Speed'), {target: {value: '1000'}});
+  fireEvent.click(getByText('play'));
+  expect(getByTestId('isPlaying')).toHaveTextContent('true');
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  await wait(() => expect(getByTestId('isPlaying')).toHaveTextContent('false'));
+  expect(code).toHaveValue(whom);
+});
+
+test('onChange (while playing ) pauses', async () => {
+  const {getByTestId, getByLabelText, getByText} = render(
+    <AnimatedTextarea initialValue={hello} patches={patches} />,
+  );
+  const code = getByLabelText('Code') as HTMLTextAreaElement;
+  expect(code).toHaveValue(hello);
+  fireEvent.click(getByText('play'));
+  await new Promise(resolve => setTimeout(resolve, 100));
+  const newValue = `import React from 'react';
+import ReactDOM from 'react-dom';
+😂🥺🔥😍😊🥰👍🤔
+const Hello = () => <p>Hello World!</p>;
+
+const root = document.querySelector('#root');
+ReactDOM.render(<Hello />, root);
+
+export default React;`;
+  code.selectionStart = code.selectionEnd = 69;
+  fireEvent.change(getByLabelText('Code'), {
+    target: {
+      value: newValue,
+      selectionStart: 69,
+      selectionEnd: 69,
+    },
+  });
+  expect(code).toHaveValue(newValue);
+  expect(code).toHaveProperty('selectionStart', 69);
+  expect(code).toHaveProperty('selectionEnd', 69);
+  expect(getByTestId('isPlaying')).toHaveTextContent('false');
+  fireEvent.change(getByLabelText('Speed'), {target: {value: '1000'}});
+  fireEvent.click(getByText('play'));
+  expect(getByTestId('isPlaying')).toHaveTextContent('true');
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  await wait(() => expect(getByTestId('isPlaying')).toHaveTextContent('false'));
+  expect(code).toHaveValue(whom);
 });

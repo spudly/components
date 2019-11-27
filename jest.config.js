@@ -6,6 +6,7 @@ module.exports = {
     'packages/components/animated-textarea/jest.config.js',
     'packages/components/icons/jest.config.js',
     'packages/components/pagination/jest.config.js',
+    'packages/components/use-player/jest.config.js',
     'packages/hooks/use-animate/jest.config.js',
     'packages/hooks/use-animated-diff/jest.config.js',
     'packages/hooks/use-paginate/jest.config.js',

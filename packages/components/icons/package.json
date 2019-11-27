@@ -2,14 +2,14 @@
   "name": "@spudly/icons",
   "main": "build/index.js",
   "mainSrc": "src/index.ts",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "scripts": {
     "build": "tsc -b tsconfig.json",
     "prepare": "npm run build",
     "test": "jest"
   },
   "license": "ISC",
-  "repository": "https://github.com/spudly/components/tree/masterpackages/components/icons",
+  "repository": "https://github.com/spudly/sandbox/tree/master/packages/components/icons",
   "files": [
     "build"
   ],

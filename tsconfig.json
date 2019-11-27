@@ -27,6 +27,9 @@
       "path": "packages/components/pagination"
     },
     {
+      "path": "packages/components/use-player"
+    },
+    {
       "path": "packages/hooks/use-animate"
     },
     {

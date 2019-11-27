@@ -7,13 +7,13 @@
     "test": "jest"
   },
   "license": "ISC",
-  "repository": "https://github.com/spudly/components/tree/masterpackages/components/pagination",
+  "repository": "https://github.com/spudly/sandbox/tree/master/packages/components/pagination",
   "files": [
     "build"
   ],
-  "version": "0.1.0",
+  "version": "0.0.0",
   "dependencies": {
-    "@spudly/use-paginate": "^0.1.0",
+    "@spudly/use-paginate": "^0.0.0",
     "react": "^16.10.2"
   },
   "devDependencies": {
