@@ -16,6 +16,7 @@
     "@types/react": "^16.9.9",
     "@typescript-eslint/eslint-plugin": "^2.0.0",
     "@typescript-eslint/parser": "^2.0.0",
+    "awesome-typescript-loader": "^5.2.1",
     "babel-eslint": "^10.0.0",
     "babel-loader": "^8.0.6",
     "chalk": "^3.0.0",
@@ -42,7 +43,6 @@
     "react-split": "^2.0.7",
     "react-split-grid": "^1.0.2",
     "ts-jest": "^24.1.0",
-    "ts-loader": "^6.2.1",
     "typescript": "^3.6.4"
   },
   "eslintConfig": {
@@ -71,6 +71,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
     "test": "jest",
     "build": "tsc -b tsconfig.json",
+    "hmmf": "find packages -wholename '**/src/*.d.ts' -delete && find packages -wholename '**/src/*.js' -delete",
+    "rebuild": "find ./packages -name 'tsconfig.tsbuildinfo' -delete && npm run build",
     "storybook": "start-storybook -p 3000",
     "build-storybook": "build-storybook",
     "sync": "node ./scripts/sync.js",

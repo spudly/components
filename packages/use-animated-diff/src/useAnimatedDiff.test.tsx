@@ -89,9 +89,6 @@ const AnimatedTextarea = ({
       <button type="button" onClick={api.pause}>
         pause
       </button>
-      <button type="button" onClick={api.stop}>
-        stop
-      </button>
       <label>
         Speed
         <input

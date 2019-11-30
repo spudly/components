@@ -6,17 +6,38 @@ import {
   useCallback,
 } from 'react';
 
+type AnimationEvents = {
+  onPlay?: () => void;
+  onPause?: () => void;
+  onEnded?: () => void;
+  onDurationChange?: () => void;
+};
+
+const calcNewStartTime = (
+  currentTime: number,
+  speed: number,
+  baseSpeed: number,
+) => {
+  const newCurrentTime = currentTime / (speed / 100) / baseSpeed;
+  return Date.now() - newCurrentTime;
+};
+
 const useAnimate = (
   duration: number,
-  elapsed: number,
+  currentTime: number,
   seek: Dispatch<SetStateAction<number>>,
   baseSpeed: number = 1,
-  onFinish?: () => void,
+  {onDurationChange, onPlay, onPause, onEnded}: AnimationEvents = {},
 ) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [speed, _setSpeed] = useState(100);
-  const isFinished = elapsed >= duration;
+  const isFinished = currentTime >= duration;
+
+  useEffect(() => {
+    // eslint-disable-next-line no-unused-expressions
+    onDurationChange?.();
+  }, [duration, onDurationChange]);
 
   useEffect(() => {
     let expired = !isPlaying;
@@ -25,7 +46,7 @@ const useAnimate = (
         if (isFinished) {
           setIsPlaying(false);
           // eslint-disable-next-line no-unused-expressions
-          onFinish?.();
+          onEnded?.();
           return;
         }
         const timeElapsed = Date.now() - startTime!;
@@ -43,34 +64,32 @@ const useAnimate = (
     isFinished,
     seek,
     baseSpeed,
-    onFinish,
+    onEnded,
   ]);
 
   const play = useCallback(() => {
     setIsPlaying(true);
-    setStartTime(Date.now());
-  }, []);
+    setStartTime(calcNewStartTime(currentTime, speed, baseSpeed));
+    // eslint-disable-next-line no-unused-expressions
+    onPlay?.();
+  }, [baseSpeed, currentTime, onPlay, speed]);
 
   const pause = useCallback(() => {
     setIsPlaying(false);
-  }, []);
-
-  const stop = useCallback(() => {
-    setIsPlaying(false);
-    seek(0);
-  }, [seek]);
+    // eslint-disable-next-line no-unused-expressions
+    onPause?.();
+  }, [onPause]);
 
   const setSpeed = useCallback(
-    (speed: number) => {
-      const newTimeElapsed = elapsed / (speed / 100) / baseSpeed;
-      const newStartTime = Date.now() - newTimeElapsed;
-      setStartTime(newStartTime);
-      _setSpeed(speed);
+    (newSpeed: number) => {
+      setStartTime(calcNewStartTime(currentTime, newSpeed, baseSpeed));
+      _setSpeed(newSpeed);
     },
-    [baseSpeed, elapsed],
+    [baseSpeed, currentTime],
   );
 
-  return {isPlaying, isFinished, speed, setSpeed, play, pause, stop};
+  return {isPlaying, isFinished, speed, setSpeed, play, pause};
 };
 
+export {AnimationEvents};
 export default useAnimate;

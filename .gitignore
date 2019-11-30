@@ -6,3 +6,5 @@ build
 .theia
 .gitpod.yml
 tsconfig.tsbuildinfo
+**/src/**/*.js
+**/src/**/*.d.ts

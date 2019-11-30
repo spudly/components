@@ -62,7 +62,7 @@ export const animatedTextarea = () => {
         textarea,
         {
           duration,
-          elapsed,
+          currentTime,
           isFinished,
           isPlaying,
           patchIndex,
@@ -73,7 +73,6 @@ export const animatedTextarea = () => {
           setPatchIndex,
           setSpeed,
           speed,
-          stop,
         },
       ) => (
         <div>
@@ -109,7 +108,7 @@ export const animatedTextarea = () => {
                 min={0}
                 step={1}
                 max={duration}
-                value={elapsed}
+                value={currentTime}
                 onChange={e => seek(e.currentTarget.valueAsNumber)}
               />
             </label>
@@ -144,9 +143,6 @@ export const animatedTextarea = () => {
                 </button>
                 <button type="button" onClick={pause} disabled={!isPlaying}>
                   pause
-                </button>
-                <button type="button" onClick={stop} disabled={!isPlaying}>
-                  stop
                 </button>
               </>
             )}

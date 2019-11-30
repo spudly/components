@@ -2,11 +2,12 @@ import React, {
   useRef,
   ReactElement,
   useEffect,
-  MutableRefObject,
+  Ref,
   RefObject,
   forwardRef,
   useImperativeHandle,
-  Ref,
+  MutableRefObject,
+  useState,
 } from 'react';
 import {
   useAnimatedDiff,
@@ -23,6 +24,10 @@ type Props = JSX.IntrinsicElements['div'] & {
   onChange?: (value: string) => void;
   render: (container: ReactElement, api: RenderApi) => ReactElement;
   options: monaco.editor.IEditorConstructionOptions;
+  onDurationChange?: () => void;
+  onEnded?: () => void;
+  onPause?: () => void;
+  onPlay?: () => void;
 };
 
 const useScrollMonacoEditorToLine = (
@@ -115,7 +120,7 @@ const useSetMonacoEditorScrollPosition = (
 };
 
 const useCreateMonacoEditor = (
-  options: monaco.editor.IEditorConstructionOptions,
+  unstableOptions: monaco.editor.IEditorConstructionOptions,
 ): [
   RefObject<HTMLDivElement>,
   RefObject<monaco.editor.IStandaloneCodeEditor>,
@@ -124,6 +129,8 @@ const useCreateMonacoEditor = (
   const editorRef: MutableRefObject<monaco.editor.IStandaloneCodeEditor> = useRef<
     monaco.editor.IStandaloneCodeEditor
   >(null) as any;
+  const [options] = useState(unstableOptions);
+
   useEffect(() => {
     editorRef.current = monaco.editor.create(containerRef.current!, options);
     return () => {
@@ -137,6 +144,7 @@ const useCreateMonacoEditor = (
       }
     };
   }, [editorRef, options]);
+
   return [containerRef, editorRef];
 };
 
@@ -172,14 +180,30 @@ const useOnChange = (
   });
 };
 
-const AnimatedDiffMonaco = forwardRef(
+const AnimatedMonaco = forwardRef(
   (
-    {initialValue, patches, onChange, render, options, ...props}: Props,
+    {
+      initialValue,
+      patches,
+      onChange,
+      render,
+      options,
+      onDurationChange,
+      onEnded,
+      onPause,
+      onPlay,
+      ...props
+    }: Props,
     ref: Ref<RenderApi>,
   ) => {
     const [containerRef, editorRef] = useCreateMonacoEditor(options);
     const ignoreChangeEventRef = useRef(false);
-    const api = useAnimatedDiff(initialValue, patches);
+    const api = useAnimatedDiff(initialValue, patches, {
+      onDurationChange,
+      onEnded,
+      onPause,
+      onPlay,
+    });
     useOnChange(editorRef, ignoreChangeEventRef, () => {
       // GOTCHA: callback gets called before selection is updated. To workaround this, we
       // defer to the next tick using setTimeout(fn, 0)
@@ -224,5 +248,7 @@ const AnimatedDiffMonaco = forwardRef(
   },
 );
 
+AnimatedMonaco.displayName = 'AnimatedMonaco';
+
 export * from '@spudly/use-animated-diff';
-export default AnimatedDiffMonaco;
+export default AnimatedMonaco;

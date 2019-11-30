@@ -1,6 +1,6 @@
 import {useState, useMemo, useCallback} from 'react';
 import {parsePatch, applyPatch} from 'diff';
-import useAnimate from '@spudly/use-animate';
+import useAnimate, {AnimationEvents} from '@spudly/use-animate';
 import getActions from './getActions';
 import {RenderApi, State} from './types';
 import {reduce} from './reducer';
@@ -8,6 +8,7 @@ import {reduce} from './reducer';
 const useAnimatedDiff = (
   initialValue: string = '',
   patches: Array<string>,
+  events: AnimationEvents = {},
 ): RenderApi => {
   if (patches.length === 0) {
     throw new Error('You must provide at least one patch!');
@@ -16,7 +17,10 @@ const useAnimatedDiff = (
   const [patchIndex, _setPatchIndex] = useState(0);
   const [editIndex, setEditIndex] = useState(0);
   const [dynamicState, setDynamicState] = useState<State | null>(null);
-  const seek = useCallback(elapsed => setEditIndex(Math.floor(elapsed)), []);
+  const seek = useCallback(
+    currentTime => setEditIndex(Math.floor(currentTime)),
+    [],
+  );
 
   const patchNames = useMemo(
     () =>
@@ -56,22 +60,25 @@ const useAnimatedDiff = (
     [patchIndex, seek],
   );
 
-  const handleFinished = useCallback(() => {
+  const onEnded = useCallback(() => {
     if (patchIndex < patches.length - 1) {
       setPatchIndex(patchIndex + 1);
       setDynamicState(null);
     }
-  }, [patchIndex, patches.length, setPatchIndex]);
+    // eslint-disable-next-line no-unused-expressions
+    events.onEnded?.();
+  }, [events.onEnded, patchIndex, patches.length, setPatchIndex]);
 
-  const {
-    isPlaying,
-    isFinished,
-    speed,
-    setSpeed,
-    play,
-    pause,
-    stop,
-  } = useAnimate(editActions.length, editIndex, seek, 0.02, handleFinished);
+  const {isPlaying, isFinished, speed, setSpeed, play, pause} = useAnimate(
+    editActions.length,
+    editIndex,
+    seek,
+    0.02,
+    {
+      ...events,
+      onEnded,
+    },
+  );
 
   const handleChange = useCallback(
     (value, selectionStart, selectionEnd) => {
@@ -94,12 +101,11 @@ const useAnimatedDiff = (
     setSpeed,
     play,
     pause,
-    stop,
     patchIndex,
     setPatchIndex,
     patchNames,
     duration: editActions.length,
-    elapsed: editIndex,
+    currentTime: editIndex,
     seek,
     onChange: handleChange,
   };

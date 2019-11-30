@@ -56,7 +56,7 @@ export const animatedMonaco = () => {
         editor,
         {
           duration,
-          elapsed,
+          currentTime,
           isFinished,
           isPlaying,
           patchIndex,
@@ -67,7 +67,6 @@ export const animatedMonaco = () => {
           setPatchIndex,
           setSpeed,
           speed,
-          stop,
         },
       ) => (
         <div>
@@ -103,7 +102,7 @@ export const animatedMonaco = () => {
                 min={0}
                 step={1}
                 max={duration}
-                value={elapsed}
+                value={currentTime}
                 onChange={e => seek(e.currentTarget.valueAsNumber)}
               />
             </label>
@@ -138,9 +137,6 @@ export const animatedMonaco = () => {
                 </button>
                 <button type="button" onClick={pause} disabled={!isPlaying}>
                   pause
-                </button>
-                <button type="button" onClick={stop} disabled={!isPlaying}>
-                  stop
                 </button>
               </>
             )}

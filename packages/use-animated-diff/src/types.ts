@@ -18,7 +18,7 @@ export type RenderApi = {
   selectionStart: number;
   selectionEnd: number;
   speed: number;
-  elapsed: number;
+  currentTime: number;
   duration: number;
   patchNames: Array<string>;
   patchIndex: number;
@@ -27,9 +27,8 @@ export type RenderApi = {
   setPatchIndex: (index: number) => void;
   play: () => void;
   pause: () => void;
-  stop: () => void;
   setSpeed: (speed: number) => void;
-  seek: (elapsed: number) => void;
+  seek: (currentTime: number) => void;
   onChange: (
     value: string,
     selectionStart: number,

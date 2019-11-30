@@ -1,17 +1,38 @@
-import {useRef, useCallback, useState, useEffect} from 'react';
+import {
+  useRef,
+  useCallback,
+  useState,
+  useEffect,
+  ComponentPropsWithRef,
+  ElementType,
+  useMemo,
+} from 'react';
 
 type Playable = {
   readonly duration: number;
-  pause: () => unknown;
+  readonly pause: () => unknown;
+  readonly play: () => unknown;
   currentTime: number;
-  play: () => unknown;
 };
 
-const usePlayer = <API extends Playable>() => {
-  const ref = useRef<API>(null);
+type PlayerApi<T extends ElementType> = {
+  mediaProps: Partial<ComponentPropsWithRef<T>>;
+  currentTime: number;
+  seek: (to: number) => unknown;
+  duration: number;
+  isPlaying: boolean;
+  play: () => unknown;
+  pause: () => unknown;
+};
+
+const usePlayer = <
+  T extends ElementType,
+  R extends Playable
+>(): PlayerApi<T> => {
+  const ref = useRef<R | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
-  const [elapsed, seek] = useState(0);
+  const [currentTime, seek] = useState(0);
 
   useEffect(() => {
     if (isPlaying) {
@@ -30,27 +51,35 @@ const usePlayer = <API extends Playable>() => {
     }
   }, [isPlaying]);
 
-  const play = useCallback(() => ref.current?.play(), []);
+  const play = useCallback(() => {
+    // eslint-disable-next-line no-unused-expressions
+    ref.current?.play();
+  }, []);
 
   const pause = useCallback(() => ref.current?.pause(), []);
 
-  const getMediaProps = useCallback(
-    () => ({
+  const mediaProps: Partial<ComponentPropsWithRef<T>> = useMemo(() => {
+    return {
       ref,
-      onDurationChange: () => setDuration(ref.current!.duration),
+      onDurationChange: () => {
+        setDuration(ref.current!.duration);
+      },
       onEnded: () => {
         setIsPlaying(false);
         seek(0);
       },
-      onPause: () => setIsPlaying(false),
-      onPlay: () => setIsPlaying(true),
-    }),
-    [],
-  );
+      onPause: () => {
+        setIsPlaying(false);
+      },
+      onPlay: () => {
+        setIsPlaying(true);
+      },
+    };
+  }, []);
 
   return {
-    getMediaProps,
-    elapsed,
+    mediaProps,
+    currentTime,
     seek,
     duration,
     isPlaying,
@@ -59,4 +88,5 @@ const usePlayer = <API extends Playable>() => {
   };
 };
 
+export {Playable, PlayerApi};
 export default usePlayer;

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {FunctionComponent} from 'react';
 import * as diff from 'diff';
-import AnimatedReactLive from './AnimatedReactLive';
+import AnimatedReactLive, {RenderApi} from './AnimatedReactLive';
+import usePlayer from '@spudly/use-player';
 
 const hello = `const Hello = () => <p>Hello World!</p>;
 
@@ -21,21 +22,47 @@ const patches = [
   diff.createPatch('greeting', whom, greeting),
 ];
 
-export const animatedLiveCode = () => {
+const formatTime = (seconds: number) =>
+  [Math.round(seconds / 60), Math.round(seconds % 60)]
+    .map(n => String(n).padStart(2, '0'))
+    .join(':');
+
+const Controls: FunctionComponent<{
+  currentTime: number;
+  seek: (to: number) => unknown;
+  duration: number;
+  isPlaying: boolean;
+  play: () => unknown;
+  pause: () => unknown;
+}> = ({currentTime, duration, isPlaying, play, pause}) => (
+  <>
+    <button onClick={play} disabled={isPlaying}>
+      play
+    </button>
+    <button onClick={pause} disabled={!isPlaying}>
+      pause
+    </button>
+    {formatTime(currentTime)} / {formatTime(duration)}
+  </>
+);
+
+export const AnimatedReactLiveDemo: FunctionComponent<{}> = () => {
+  const api = usePlayer<typeof AnimatedReactLive, RenderApi>();
   return (
     <div
       style={{
         height: '80vh',
-        width: '80vw',
-        margin: '0 auto',
+        margin: 0,
+        padding: 0,
       }}
     >
       <AnimatedReactLive
+        {...api.mediaProps}
         initialValue={initialValue}
         patches={patches}
         monacoOptions={{
           language: 'javascript',
-          theme: 'vs-dark',
+          theme: 'vs-light',
           automaticLayout: true,
         }}
         reactLiveOptions={{
@@ -49,6 +76,7 @@ export const animatedLiveCode = () => {
           },
         }}
       />
+      <Controls {...api} />
     </div>
   );
 };

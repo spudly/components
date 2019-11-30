@@ -9,7 +9,6 @@
     "module": "commonjs",
     "composite": true
   },
-  "include": ["packages/*/src/**/*"],
   "references": [
     {
       "path": "packages/animated-monaco"

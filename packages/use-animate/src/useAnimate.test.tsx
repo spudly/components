@@ -8,10 +8,10 @@ import '@testing-library/jest-dom/extend-expect';
 
 const Progress = ({
   baseSpeed,
-  onFinish,
+  onEnded,
 }: {
   baseSpeed?: number;
-  onFinish?: () => void;
+  onEnded?: () => void;
 }) => {
   const duration = 100;
   const [elapsed, seek] = useState(0);
@@ -22,8 +22,7 @@ const Progress = ({
     setSpeed,
     play,
     pause,
-    stop,
-  } = useAnimate(duration, elapsed, seek, baseSpeed, onFinish);
+  } = useAnimate(duration, elapsed, seek, baseSpeed, {onEnded});
   return (
     <>
       <div
@@ -54,9 +53,6 @@ const Progress = ({
       </button>
       <button type="button" onClick={pause}>
         pause
-      </button>
-      <button type="button" onClick={stop}>
-        stop
       </button>
     </>
   );
@@ -122,14 +118,14 @@ test('play: baseSpeed: 2', async () => {
   expect(getByLabelText('Is Finished?')).toBeChecked();
 });
 
-test('calls onFinish if provided', async () => {
-  const onFinish = jest.fn();
+test('calls onEnded if provided', async () => {
+  const onEnded = jest.fn();
   (Date.now as MockNow).mockReturnValue(0);
-  const {getByText, getByLabelText} = render(<Progress onFinish={onFinish} />);
+  const {getByText, getByLabelText} = render(<Progress onEnded={onEnded} />);
   fireEvent.click(getByText('play'));
   (Date.now as MockNow).mockReturnValue(101);
   await wait(() => expect(getByLabelText('Is Finished?')).toBeChecked());
-  expect(onFinish).toHaveBeenCalledTimes(1);
+  expect(onEnded).toHaveBeenCalledTimes(1);
 });
 
 test('pause', async () => {
@@ -145,21 +141,6 @@ test('pause', async () => {
   fireEvent.click(getByText('pause'));
   await wait(() => expect(getByLabelText('Is Playing?')).not.toBeChecked());
   expect(getByRole('progressbar')).toHaveStyle(`width: 50%`);
-});
-
-test('stop', async () => {
-  (Date.now as MockNow).mockReturnValue(0);
-  const {getByRole, getByText, getByLabelText} = render(<Progress />);
-  expect(getByRole('progressbar')).toHaveStyle(`width: 0%`);
-  expect(getByLabelText('Is Playing?')).not.toBeChecked();
-  expect(getByLabelText('Is Finished?')).not.toBeChecked();
-  fireEvent.click(getByText('play'));
-  expect(getByLabelText('Is Playing?')).toBeChecked();
-  (Date.now as MockNow).mockReturnValue(50);
-  await wait(() => expect(getByRole('progressbar')).toHaveStyle(`width: 50%`));
-  fireEvent.click(getByText('stop'));
-  await wait(() => expect(getByLabelText('Is Playing?')).not.toBeChecked());
-  expect(getByRole('progressbar')).toHaveStyle(`width: 0%`);
 });
 
 test('setSpeed', async () => {
