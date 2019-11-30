@@ -14,7 +14,7 @@ const useAnimatedDiff = (
     throw new Error('You must provide at least one patch!');
   }
 
-  const [patchIndex, _setPatchIndex] = useState(0);
+  const [trackIndex, _setTrackIndex] = useState(0);
   const [editIndex, setEditIndex] = useState(0);
   const [dynamicState, setDynamicState] = useState<State | null>(null);
   const seek = useCallback(
@@ -22,7 +22,7 @@ const useAnimatedDiff = (
     [],
   );
 
-  const patchNames = useMemo(
+  const trackNames = useMemo(
     () =>
       patches.map(
         (patch, index) => parsePatch(patch)[0].newFileName || String(index),
@@ -32,11 +32,11 @@ const useAnimatedDiff = (
 
   const [startValue, endValue] = useMemo(() => {
     const startValue = patches
-      .slice(0, patchIndex)
+      .slice(0, trackIndex)
       .reduce((value, patch) => applyPatch(value, patch), initialValue);
-    const endValue = applyPatch(startValue, patches[patchIndex]);
+    const endValue = applyPatch(startValue, patches[trackIndex]);
     return [startValue, endValue];
-  }, [initialValue, patches, patchIndex]);
+  }, [initialValue, patches, trackIndex]);
 
   const [editActions, {value, selectionStart, selectionEnd}] = useMemo(() => {
     const initialState: State = dynamicState ?? {
@@ -49,64 +49,69 @@ const useAnimatedDiff = (
     return [actions, state];
   }, [dynamicState, startValue, endValue, editIndex]);
 
-  const setPatchIndex = useCallback(
+  const setTrackIndex = useCallback(
     (index: number) => {
-      _setPatchIndex(index);
-      if (index < patchIndex) {
+      _setTrackIndex(index);
+      if (index < trackIndex) {
         setDynamicState(null);
       }
       seek(0);
     },
-    [patchIndex, seek],
+    [trackIndex, seek],
   );
 
   const onEnded = useCallback(() => {
-    if (patchIndex < patches.length - 1) {
-      setPatchIndex(patchIndex + 1);
+    if (trackIndex < patches.length - 1) {
+      setTrackIndex(trackIndex + 1);
       setDynamicState(null);
     }
     // eslint-disable-next-line no-unused-expressions
     events.onEnded?.();
-  }, [events.onEnded, patchIndex, patches.length, setPatchIndex]);
+  }, [events.onEnded, trackIndex, patches.length, setTrackIndex]);
 
-  const {isPlaying, isFinished, speed, setSpeed, play, pause} = useAnimate(
-    editActions.length,
-    editIndex,
-    seek,
-    0.02,
-    {
-      ...events,
-      onEnded,
-    },
-  );
+  const {
+    paused,
+    ended,
+    playbackRate,
+    setPlaybackRate,
+    play,
+    pause,
+  } = useAnimate(editActions.length, editIndex, seek, 0.02, {
+    ...events,
+    onEnded,
+  });
 
   const handleChange = useCallback(
     (value, selectionStart, selectionEnd) => {
-      if (isPlaying) {
+      if (!paused) {
         pause();
       }
       seek(0);
       setDynamicState({value, selectionStart, selectionEnd});
     },
-    [isPlaying, pause, seek],
+    [pause, paused, seek],
   );
 
   return {
     value,
     selectionStart,
     selectionEnd,
-    isPlaying,
-    isFinished,
-    speed,
-    setSpeed,
+    paused,
+    ended,
+    playbackRate,
+    setPlaybackRate,
     play,
     pause,
-    patchIndex,
-    setPatchIndex,
-    patchNames,
+    trackIndex,
+    setTrackIndex,
+    trackNames,
     duration: editActions.length,
-    currentTime: editIndex,
-    seek,
+    get currentTime() {
+      return editIndex;
+    },
+    set currentTime(time) {
+      seek(time);
+    },
     onChange: handleChange,
   };
 };

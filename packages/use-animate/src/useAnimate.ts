@@ -11,14 +11,15 @@ type AnimationEvents = {
   onPause?: () => void;
   onEnded?: () => void;
   onDurationChange?: () => void;
+  onTimeUpdate?: () => void;
 };
 
 const calcNewStartTime = (
   currentTime: number,
-  speed: number,
-  baseSpeed: number,
+  playbackRate: number,
+  basePlaybackRate: number,
 ) => {
-  const newCurrentTime = currentTime / (speed / 100) / baseSpeed;
+  const newCurrentTime = currentTime / (playbackRate / 100) / basePlaybackRate;
   return Date.now() - newCurrentTime;
 };
 
@@ -26,13 +27,19 @@ const useAnimate = (
   duration: number,
   currentTime: number,
   seek: Dispatch<SetStateAction<number>>,
-  baseSpeed: number = 1,
-  {onDurationChange, onPlay, onPause, onEnded}: AnimationEvents = {},
+  basePlaybackRate: number = 1,
+  {
+    onDurationChange,
+    onPlay,
+    onPause,
+    onEnded,
+    onTimeUpdate,
+  }: AnimationEvents = {},
 ) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [paused, setPaused] = useState(true);
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [speed, _setSpeed] = useState(100);
-  const isFinished = currentTime >= duration;
+  const [playbackRate, _setPlaybackRate] = useState(100);
+  const ended = currentTime >= duration;
 
   useEffect(() => {
     // eslint-disable-next-line no-unused-expressions
@@ -40,17 +47,37 @@ const useAnimate = (
   }, [duration, onDurationChange]);
 
   useEffect(() => {
-    let expired = !isPlaying;
+    // eslint-disable-next-line no-unused-expressions
+    onTimeUpdate?.();
+  }, [currentTime, onTimeUpdate]);
+
+  useEffect(() => {
+    if (paused) {
+      // eslint-disable-next-line no-unused-expressions
+      onPause?.();
+    } else {
+      // eslint-disable-next-line no-unused-expressions
+      onPlay?.();
+    }
+  }, [onPause, onPlay, paused]);
+
+  useEffect(() => {
+    let expired = paused;
     const effect = () => {
       if (!expired) {
-        if (isFinished) {
-          setIsPlaying(false);
+        if (ended) {
+          setPaused(true);
           // eslint-disable-next-line no-unused-expressions
           onEnded?.();
           return;
         }
         const timeElapsed = Date.now() - startTime!;
-        seek(Math.min(timeElapsed * baseSpeed * (speed / 100), duration));
+        seek(
+          Math.min(
+            timeElapsed * basePlaybackRate * (playbackRate / 100),
+            duration,
+          ),
+        );
         requestAnimationFrame(effect);
       }
     };
@@ -58,37 +85,33 @@ const useAnimate = (
     return () => void (expired = true);
   }, [
     startTime,
-    isPlaying,
-    speed,
+    paused,
+    playbackRate,
     duration,
-    isFinished,
+    ended,
     seek,
-    baseSpeed,
+    basePlaybackRate,
     onEnded,
   ]);
 
   const play = useCallback(() => {
-    setIsPlaying(true);
-    setStartTime(calcNewStartTime(currentTime, speed, baseSpeed));
-    // eslint-disable-next-line no-unused-expressions
-    onPlay?.();
-  }, [baseSpeed, currentTime, onPlay, speed]);
+    setPaused(false);
+    setStartTime(calcNewStartTime(currentTime, playbackRate, basePlaybackRate));
+  }, [basePlaybackRate, currentTime, playbackRate]);
 
   const pause = useCallback(() => {
-    setIsPlaying(false);
-    // eslint-disable-next-line no-unused-expressions
-    onPause?.();
-  }, [onPause]);
+    setPaused(true);
+  }, []);
 
-  const setSpeed = useCallback(
+  const setPlaybackRate = useCallback(
     (newSpeed: number) => {
-      setStartTime(calcNewStartTime(currentTime, newSpeed, baseSpeed));
-      _setSpeed(newSpeed);
+      setStartTime(calcNewStartTime(currentTime, newSpeed, basePlaybackRate));
+      _setPlaybackRate(newSpeed);
     },
-    [baseSpeed, currentTime],
+    [basePlaybackRate, currentTime],
   );
 
-  return {isPlaying, isFinished, speed, setSpeed, play, pause};
+  return {paused, ended, playbackRate, setPlaybackRate, play, pause};
 };
 
 export {AnimationEvents};

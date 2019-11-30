@@ -52,113 +52,119 @@ export const animatedMonaco = () => {
         width: '80vw',
         height: '300px',
       }}
-      render={(
-        editor,
-        {
+      render={(editor, api) => {
+        const {
           duration,
           currentTime,
-          isFinished,
-          isPlaying,
-          patchIndex,
-          patchNames,
+          ended,
+          paused,
+          trackIndex,
+          trackNames,
           pause,
           play,
-          seek,
-          setPatchIndex,
-          setSpeed,
-          speed,
-        },
-      ) => (
-        <div>
-          {editor}
+          setTrackIndex,
+          setPlaybackRate,
+          playbackRate,
+        } = api;
+        return (
           <div>
-            <h1>{patchNames[patchIndex]}</h1>
-            <select
-              size={patches.length}
-              value={patchIndex}
-              onChange={e => setPatchIndex(Number(e.currentTarget.value))}
-            >
-              {patchNames.map((name, index) => (
-                <option key={name} value={index}>
-                  {name}
-                </option>
-              ))}
-            </select>
-            <label>
-              Speed{' '}
-              <input
-                type="range"
-                min={0}
-                step={1}
-                max={100}
-                value={speed}
-                onChange={e => setSpeed(e.currentTarget.valueAsNumber)}
-              />
-            </label>
-            <label>
-              Seek{' '}
-              <input
-                type="range"
-                min={0}
-                step={1}
-                max={duration}
-                value={currentTime}
-                onChange={e => seek(e.currentTarget.valueAsNumber)}
-              />
-            </label>
-            <button
-              type="button"
-              disabled={patchIndex === 0}
-              onClick={() => setPatchIndex(0)}
-            >
-              First
-            </button>
-            <button
-              type="button"
-              disabled={patchIndex === 0}
-              onClick={() => setPatchIndex(Math.max(patchIndex - 1, 0))}
-            >
-              Prev
-            </button>
-            {isFinished ? (
-              <>
-                <button type="button" onClick={() => seek(0)}>
-                  restart
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={play}
-                  disabled={isPlaying || isFinished}
-                >
-                  play
-                </button>
-                <button type="button" onClick={pause} disabled={!isPlaying}>
-                  pause
-                </button>
-              </>
-            )}
-            <button
-              type="button"
-              disabled={patchIndex === patches.length - 1}
-              onClick={() =>
-                setPatchIndex(Math.min(patchIndex + 1, patches.length - 1))
-              }
-            >
-              Next
-            </button>
-            <button
-              type="button"
-              disabled={patchIndex === patches.length - 1}
-              onClick={() => setPatchIndex(patches.length - 1)}
-            >
-              Last
-            </button>
+            {editor}
+            <div>
+              <h1>{trackNames[trackIndex]}</h1>
+              <select
+                size={patches.length}
+                value={trackIndex}
+                onChange={e => setTrackIndex(Number(e.currentTarget.value))}
+              >
+                {trackNames.map((name, index) => (
+                  <option key={name} value={index}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+              <label>
+                Speed{' '}
+                <input
+                  type="range"
+                  min={0}
+                  step={1}
+                  max={100}
+                  value={playbackRate}
+                  onChange={e => setPlaybackRate(e.currentTarget.valueAsNumber)}
+                />
+              </label>
+              <label>
+                Seek{' '}
+                <input
+                  type="range"
+                  min={0}
+                  step={1}
+                  max={duration}
+                  value={currentTime}
+                  onChange={e => {
+                    api.currentTime = e.currentTarget.valueAsNumber;
+                  }}
+                />
+              </label>
+              <button
+                type="button"
+                disabled={trackIndex === 0}
+                onClick={() => setTrackIndex(0)}
+              >
+                First
+              </button>
+              <button
+                type="button"
+                disabled={trackIndex === 0}
+                onClick={() => setTrackIndex(Math.max(trackIndex - 1, 0))}
+              >
+                Prev
+              </button>
+              {ended ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      api.currentTime = 0;
+                    }}
+                  >
+                    restart
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={play}
+                    disabled={!paused || ended}
+                  >
+                    play
+                  </button>
+                  <button type="button" onClick={pause} disabled={paused}>
+                    pause
+                  </button>
+                </>
+              )}
+              <button
+                type="button"
+                disabled={trackIndex === patches.length - 1}
+                onClick={() =>
+                  setTrackIndex(Math.min(trackIndex + 1, patches.length - 1))
+                }
+              >
+                Next
+              </button>
+              <button
+                type="button"
+                disabled={trackIndex === patches.length - 1}
+                onClick={() => setTrackIndex(patches.length - 1)}
+              >
+                Last
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      }}
     />
   );
 };

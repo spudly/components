@@ -15,6 +15,7 @@ type Props = {
   onEnded?: () => void;
   onPause?: () => void;
   onPlay?: () => void;
+  onTimeUpdate?: () => void;
 };
 
 const AnimatedReactLive = forwardRef(
@@ -29,6 +30,7 @@ const AnimatedReactLive = forwardRef(
       onEnded,
       onPause,
       onPlay,
+      onTimeUpdate,
     }: Props,
     ref: Ref<RenderApi>,
   ) => {
@@ -57,6 +59,7 @@ const AnimatedReactLive = forwardRef(
                 onEnded={onEnded}
                 onPause={onPause}
                 onPlay={onPlay}
+                onTimeUpdate={onTimeUpdate}
                 render={(editor, api) => (
                   <>
                     {editor}

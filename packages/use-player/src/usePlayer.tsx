@@ -12,44 +12,75 @@ type Playable = {
   readonly duration: number;
   readonly pause: () => unknown;
   readonly play: () => unknown;
+  readonly ended: boolean;
+  readonly paused: boolean;
   currentTime: number;
+  playbackRate: number;
 };
 
 type PlayerApi<T extends ElementType> = {
   mediaProps: Partial<ComponentPropsWithRef<T>>;
   currentTime: number;
-  seek: (to: number) => unknown;
   duration: number;
-  isPlaying: boolean;
+  paused: boolean;
   play: () => unknown;
   pause: () => unknown;
+  ended: boolean;
+  playbackRate: number;
+  setPlaybackRate: (rate: number) => void;
+  seek: (time: number) => void;
 };
 
-const usePlayer = <
-  T extends ElementType,
-  R extends Playable
->(): PlayerApi<T> => {
-  const ref = useRef<R | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [duration, setDuration] = useState(0);
-  const [currentTime, seek] = useState(0);
-
+// TODO: move this into a separate package
+const useRaf = (fn: () => void, condition: boolean) => {
   useEffect(() => {
-    if (isPlaying) {
+    if (condition) {
       let stop = false;
       const handleFrame = () => {
-        if (stop) {
-          return;
+        if (!stop) {
+          fn();
+          requestAnimationFrame(handleFrame);
         }
-        seek(ref.current!.currentTime);
-        requestAnimationFrame(handleFrame);
       };
       requestAnimationFrame(handleFrame);
       return () => {
         stop = true;
       };
     }
-  }, [isPlaying]);
+  }, [fn, condition]);
+};
+
+const usePlayer = <
+  COMP extends ElementType,
+  PLAYABLE extends Playable
+>(): PlayerApi<COMP> => {
+  const ref = useRef<PLAYABLE | null>(null);
+  const [
+    {paused, currentTime, ended, duration, playbackRate},
+    setState,
+  ] = useState({
+    paused: true,
+    currentTime: 0,
+    ended: false,
+    duration: 0,
+    playbackRate: 1,
+  });
+
+  const updateState = useCallback(() => {
+    const api = ref.current;
+    if (api) {
+      const {paused, currentTime, ended, duration, playbackRate} = api;
+      setState({
+        paused,
+        currentTime,
+        ended,
+        duration,
+        playbackRate,
+      });
+    }
+  }, []);
+
+  useRaf(updateState, !paused);
 
   const play = useCallback(() => {
     // eslint-disable-next-line no-unused-expressions
@@ -57,34 +88,39 @@ const usePlayer = <
   }, []);
 
   const pause = useCallback(() => ref.current?.pause(), []);
+  const seek = useCallback(time => {
+    if (ref.current) {
+      ref.current.currentTime = time;
+    }
+  }, []);
+  const setPlaybackRate = useCallback(rate => {
+    if (ref.current) {
+      ref.current.playbackRate = rate;
+    }
+  }, []);
 
-  const mediaProps: Partial<ComponentPropsWithRef<T>> = useMemo(() => {
+  const mediaProps: Partial<ComponentPropsWithRef<COMP>> = useMemo(() => {
     return {
       ref,
-      onDurationChange: () => {
-        setDuration(ref.current!.duration);
-      },
-      onEnded: () => {
-        setIsPlaying(false);
-        seek(0);
-      },
-      onPause: () => {
-        setIsPlaying(false);
-      },
-      onPlay: () => {
-        setIsPlaying(true);
-      },
+      onDurationChange: updateState,
+      onEnded: updateState,
+      onPause: updateState,
+      onPlay: updateState,
+      onTimeUpdate: updateState,
     };
-  }, []);
+  }, [updateState]);
 
   return {
     mediaProps,
     currentTime,
     seek,
     duration,
-    isPlaying,
+    paused,
     play,
     pause,
+    ended,
+    playbackRate,
+    setPlaybackRate,
   };
 };
 

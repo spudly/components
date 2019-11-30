@@ -28,6 +28,7 @@ type Props = JSX.IntrinsicElements['div'] & {
   onEnded?: () => void;
   onPause?: () => void;
   onPlay?: () => void;
+  onTimeUpdate?: () => void;
 };
 
 const useScrollMonacoEditorToLine = (
@@ -192,6 +193,7 @@ const AnimatedMonaco = forwardRef(
       onEnded,
       onPause,
       onPlay,
+      onTimeUpdate,
       ...props
     }: Props,
     ref: Ref<RenderApi>,
@@ -203,6 +205,7 @@ const AnimatedMonaco = forwardRef(
       onEnded,
       onPause,
       onPlay,
+      onTimeUpdate,
     });
     useOnChange(editorRef, ignoreChangeEventRef, () => {
       // GOTCHA: callback gets called before selection is updated. To workaround this, we

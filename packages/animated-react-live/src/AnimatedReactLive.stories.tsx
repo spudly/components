@@ -31,18 +31,101 @@ const Controls: FunctionComponent<{
   currentTime: number;
   seek: (to: number) => unknown;
   duration: number;
-  isPlaying: boolean;
+  paused: boolean;
   play: () => unknown;
   pause: () => unknown;
-}> = ({currentTime, duration, isPlaying, play, pause}) => (
+  // ---
+  // trackNames: Array<string>;
+  // trackIndex: number;
+  // setTrackIndex: (trackIndex: number) => void;
+  ended: boolean;
+  playbackRate: number;
+  setPlaybackRate: (playbackRate: number) => void;
+}> = ({
+  currentTime,
+  duration,
+  paused,
+  play,
+  pause,
+  // trackNames,
+  // trackIndex,
+  // setTrackIndex,
+  ended,
+  playbackRate,
+  setPlaybackRate,
+  seek,
+}) => (
   <>
-    <button onClick={play} disabled={isPlaying}>
+    <button onClick={play} disabled={!paused}>
       play
     </button>
-    <button onClick={pause} disabled={!isPlaying}>
+    <button onClick={pause} disabled={paused}>
       pause
     </button>
     {formatTime(currentTime)} / {formatTime(duration)}
+    {/* <select
+      size={patches.length}
+      value={trackIndex}
+      onChange={e => setTrackIndex(Number(e.currentTarget.value))}
+    >
+      {trackNames.map((name, index) => (
+        <option key={name} value={index}>
+          {name}
+        </option>
+      ))}
+    </select> */}
+    <label>
+      Playback Rate{' '}
+      <input
+        type="range"
+        min={1}
+        step={1}
+        max={100}
+        value={playbackRate}
+        onChange={e => setPlaybackRate(e.currentTarget.valueAsNumber)}
+      />
+    </label>
+    <label>
+      Seek{' '}
+      <input
+        type="range"
+        min={0}
+        step={1}
+        max={duration}
+        value={currentTime}
+        onChange={e => seek(e.currentTarget.valueAsNumber)}
+      />
+    </label>
+    {/* <button
+      type="button"
+      disabled={trackIndex === 0}
+      onClick={() => setTrackIndex(0)}
+    >
+      First
+    </button>
+    <button
+      type="button"
+      disabled={trackIndex === 0}
+      onClick={() => setTrackIndex(Math.max(trackIndex - 1, 0))}
+    >
+      Prev
+    </button> */}
+    {/* <button
+      type="button"
+      disabled={trackIndex === patches.length - 1}
+      onClick={() =>
+        setTrackIndex(Math.min(trackIndex + 1, patches.length - 1))
+      }
+    >
+      Next
+    </button>
+    <button
+      type="button"
+      disabled={trackIndex === patches.length - 1}
+      onClick={() => setTrackIndex(patches.length - 1)}
+    >
+      Last
+    </button> */}
   </>
 );
 

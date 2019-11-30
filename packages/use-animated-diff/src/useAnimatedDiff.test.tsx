@@ -55,8 +55,8 @@ const AnimatedTextarea = ({
   useSelectionRange(textareaRef, api.selectionStart, api.selectionEnd);
   return (
     <>
-      <div data-testid="names">{api.patchNames.join(', ')}</div>
-      <div data-testid="isPlaying">{String(api.isPlaying)}</div>
+      <div data-testid="names">{api.trackNames.join(', ')}</div>
+      <div data-testid="paused">{String(api.paused)}</div>
       <label>
         Code
         <textarea
@@ -73,13 +73,13 @@ const AnimatedTextarea = ({
       </label>
       <button
         type="button"
-        onClick={() => api.setPatchIndex(api.patchIndex + 1)}
+        onClick={() => api.setTrackIndex(api.trackIndex + 1)}
       >
         next patch
       </button>
       <button
         type="button"
-        onClick={() => api.setPatchIndex(api.patchIndex - 1)}
+        onClick={() => api.setTrackIndex(api.trackIndex - 1)}
       >
         prev patch
       </button>
@@ -90,11 +90,11 @@ const AnimatedTextarea = ({
         pause
       </button>
       <label>
-        Speed
+        Playback Rate
         <input
           type="number"
-          value={api.speed}
-          onChange={e => api.setSpeed(Number(e.currentTarget.value))}
+          value={api.playbackRate}
+          onChange={e => api.setPlaybackRate(Number(e.currentTarget.value))}
         />
       </label>
       {/* <button type="button" onClick={api.seek: (elapsed: number) => void; */}
@@ -145,7 +145,7 @@ test('plays through all the patches', async () => {
   expect(code).toHaveValue(greeting);
 });
 
-test('setPatchIndex', () => {
+test('setTrackIndex', () => {
   const {getByText, getByLabelText} = render(
     <AnimatedTextarea initialValue={hello} patches={patches} />,
   );
@@ -153,7 +153,7 @@ test('setPatchIndex', () => {
   expect(getByLabelText('Code')).toHaveValue(whom);
 });
 
-test('setPatchIndex: resets changes if new patchIndex < old patch index, then plays to next patch', async () => {
+test('setTrackIndex: resets changes if new trackIndex < old patch index, then plays to next patch', async () => {
   const {getByText, getByTestId, getByLabelText} = render(
     <AnimatedTextarea initialValue={hello} patches={patches} />,
   );

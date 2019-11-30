@@ -14,38 +14,38 @@ const Progress = ({
   onEnded?: () => void;
 }) => {
   const duration = 100;
-  const [elapsed, seek] = useState(0);
+  const [currentTime, seek] = useState(0);
   const {
-    isPlaying,
-    isFinished,
-    speed,
-    setSpeed,
+    paused,
+    ended,
+    playbackRate,
+    setPlaybackRate,
     play,
     pause,
-  } = useAnimate(duration, elapsed, seek, baseSpeed, {onEnded});
+  } = useAnimate(duration, currentTime, seek, baseSpeed, {onEnded});
   return (
     <>
       <div
         role="progressbar"
-        aria-valuenow={elapsed}
+        aria-valuenow={currentTime}
         aria-valuemin={0}
         aria-valuemax={duration}
-        style={{width: `${elapsed}%`}}
+        style={{width: `${currentTime}%`}}
       >
-        {elapsed}%
+        {currentTime}%
       </div>
       <label>
-        <input type="checkbox" checked={isPlaying} readOnly /> Is Playing?
+        <input type="checkbox" checked={paused} readOnly /> Is Paused?
       </label>
       <label>
-        <input type="checkbox" checked={isFinished} readOnly /> Is Finished?
+        <input type="checkbox" checked={ended} readOnly /> Is Finished?
       </label>
       <label>
         Speed
         <input
           type="number"
-          value={speed}
-          onChange={e => setSpeed(Number(e.currentTarget.value))}
+          value={playbackRate}
+          onChange={e => setPlaybackRate(Number(e.currentTarget.value))}
         />
       </label>
       <button type="button" onClick={play}>

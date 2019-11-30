@@ -17,18 +17,17 @@ export type RenderApi = {
   value: string;
   selectionStart: number;
   selectionEnd: number;
-  speed: number;
+  playbackRate: number;
   currentTime: number;
   duration: number;
-  patchNames: Array<string>;
-  patchIndex: number;
-  isPlaying: boolean;
-  isFinished: boolean;
-  setPatchIndex: (index: number) => void;
+  trackNames: Array<string>;
+  trackIndex: number;
+  paused: boolean;
+  ended: boolean;
+  setTrackIndex: (index: number) => void;
   play: () => void;
   pause: () => void;
-  setSpeed: (speed: number) => void;
-  seek: (currentTime: number) => void;
+  setPlaybackRate: (rate: number) => void;
   onChange: (
     value: string,
     selectionStart: number,

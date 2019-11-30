@@ -16,15 +16,15 @@ const DemoControls: FunctionComponent<{
   currentTime: number;
   seek: (to: number) => unknown;
   duration: number;
-  isPlaying: boolean;
+  paused: boolean;
   play: () => unknown;
   pause: () => unknown;
-}> = ({currentTime, duration, isPlaying, play, pause}) => (
+}> = ({currentTime, duration, paused, play, pause}) => (
   <>
-    <button onClick={play} disabled={isPlaying}>
+    <button onClick={play} disabled={!paused}>
       play
     </button>
-    <button onClick={pause} disabled={!isPlaying}>
+    <button onClick={pause} disabled={paused}>
       pause
     </button>
     {formatTime(currentTime)} / {formatTime(duration)}
