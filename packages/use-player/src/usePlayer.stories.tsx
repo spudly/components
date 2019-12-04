@@ -1,4 +1,5 @@
-import React, {FunctionComponent} from 'react';
+import React, {CSSProperties, ReactElement} from 'react';
+import Player from '@spudly/player';
 import usePlayer from './usePlayer';
 // @ts-ignore
 import bigBuckBunny from './media/big-buck-bunny.mp4';
@@ -7,48 +8,24 @@ import cheer from './media/cheer.mp3';
 
 export default {title: 'use-player'};
 
-const formatTime = (seconds: number) =>
-  [Math.round(seconds / 60), Math.round(seconds % 60)]
-    .map(n => String(n).padStart(2, '0'))
-    .join(':');
-
-const DemoControls: FunctionComponent<{
-  currentTime: number;
-  seek: (to: number) => unknown;
-  duration: number;
-  paused: boolean;
-  play: () => unknown;
-  pause: () => unknown;
-}> = ({currentTime, duration, paused, play, pause}) => (
-  <>
-    <button onClick={play} disabled={!paused}>
-      play
-    </button>
-    <button onClick={pause} disabled={paused}>
-      pause
-    </button>
-    {formatTime(currentTime)} / {formatTime(duration)}
-  </>
-);
-
 export const AudioPlayer = () => {
   const {mediaProps, ...controlProps} = usePlayer<'audio', HTMLAudioElement>();
   return (
-    <>
-      <h1>Audio Player</h1>
-      <audio {...mediaProps} src={cheer} />
-      <DemoControls {...controlProps} />
-    </>
+    <Player
+      render={() => <audio {...mediaProps} src={cheer} />}
+      {...controlProps}
+    />
   );
 };
 
 export const VideoPlayer = () => {
   const {mediaProps, ...controlProps} = usePlayer<'video', HTMLVideoElement>();
   return (
-    <>
-      <h1>Video Player</h1>
-      <video {...mediaProps} src={bigBuckBunny} width="500" />
-      <DemoControls {...controlProps} />
-    </>
+    <Player
+      render={(style: CSSProperties): ReactElement => (
+        <video {...mediaProps} src={bigBuckBunny} style={style} />
+      )}
+      {...controlProps}
+    />
   );
 };

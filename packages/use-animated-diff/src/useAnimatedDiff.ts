@@ -5,6 +5,8 @@ import getActions from './getActions';
 import {RenderApi, State} from './types';
 import {reduce} from './reducer';
 
+const BASE_PLAYBACK_RATE = 0.02; // edit actions per millisecond
+
 const useAnimatedDiff = (
   initialValue: string = '',
   patches: Array<string>,
@@ -15,20 +17,9 @@ const useAnimatedDiff = (
   }
 
   const [trackIndex, _setTrackIndex] = useState(0);
-  const [editIndex, setEditIndex] = useState(0);
   const [dynamicState, setDynamicState] = useState<State | null>(null);
-  const seek = useCallback(
-    currentTime => setEditIndex(Math.floor(currentTime)),
-    [],
-  );
-
-  const trackNames = useMemo(
-    () =>
-      patches.map(
-        (patch, index) => parsePatch(patch)[0].newFileName || String(index),
-      ),
-    [patches],
-  );
+  const [currentTime, seek] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState(100);
 
   const [startValue, endValue] = useMemo(() => {
     const startValue = patches
@@ -38,16 +29,20 @@ const useAnimatedDiff = (
     return [startValue, endValue];
   }, [initialValue, patches, trackIndex]);
 
-  const [editActions, {value, selectionStart, selectionEnd}] = useMemo(() => {
-    const initialState: State = dynamicState ?? {
-      value: startValue,
-      selectionStart: 0,
-      selectionEnd: 0,
-    };
+  const initialState: State = dynamicState ?? {
+    value: startValue,
+    selectionStart: 0,
+    selectionEnd: 0,
+  };
+
+  const editActions = useMemo(() => {
     const actions = getActions(initialState, endValue);
-    const state = reduce(initialState, actions.slice(0, editIndex));
-    return [actions, state];
-  }, [dynamicState, startValue, endValue, editIndex]);
+    return actions;
+  }, [initialState, endValue]);
+
+  const editIndex = Math.floor(
+    currentTime * BASE_PLAYBACK_RATE * (playbackRate / 100),
+  );
 
   const setTrackIndex = useCallback(
     (index: number) => {
@@ -69,17 +64,29 @@ const useAnimatedDiff = (
     events.onEnded?.();
   }, [events.onEnded, trackIndex, patches.length, setTrackIndex]);
 
-  const {
-    paused,
-    ended,
-    playbackRate,
-    setPlaybackRate,
-    play,
-    pause,
-  } = useAnimate(editActions.length, editIndex, seek, 0.02, {
-    ...events,
-    onEnded,
-  });
+  const {paused, ended, play, pause} = useAnimate(
+    editActions.length * BASE_PLAYBACK_RATE,
+    currentTime,
+    seek,
+    BASE_PLAYBACK_RATE * playbackRate,
+    {
+      ...events,
+      onEnded,
+    },
+  );
+
+  const {value, selectionStart, selectionEnd} = useMemo(
+    () => reduce(initialState, editActions.slice(0, editIndex)),
+    [editActions, editIndex, initialState],
+  );
+
+  const trackNames = useMemo(
+    () =>
+      patches.map(
+        (patch, index) => parsePatch(patch)[0].newFileName || String(index),
+      ),
+    [patches],
+  );
 
   const handleChange = useCallback(
     (value, selectionStart, selectionEnd) => {

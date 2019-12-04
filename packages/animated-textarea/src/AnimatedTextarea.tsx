@@ -1,4 +1,11 @@
-import React, {useEffect, useRef, ReactElement, RefObject} from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  RefObject,
+  forwardRef,
+  Ref,
+} from 'react';
 import {
   useAnimatedDiff,
   RenderApi,
@@ -47,7 +54,6 @@ type Props = JSX.IntrinsicElements['textarea'] & {
   initialValue: string;
   patches: Array<string>;
   onChange?: (value: string) => void;
-  render: (textarea: ReactElement, api: RenderApi) => ReactElement;
 };
 
 type SelectionInfo = {
@@ -56,40 +62,38 @@ type SelectionInfo = {
   selectionDirection: string;
 };
 
-const AnimatedTextarea = ({
-  initialValue,
-  patches,
-  onChange,
-  render,
-  ...props
-}: Props) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const api = useAnimatedDiff(initialValue, patches);
-  useEffect(() => {
-    const t = textareaRef.current!;
-    if (t.value !== api.value) {
-      t.value = api.value;
-    }
-  }, [api.value]);
-  useSelectionRange(textareaRef, api.selectionStart, api.selectionEnd);
-  const [line] = getPosition(api.value, api.selectionEnd);
-  useScrollToLine(textareaRef, api.value, line);
-  useFocus(textareaRef, api.value, api.selectionStart, api.selectionEnd);
+const AnimatedTextarea = forwardRef(
+  ({initialValue, patches, onChange, ...props}: Props, ref: Ref<RenderApi>) => {
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const api = useAnimatedDiff(initialValue, patches);
+    useImperativeHandle<RenderApi, RenderApi>(ref, () => api, [api]);
+    useEffect(() => {
+      const t = textareaRef.current!;
+      if (t.value !== api.value) {
+        t.value = api.value;
+      }
+    }, [api.value]);
+    useSelectionRange(textareaRef, api.selectionStart, api.selectionEnd);
+    const [line] = getPosition(api.value, api.selectionEnd);
+    useScrollToLine(textareaRef, api.value, line);
+    useFocus(textareaRef, api.value, api.selectionStart, api.selectionEnd);
 
-  return render(
-    <textarea
-      ref={textareaRef}
-      onChange={e => {
-        api.onChange(
-          e.currentTarget.value,
-          e.currentTarget.selectionStart,
-          e.currentTarget.selectionEnd,
-        );
-      }}
-      {...props}
-    />,
-    api,
-  );
-};
+    return (
+      <textarea
+        ref={textareaRef}
+        onChange={e => {
+          api.onChange(
+            e.currentTarget.value,
+            e.currentTarget.selectionStart,
+            e.currentTarget.selectionEnd,
+          );
+        }}
+        {...props}
+      />
+    );
+  },
+);
+
+AnimatedTextarea.displayName = 'AnimatedTextarea';
 
 export default AnimatedTextarea;

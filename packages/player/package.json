@@ -1,0 +1,19 @@
+{
+  "name": "@spudly/player",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {},
+  "main": "build/Player.js",
+  "mainSrc": "src/Player.tsx",
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/sandbox/tree/master/packages/player",
+  "files": [
+    "build"
+  ],
+  "sideEffects": false
+}

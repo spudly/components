@@ -14,12 +14,8 @@ type AnimationEvents = {
   onTimeUpdate?: () => void;
 };
 
-const calcNewStartTime = (
-  currentTime: number,
-  playbackRate: number,
-  basePlaybackRate: number,
-) => {
-  const newCurrentTime = currentTime / (playbackRate / 100) / basePlaybackRate;
+const calcNewStartTime = (currentTime: number, playbackRate: number) => {
+  const newCurrentTime = currentTime / playbackRate;
   return Date.now() - newCurrentTime;
 };
 
@@ -27,7 +23,7 @@ const useAnimate = (
   duration: number,
   currentTime: number,
   seek: Dispatch<SetStateAction<number>>,
-  basePlaybackRate: number = 1,
+  playbackRate: number,
   {
     onDurationChange,
     onPlay,
@@ -38,7 +34,6 @@ const useAnimate = (
 ) => {
   const [paused, setPaused] = useState(true);
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [playbackRate, _setPlaybackRate] = useState(100);
   const ended = currentTime >= duration;
 
   useEffect(() => {
@@ -62,6 +57,10 @@ const useAnimate = (
   }, [onPause, onPlay, paused]);
 
   useEffect(() => {
+    setStartTime(calcNewStartTime(currentTime, playbackRate));
+  }, [currentTime, playbackRate]);
+
+  useEffect(() => {
     let expired = paused;
     const effect = () => {
       if (!expired) {
@@ -72,46 +71,24 @@ const useAnimate = (
           return;
         }
         const timeElapsed = Date.now() - startTime!;
-        seek(
-          Math.min(
-            timeElapsed * basePlaybackRate * (playbackRate / 100),
-            duration,
-          ),
-        );
+        seek(Math.min(timeElapsed * playbackRate, duration));
         requestAnimationFrame(effect);
       }
     };
     effect();
     return () => void (expired = true);
-  }, [
-    startTime,
-    paused,
-    playbackRate,
-    duration,
-    ended,
-    seek,
-    basePlaybackRate,
-    onEnded,
-  ]);
+  }, [startTime, paused, playbackRate, duration, ended, seek, onEnded]);
 
   const play = useCallback(() => {
     setPaused(false);
-    setStartTime(calcNewStartTime(currentTime, playbackRate, basePlaybackRate));
-  }, [basePlaybackRate, currentTime, playbackRate]);
+    setStartTime(calcNewStartTime(currentTime, playbackRate));
+  }, [currentTime, playbackRate]);
 
   const pause = useCallback(() => {
     setPaused(true);
   }, []);
 
-  const setPlaybackRate = useCallback(
-    (newSpeed: number) => {
-      setStartTime(calcNewStartTime(currentTime, newSpeed, basePlaybackRate));
-      _setPlaybackRate(newSpeed);
-    },
-    [basePlaybackRate, currentTime],
-  );
-
-  return {paused, ended, playbackRate, setPlaybackRate, play, pause};
+  return {paused, ended, playbackRate, play, pause};
 };
 
 export {AnimationEvents};

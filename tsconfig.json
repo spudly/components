@@ -35,6 +35,9 @@
       "path": "packages/pagination"
     },
     {
+      "path": "packages/player"
+    },
+    {
       "path": "packages/range"
     },
     {
@@ -42,6 +45,9 @@
     },
     {
       "path": "packages/string-splice"
+    },
+    {
+      "path": "packages/style"
     },
     {
       "path": "packages/times"
@@ -57,6 +63,9 @@
     },
     {
       "path": "packages/use-player"
+    },
+    {
+      "path": "packages/use-playlist"
     },
     {
       "path": "packages/use-selection-range"

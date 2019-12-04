@@ -15,7 +15,6 @@
   ],
   "dependencies": {
     "@spudly/animated-monaco": "^0.0.0",
-    "@spudly/icons": "^0.0.0",
     "diff": "^4.0.1",
     "react": "^16.10.2",
     "react-live": "^2.2.1",

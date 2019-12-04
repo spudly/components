@@ -1,0 +1,20 @@
+{
+  "name": "style",
+  "version": "0.0.0",
+  "main": "build/index.css",
+  "mainSrc": "src/index.css",
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/sandbox/tree/master/packages/style",
+  "files": [
+    "build"
+  ],
+  "sideEffects": false,
+  "dependencies": {
+    "tailwindcss": "^1.1.4"
+  }
+}

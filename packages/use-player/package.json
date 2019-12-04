@@ -13,5 +13,8 @@
   "files": [
     "build"
   ],
-  "sideEffects": false
+  "sideEffects": false,
+  "devDependencies": {
+    "@spudly/player": "*"
+  }
 }

@@ -1,0 +1,17 @@
+{
+  "name": "@spudly/use-playlist",
+  "version": "0.0.0",
+  "main": "build/usePlaylist.js",
+  "mainSrc": "src/usePlaylist.ts",
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "repository": "https://github.com/spudly/sandbox/tree/master/packages/use-playlist",
+  "files": [
+    "build"
+  ],
+  "sideEffects": false
+}

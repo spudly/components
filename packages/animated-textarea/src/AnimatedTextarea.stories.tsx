@@ -1,6 +1,8 @@
 import React from 'react';
 import * as diff from 'diff';
 import AnimatedTextarea from './AnimatedTextarea';
+import Player from '@spudly/player';
+import usePlayer from '@spudly/use-player';
 
 // const hello = `import React from 'react';
 // import ReactDOM from 'react-dom';
@@ -48,129 +50,29 @@ const patches = [
 ];
 
 export const animatedTextarea = () => {
+  const {mediaProps, ...controlProps} = usePlayer<
+    typeof AnimatedTextarea,
+    HTMLVideoElement
+  >();
   return (
-    <AnimatedTextarea
-      initialValue={hello}
-      patches={patches}
-      style={{
-        fontFamily: 'monospace',
-        fontSize: 16,
-        width: '80vw',
-        height: '40vh',
-      }}
-      render={(textarea, api) => {
-        const {
-          duration,
-          currentTime,
-          ended,
-          paused,
-          trackIndex,
-          trackNames,
-          pause,
-          play,
-          setTrackIndex,
-          setPlaybackRate,
-          playbackRate,
-        } = api;
-        return (
-          <div>
-            {textarea}
-            <div>
-              <h1>{trackNames[trackIndex]}</h1>
-              <select
-                size={patches.length}
-                value={trackIndex}
-                onChange={e => setTrackIndex(Number(e.currentTarget.value))}
-              >
-                {trackNames.map((name, index) => (
-                  <option key={name} value={index}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-              <label>
-                Speed{' '}
-                <input
-                  type="range"
-                  min={1}
-                  step={1}
-                  max={100}
-                  value={playbackRate}
-                  onChange={e => setPlaybackRate(e.currentTarget.valueAsNumber)}
-                />
-              </label>
-              <label>
-                Seek{' '}
-                <input
-                  type="range"
-                  min={0}
-                  step={1}
-                  max={duration}
-                  value={currentTime}
-                  onChange={e =>
-                    (api.currentTime = e.currentTarget.valueAsNumber)
-                  }
-                />
-              </label>
-              <button
-                type="button"
-                disabled={trackIndex === 0}
-                onClick={() => setTrackIndex(0)}
-              >
-                First
-              </button>
-              <button
-                type="button"
-                disabled={trackIndex === 0}
-                onClick={() => setTrackIndex(Math.max(trackIndex - 1, 0))}
-              >
-                Prev
-              </button>
-              {ended ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      api.currentTime = 0;
-                    }}
-                  >
-                    restart
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={play}
-                    disabled={!paused || ended}
-                  >
-                    play
-                  </button>
-                  <button type="button" onClick={pause} disabled={paused}>
-                    pause
-                  </button>
-                </>
-              )}
-              <button
-                type="button"
-                disabled={trackIndex === patches.length - 1}
-                onClick={() =>
-                  setTrackIndex(Math.min(trackIndex + 1, patches.length - 1))
-                }
-              >
-                Next
-              </button>
-              <button
-                type="button"
-                disabled={trackIndex === patches.length - 1}
-                onClick={() => setTrackIndex(patches.length - 1)}
-              >
-                Last
-              </button>
-            </div>
-          </div>
-        );
-      }}
+    <Player
+      {...controlProps}
+      render={style => (
+        <AnimatedTextarea
+          initialValue={hello}
+          patches={patches}
+          style={{
+            ...style,
+            fontFamily: 'monospace',
+            fontSize: 16,
+            width: '80vw',
+            height: '40vh',
+            color: 'white',
+            background: '#222',
+            border: '1px solid #333',
+          }}
+        />
+      )}
     />
   );
 };
