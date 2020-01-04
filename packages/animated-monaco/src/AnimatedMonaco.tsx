@@ -8,6 +8,7 @@ import React, {
   useImperativeHandle,
   MutableRefObject,
   useState,
+  useCallback,
 } from 'react';
 import {
   useAnimatedDiff,
@@ -19,8 +20,8 @@ import * as monaco from 'monaco-editor';
 import {diffChars} from 'diff';
 
 type Props = JSX.IntrinsicElements['div'] & {
-  initialValue: string;
-  patches: Array<string>;
+  startValue: string;
+  endValue: string;
   onChange?: (value: string) => void;
   render: (container: ReactElement, api: RenderApi) => ReactElement;
   options: monaco.editor.IEditorConstructionOptions;
@@ -184,8 +185,8 @@ const useOnChange = (
 const AnimatedMonaco = forwardRef(
   (
     {
-      initialValue,
-      patches,
+      startValue,
+      endValue,
       onChange,
       render,
       options,
@@ -199,8 +200,25 @@ const AnimatedMonaco = forwardRef(
     ref: Ref<RenderApi>,
   ) => {
     const [containerRef, editorRef] = useCreateMonacoEditor(options);
+
+    const resize = useCallback(() => {
+      if (editorRef.current && containerRef.current) {
+        editorRef.current.layout({width: 0, height: 0});
+        const {width, height} = (containerRef.current
+          .parentNode! as HTMLElement).getBoundingClientRect();
+        console.log({container: containerRef.current, width, height});
+        editorRef.current.layout({width, height});
+      }
+    }, [containerRef, editorRef]);
+
+    useEffect(() => {
+      resize();
+      window.addEventListener('resize', resize);
+      return () => window.removeEventListener('resize', resize);
+    }, [resize]);
+
     const ignoreChangeEventRef = useRef(false);
-    const api = useAnimatedDiff(initialValue, patches, {
+    const api = useAnimatedDiff(startValue, endValue, {
       onDurationChange,
       onEnded,
       onPause,
@@ -224,7 +242,8 @@ const AnimatedMonaco = forwardRef(
             selection?.endLineNumber,
             selection.endColumn,
           );
-          api.onChange(val, selectionStart, selectionEnd);
+          // eslint-disable-next-line no-unused-expressions
+          api.onChange?.(val, selectionStart, selectionEnd);
         } catch (error) {
           debugger;
         }
@@ -247,7 +266,10 @@ const AnimatedMonaco = forwardRef(
       api.selectionEnd,
     );
 
-    return render(<div ref={containerRef} {...props} />, api);
+    return render(
+      <div style={{height: '100%'}} ref={containerRef} {...props} />,
+      api,
+    );
   },
 );
 

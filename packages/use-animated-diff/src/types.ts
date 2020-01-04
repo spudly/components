@@ -20,15 +20,12 @@ export type RenderApi = {
   playbackRate: number;
   currentTime: number;
   duration: number;
-  trackNames: Array<string>;
-  trackIndex: number;
   paused: boolean;
   ended: boolean;
-  setTrackIndex: (index: number) => void;
   play: () => void;
   pause: () => void;
   setPlaybackRate: (rate: number) => void;
-  onChange: (
+  onChange?: (
     value: string,
     selectionStart: number,
     selectionEnd: number,

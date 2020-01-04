@@ -10,6 +10,7 @@ import {
   useAnimatedDiff,
   RenderApi,
   getPosition,
+  AnimationEvents,
 } from '@spudly/use-animated-diff';
 import useSelectionRange from '@spudly/use-selection-range';
 
@@ -50,11 +51,12 @@ const useScrollToLine = (
   }, [value, line, elRef]);
 };
 
-type Props = JSX.IntrinsicElements['textarea'] & {
-  initialValue: string;
-  patches: Array<string>;
-  onChange?: (value: string) => void;
-};
+type Props = JSX.IntrinsicElements['textarea'] &
+  AnimationEvents & {
+    startValue: string;
+    endValue: string;
+    onChange?: (value: string) => void;
+  };
 
 type SelectionInfo = {
   selectionStart: number;
@@ -63,9 +65,28 @@ type SelectionInfo = {
 };
 
 const AnimatedTextarea = forwardRef(
-  ({initialValue, patches, onChange, ...props}: Props, ref: Ref<RenderApi>) => {
+  (
+    {
+      startValue,
+      endValue,
+      onChange,
+      onDurationChange,
+      onEnded,
+      onPause,
+      onPlay,
+      onTimeUpdate,
+      ...props
+    }: Props,
+    ref: Ref<RenderApi>,
+  ) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const api = useAnimatedDiff(initialValue, patches);
+    const api = useAnimatedDiff(startValue, endValue, {
+      onDurationChange,
+      onEnded,
+      onPause,
+      onPlay,
+      onTimeUpdate,
+    });
     useImperativeHandle<RenderApi, RenderApi>(ref, () => api, [api]);
     useEffect(() => {
       const t = textareaRef.current!;
@@ -82,7 +103,8 @@ const AnimatedTextarea = forwardRef(
       <textarea
         ref={textareaRef}
         onChange={e => {
-          api.onChange(
+          // eslint-disable-next-line no-unused-expressions
+          api.onChange?.(
             e.currentTarget.value,
             e.currentTarget.selectionStart,
             e.currentTarget.selectionEnd,
@@ -96,4 +118,5 @@ const AnimatedTextarea = forwardRef(
 
 AnimatedTextarea.displayName = 'AnimatedTextarea';
 
+export {RenderApi};
 export default AnimatedTextarea;

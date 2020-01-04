@@ -4,7 +4,6 @@
 import React, {useRef} from 'react';
 import useSelectionRange from '@spudly/use-selection-range';
 import {render, cleanup, fireEvent, wait} from '@testing-library/react';
-import * as diff from 'diff';
 import useAnimatedDiff from './useAnimatedDiff';
 import '@testing-library/jest-dom/extend-expect';
 
@@ -18,16 +17,6 @@ ReactDOM.render(<Hello />, root);
 
 export default React;`;
 
-const whom = `import React from 'react';
-import ReactDOM from 'react-dom';
-
-const Hello = ({whom}) => <p>Hello {whom}!</p>;
-
-const root = document.querySelector('#root');
-ReactDOM.render(<Hello whom="darkness, my old friend" />, root);
-
-export default React;`;
-
 const greeting = `import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -38,24 +27,18 @@ ReactDOM.render(<Hello greeting="Greetings," whom="Earthlings" />, root);
 
 export default React;`;
 
-const patches = [
-  diff.createPatch('whom', hello, whom),
-  diff.createPatch('greeting', whom, greeting),
-];
-
 const AnimatedTextarea = ({
-  initialValue,
-  patches,
+  startValue,
+  endValue,
 }: {
-  initialValue?: string;
-  patches: Array<string>;
+  startValue: string;
+  endValue: string;
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const api = useAnimatedDiff(initialValue, patches);
+  const api = useAnimatedDiff(startValue, endValue);
   useSelectionRange(textareaRef, api.selectionStart, api.selectionEnd);
   return (
     <>
-      <div data-testid="names">{api.trackNames.join(', ')}</div>
       <div data-testid="paused">{String(api.paused)}</div>
       <label>
         Code
@@ -63,7 +46,8 @@ const AnimatedTextarea = ({
           ref={textareaRef}
           value={api.value}
           onChange={e => {
-            api.onChange(
+            // eslint-disable-next-line no-unused-expressions
+            api.onChange?.(
               e.currentTarget.value,
               e.currentTarget.selectionStart,
               e.currentTarget.selectionEnd,
@@ -71,18 +55,6 @@ const AnimatedTextarea = ({
           }}
         />
       </label>
-      <button
-        type="button"
-        onClick={() => api.setTrackIndex(api.trackIndex + 1)}
-      >
-        next patch
-      </button>
-      <button
-        type="button"
-        onClick={() => api.setTrackIndex(api.trackIndex - 1)}
-      >
-        prev patch
-      </button>
       <button type="button" onClick={api.play}>
         play
       </button>
@@ -113,30 +85,18 @@ afterEach(() => {
 
 test('renders w/ initial value', () => {
   const {getByLabelText} = render(
-    <AnimatedTextarea initialValue={hello} patches={patches} />,
+    <AnimatedTextarea startValue={hello} endValue={greeting} />,
   );
   expect(getByLabelText('Code')).toHaveValue(hello);
 });
 
-test('if patches.length is 0, throws', () => {
-  expect(() =>
-    render(<AnimatedTextarea initialValue={hello} patches={[]} />),
-  ).toThrow('You must provide at least one patch!');
-});
-
-test('plays through all the patches', async () => {
+test('plays', async () => {
   const {getByTestId, getByLabelText, getByText} = render(
-    <AnimatedTextarea initialValue={hello} patches={patches} />,
+    <AnimatedTextarea startValue={hello} endValue={greeting} />,
   );
   const code = getByLabelText('Code') as HTMLTextAreaElement;
   expect(code).toHaveValue(hello);
   fireEvent.change(getByLabelText('Speed'), {target: {value: '1000'}});
-
-  fireEvent.click(getByText('play'));
-  expect(getByTestId('isPlaying')).toHaveTextContent('true');
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  await wait(() => expect(getByTestId('isPlaying')).toHaveTextContent('false'));
-  expect(code).toHaveValue(whom);
 
   fireEvent.click(getByText('play'));
   expect(getByTestId('isPlaying')).toHaveTextContent('true');
@@ -147,15 +107,15 @@ test('plays through all the patches', async () => {
 
 test('setTrackIndex', () => {
   const {getByText, getByLabelText} = render(
-    <AnimatedTextarea initialValue={hello} patches={patches} />,
+    <AnimatedTextarea startValue={hello} endValue={greeting} />,
   );
   fireEvent.click(getByText('next patch'));
-  expect(getByLabelText('Code')).toHaveValue(whom);
+  expect(getByLabelText('Code')).toHaveValue(greeting);
 });
 
 test('setTrackIndex: resets changes if new trackIndex < old patch index, then plays to next patch', async () => {
   const {getByText, getByTestId, getByLabelText} = render(
-    <AnimatedTextarea initialValue={hello} patches={patches} />,
+    <AnimatedTextarea startValue={hello} endValue={greeting} />,
   );
   fireEvent.click(getByText('next patch'));
   fireEvent.change(getByLabelText('Code'), {
@@ -174,66 +134,12 @@ test('setTrackIndex: resets changes if new trackIndex < old patch index, then pl
   expect(getByTestId('isPlaying')).toHaveTextContent('true');
   await new Promise(resolve => setTimeout(resolve, 1000));
   await wait(() => expect(getByTestId('isPlaying')).toHaveTextContent('false'));
-  expect(code).toHaveValue(whom);
-});
-
-test('defaults initialValue to empty string', () => {
-  const {getByLabelText} = render(
-    <AnimatedTextarea patches={[diff.createPatch('to test', '', 'test')]} />,
-  );
-  expect(getByLabelText('Code')).toHaveValue('');
-});
-
-test('if patch filename is empty, uses index instead', () => {
-  const {getByTestId} = render(
-    <AnimatedTextarea
-      patches={[
-        diff.createPatch('', '', 'test'),
-        diff.createPatch('', 'test', 'best'),
-        diff.createPatch('', 'best', 'belt'),
-      ]}
-    />,
-  );
-  expect(getByTestId('names')).toHaveTextContent('0, 1, 2');
-});
-
-test('on change, then play, transforms user-edited code to next patch result', async () => {
-  const {getByTestId, getByLabelText, getByText} = render(
-    <AnimatedTextarea initialValue={hello} patches={patches} />,
-  );
-  const code = getByLabelText('Code') as HTMLTextAreaElement;
-  expect(code).toHaveValue(hello);
-  const newValue = `import React from 'react';
-import ReactDOM from 'react-dom';
-😂🥺🔥😍😊🥰👍🤔
-const Hello = () => <p>Hello World!</p>;
-
-const root = document.querySelector('#root');
-ReactDOM.render(<Hello />, root);
-
-export default React;`;
-  code.selectionStart = code.selectionEnd = 69;
-  fireEvent.change(getByLabelText('Code'), {
-    target: {
-      value: newValue,
-      selectionStart: 69,
-      selectionEnd: 69,
-    },
-  });
-  expect(code).toHaveValue(newValue);
-  expect(code).toHaveProperty('selectionStart', 69);
-  expect(code).toHaveProperty('selectionEnd', 69);
-  fireEvent.change(getByLabelText('Speed'), {target: {value: '1000'}});
-  fireEvent.click(getByText('play'));
-  expect(getByTestId('isPlaying')).toHaveTextContent('true');
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  await wait(() => expect(getByTestId('isPlaying')).toHaveTextContent('false'));
-  expect(code).toHaveValue(whom);
+  expect(code).toHaveValue(greeting);
 });
 
 test('onChange (while playing ) pauses', async () => {
   const {getByTestId, getByLabelText, getByText} = render(
-    <AnimatedTextarea initialValue={hello} patches={patches} />,
+    <AnimatedTextarea startValue={hello} endValue={greeting} />,
   );
   const code = getByLabelText('Code') as HTMLTextAreaElement;
   expect(code).toHaveValue(hello);
@@ -265,5 +171,5 @@ export default React;`;
   expect(getByTestId('isPlaying')).toHaveTextContent('true');
   await new Promise(resolve => setTimeout(resolve, 1000));
   await wait(() => expect(getByTestId('isPlaying')).toHaveTextContent('false'));
-  expect(code).toHaveValue(whom);
+  expect(code).toHaveValue(greeting);
 });

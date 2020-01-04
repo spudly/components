@@ -1,5 +1,10 @@
 import React, {FunctionComponent, ReactElement, CSSProperties} from 'react';
-import {PlayIcon, PauseIcon, PrevIcon, NextIcon} from '@spudly/icons';
+import {
+  PlayIcon,
+  PauseIcon,
+  SkipPreviousIcon,
+  SkipNextIcon,
+} from '@spudly/icons';
 
 const formatTime = (seconds: number) =>
   [Math.round(seconds / 60), Math.round(seconds % 60)]
@@ -20,6 +25,7 @@ type Props = {
   trackIndex?: number;
   setTrackIndex?: (trackIndex: number) => void;
   render: (style: CSSProperties) => ReactElement;
+  style?: CSSProperties;
 };
 
 const IconButton = (props: JSX.IntrinsicElements['button']) => (
@@ -50,6 +56,7 @@ const Player: FunctionComponent<Props> = ({
   setPlaybackRate,
   seek,
   render,
+  style = {},
 }) => (
   <div
     style={{
@@ -58,13 +65,19 @@ const Player: FunctionComponent<Props> = ({
       color: 'white',
       width: 'max-content',
       maxWidth: '100%',
+      fontFamily: 'sans-serif',
+      display: 'flex',
+      flexDirection: 'column',
+      ...style,
     }}
   >
-    {render({
-      display: 'block',
-      margin: '1em',
-      maxWidth: 'calc(100% - 2em)',
-    })}
+    <div style={{flexGrow: 1}}>
+      {render({
+        display: 'block',
+        margin: '1em',
+        maxWidth: 'calc(100% - 2em)',
+      })}
+    </div>
     <div
       style={{
         display: 'flex',
@@ -78,11 +91,11 @@ const Player: FunctionComponent<Props> = ({
           disabled={trackIndex === 0}
           onClick={() => setTrackIndex?.(Math.max((trackIndex || 0) - 1, 0))}
         >
-          <PrevIcon />
+          <SkipPreviousIcon size="1.5em" />
         </IconButton>
       )}
       <IconButton onClick={paused ? play : pause}>
-        {paused ? <PlayIcon /> : <PauseIcon />}
+        {paused ? <PlayIcon size="1.5em" /> : <PauseIcon size="1.5em" />}
       </IconButton>
       {tracks && (
         <IconButton
@@ -91,7 +104,7 @@ const Player: FunctionComponent<Props> = ({
             setTrackIndex?.(Math.min((trackIndex || 0) + 1, tracks.length - 1))
           }
         >
-          <NextIcon />
+          <SkipNextIcon size="1.5em" />
         </IconButton>
       )}
       <div style={{margin: '1em'}}>

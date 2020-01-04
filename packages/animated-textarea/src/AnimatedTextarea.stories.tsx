@@ -1,28 +1,17 @@
 import React from 'react';
-import * as diff from 'diff';
-import AnimatedTextarea from './AnimatedTextarea';
+import AnimatedTextarea, {RenderApi} from './AnimatedTextarea';
 import Player from '@spudly/player';
 import usePlayer from '@spudly/use-player';
 
-// const hello = `import React from 'react';
-// import ReactDOM from 'react-dom';
+const hello = `import React from 'react';
+import ReactDOM from 'react-dom';
 
-// const Hello = () => <p>Hello World!</p>;
+const Hello = () => <p>Hello World!</p>;
 
-// const root = document.querySelector('#root');
-// ReactDOM.render(<Hello />, root);
+const root = document.querySelector('#root');
+ReactDOM.render(<Hello />, root);
 
-// export default React;`;
-
-const hello = `a
-bb
-
-d`;
-
-const whom = `a
-bb
-
-df`;
+export default React;`;
 
 // const whom = `import React from 'react';
 // import ReactDOM from 'react-dom';
@@ -44,23 +33,19 @@ ReactDOM.render(<Hello greeting="Greetings," whom="Earthlings" />, root);
 
 export default React;`;
 
-const patches = [
-  diff.createPatch('whom', hello, whom),
-  diff.createPatch('greeting', whom, greeting),
-];
-
-export const animatedTextarea = () => {
+export const AnimatedTextareaDemo = () => {
   const {mediaProps, ...controlProps} = usePlayer<
     typeof AnimatedTextarea,
-    HTMLVideoElement
+    RenderApi
   >();
   return (
     <Player
       {...controlProps}
       render={style => (
         <AnimatedTextarea
-          initialValue={hello}
-          patches={patches}
+          {...mediaProps}
+          startValue={hello}
+          endValue={greeting}
           style={{
             ...style,
             fontFamily: 'monospace',
